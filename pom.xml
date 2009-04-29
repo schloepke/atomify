@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="iso-8859-1" ?>
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd ">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd ">
 
 	<modelVersion>4.0.0</modelVersion>
 
@@ -11,10 +12,27 @@
 
 	<packaging>pom</packaging>
 
+	<modules>
+		<module>atom-model</module>
+		<module>atom-service</module>
+		<module>atom-client</module>
+	</modules>
+
 	<organization>
 		<name>Atomify</name>
 		<url>http://www.atomify.org</url>
 	</organization>
+
+	<licenses>
+		<license>
+			<name>MIT License</name>
+			<url>http://www.atomify.org/license.html</url>
+			<distribution>repo</distribution>
+			<comments>
+				Copyright (c) 2009 Stephan Schloepke and innoQ Deutschland GmbH - Use under MIT license as pointed out under the URL.	
+			</comments>
+		</license>
+	</licenses>
 
 	<scm>
 		<connection>scm:git:git://github.com/schloepke/atomify.git/</connection>
@@ -22,12 +40,10 @@
 		<url>http://github.com/schloepke/atomify/</url>
 	</scm>
 
-<!--
 	<issueManagement>
-		<system>Trac</system>
-		<url>http://www.atomify.org/issues</url>
+		<system>github</system>
+		<url>http://github.com/schloepke/atomify/issues</url>
 	</issueManagement>
--->
 
 	<distributionManagement>
 		<repository>
@@ -39,6 +55,14 @@
 			<url>sftp://step-h.com:47922/httpdocs/snapshot</url>
 		</snapshotRepository>
 	</distributionManagement>
+
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.4</version>
+		</dependency>
+	</dependencies>
 
 	<properties>
 		<maven.compiler.encoding>ISO-8859-1</maven.compiler.encoding>
@@ -69,33 +93,13 @@
 					</execution>
 				</executions>
 			</plugin>
-			<!--
 			<plugin>
 				<groupId>com.google.code.maven-license-plugin</groupId>
 				<artifactId>maven-license-plugin</artifactId>
-				<version>1.4.0_RMS</version>
-				<dependencies>
-					<dependency>
-						<groupId>de.rms.audit</groupId>
-						<artifactId>coding-convention</artifactId>
-						<version>${rms.audit.version}</version>
-					</dependency>
-				</dependencies>
+				<version>1.4.0</version>
 				<configuration>
-					<header>audit/coding-convention/license-header.txt</header>
-					<includes>
-						<include>src/**/*.java</include>
-					</includes>
-					<excludes>
-						<exclude>src/iqgen/**</exclude>
-					</excludes>
-					<mapping>
-						<java>SLASHSTAR_STYLE</java>
-					</mapping>
+					<header>LICENSE</header>
 					<encoding>iso-8859-1</encoding>
-					<headerDefinitions>
-						<headerDefinition>audit/coding-convention/license-header-definition.xml</headerDefinition>
-					</headerDefinitions>
 				</configuration>
 				<executions>
 					<execution>
@@ -107,22 +111,6 @@
 					</execution>
 				</executions>
 			</plugin>
-			-->
-			<!--
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-checkstyle-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>CheckstyleViolationCheck</id>
-						<goals>
-							<goal>check</goal>
-						</goals>
-						<phase>verify</phase>
-					</execution>
-				</executions>
-			</plugin>
-			-->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-enforcer-plugin</artifactId>
@@ -132,7 +120,10 @@
 						<goals>
 							<goal>enforce</goal>
 						</goals>
-						<!-- We need to bind the enforcing rules to the verify phase instead of validate because inside eclipse it produces an error otherwise -->
+						<!--
+							We need to bind the enforcing rules to the verify phase instead
+							of validate because inside eclipse it produces an error otherwise
+						-->
 						<phase>verify</phase>
 						<configuration>
 							<rules>
@@ -264,7 +255,7 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-changes-plugin</artifactId>
 				<configuration>
-					<issueLinkTemplate>%URL%/browse/%ISSUE%</issueLinkTemplate>
+					<issueLinkTemplate>%URL%#issue/%ISSUE%</issueLinkTemplate>
                 </configuration>
                 <reportSets>
                     <reportSet>
@@ -300,19 +291,10 @@
 				<artifactId>maven-checkstyle-plugin</artifactId>
 				<configuration>
 					<linkXRef>true</linkXRef>
-					<configLocation>audit/coding-convention/checkstyle.xml</configLocation>
+					<configLocation>etc/checkstyle.xml</configLocation>
 					<consoleOutput>true</consoleOutput>
 					<encoding>iso-8859-1</encoding>
 					<suppressionsLocation>etc/checkstyle-suppressions.xml</suppressionsLocation>
-					<!--
-					<propertyExpansion>
-						rms.checkstyle.javadoc.severity = ${rms.checkstyle.javadoc.severity}
-						rms.checkstyle.identifier.severity = ${rms.checkstyle.identifier.severity}
-						rms.checkstyle.size.severity = ${rms.checkstyle.size.severity}
-						rms.checkstyle.metrics.severity = ${rms.checkstyle.metrics.severity}
-						rms.checkstyle.bestcode.severity = ${rms.checkstyle.bestcode.severity}
-					</propertyExpansion>
-					-->
 				</configuration>
 			</plugin>
             <plugin>
@@ -369,5 +351,19 @@
 			</plugin>
 		</plugins>
 	</reporting>
+
+	<pluginRepositories>
+		<pluginRepository>
+		    <id>mc-release</id>
+		    <name>Local Maven repository of releases</name>
+		    <url>http://mc-repo.googlecode.com/svn/maven2/releases</url>
+		    <snapshots>
+		        <enabled>false</enabled>
+		    </snapshots>
+		    <releases>
+		        <enabled>true</enabled>
+		    </releases>
+		</pluginRepository>
+	</pluginRepositories>
 
 </project>
