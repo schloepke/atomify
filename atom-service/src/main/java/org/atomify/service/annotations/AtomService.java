@@ -22,24 +22,40 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.atomify.model;
+package org.atomify.service.annotations;
 
-public class AtomMediaType {
-	private final String type;
-	private final String subType;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-	public AtomMediaType(String type, String subType, String... parameters) {
-		this.type = AtomContractConstraint.notNull("type", type);
-		this.subType = subType;
-	}
+import org.atomify.service.AtomPublishingServiceResource;
 
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder(this.type);
-		if (this.subType != null) {
-			builder.append("/").append(this.subType);
-		}
-		return builder.toString();
-	}
+/**
+ * Annotation to annotate a class or method to be provided as Atom Syndication Feed in the Atom Publishing Service Document.
+ * <p>
+ * Atom Publishing Service Document lists collections which are Atom Syndication Feeds. Use this annotation in conjunction with the
+ * {@link AtomPublishingServiceResource} to produce the correct Atom Publishing Protocol Service Document.
+ * </p>
+ * 
+ * @author Stephan Schloepke
+ * @since 1.0
+ */
+@Retention(RetentionPolicy.RUNTIME)
+@Target( { ElementType.TYPE, ElementType.METHOD })
+public @interface AtomService {
+	/**
+	 * Returns the workspace title in which the collection appears. Does not have a default.
+	 */
+	String workspace();
 
+	/**
+	 * Returns the collection title.
+	 */
+	String collection();
+
+	/**
+	 * Returns the list of accepted media types for the collection. Can be null or empty meaning only atom syndication entry is accepted.
+	 */
+	String[] accept() default {};
 }

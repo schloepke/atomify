@@ -22,24 +22,31 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.atomify.model;
+package org.atomify.client.http;
 
-public class AtomMediaType {
-	private final String type;
-	private final String subType;
+import java.io.IOException;
 
-	public AtomMediaType(String type, String subType, String... parameters) {
-		this.type = AtomContractConstraint.notNull("type", type);
-		this.subType = subType;
+/**
+ * Thrown if an URI is a relative URI whereas an absolute is required.
+ * 
+ * @author Stephan Schloepke
+ */
+public class RelativeURIException extends IOException {
+
+	/**
+	 * Create a relative URI exception without message.
+	 */
+	public RelativeURIException() {
+		super();
 	}
 
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder(this.type);
-		if (this.subType != null) {
-			builder.append("/").append(this.subType);
-		}
-		return builder.toString();
+	/**
+	 * Creates a relative URI exception with a detailed message.
+	 * 
+	 * @param message The message.
+	 */
+	public RelativeURIException(final String message) {
+		super(message);
 	}
 
 }

@@ -22,24 +22,40 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.atomify.model;
+package org.atomify.client;
 
-public class AtomMediaType {
-	private final String type;
-	private final String subType;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URI;
 
-	public AtomMediaType(String type, String subType, String... parameters) {
-		this.type = AtomContractConstraint.notNull("type", type);
-		this.subType = subType;
+import org.atomify.client.http.HttpAccessor;
+import org.atomify.client.http.MessageContractConstraint;
+import org.atomify.model.publishing.AtomPubService;
+
+public class AtomServiceClient {
+	private final HttpAccessor accesor;
+	private AtomPubService currentService;
+
+	public static AtomServiceClient newInstance(final HttpAccessor accesor) {
+		return new AtomServiceClient(accesor, null);
 	}
 
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder(this.type);
-		if (this.subType != null) {
-			builder.append("/").append(this.subType);
+	public AtomServiceClient selectAtomService(final URI serviceURI) {
+		MessageContractConstraint.notNull("serviceURI", serviceURI);
+		try {
+			AtomServiceRequest t = new AtomServiceRequest();
+			if (this.accesor.get(serviceURI, t, t) == HttpURLConnection.HTTP_OK) {
+				this.currentService = t.getServiceDocument();
+			}
+		} catch (IOException e) {
+			throw new RuntimeException(e);
 		}
-		return builder.toString();
+		return this;
+	}
+
+	private AtomServiceClient(final HttpAccessor accesor, final AtomServiceClient upperState) {
+		MessageContractConstraint.notNull("accessor", accesor);
+		this.accesor = accesor;
 	}
 
 }

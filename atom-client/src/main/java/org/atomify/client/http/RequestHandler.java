@@ -22,24 +22,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.atomify.model;
+package org.atomify.client.http;
 
-public class AtomMediaType {
-	private final String type;
-	private final String subType;
+import java.io.IOException;
+import java.io.InputStream;
 
-	public AtomMediaType(String type, String subType, String... parameters) {
-		this.type = AtomContractConstraint.notNull("type", type);
-		this.subType = subType;
-	}
+/**
+ * Handler to handle the request done thru the {@link HttpAccessor}
+ * <p>
+ * In order to handle the input and output of a request thru the {@link HttpAccessor} it is required that you provide an implementation of the request
+ * handler to handle the input and output streaming. If an input and/or output streaming happens is dependent on the request. Only those having either
+ * do call the suitable process method on the request handler implementation.S
+ * </p>
+ * 
+ * @author Stephan Schloepke
+ */
+public interface RequestHandler {
 
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder(this.type);
-		if (this.subType != null) {
-			builder.append("/").append(this.subType);
-		}
-		return builder.toString();
-	}
+	/**
+	 * Handles the input received from the server.
+	 * 
+	 * @param metaData The response meta data holds the information gotten from the server like character set, media type.
+	 * @param in The input stream to read your data from. It is required that the implementor knows the content type and encoding.
+	 * @throws IOException Thrown if an error occurred writing the data.
+	 */
+	void processInput(ResponseMeta metaData, InputStream in) throws IOException;
 
 }

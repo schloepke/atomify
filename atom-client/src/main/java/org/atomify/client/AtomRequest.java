@@ -22,24 +22,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.atomify.model;
+package org.atomify.client;
 
-public class AtomMediaType {
-	private final String type;
-	private final String subType;
-
-	public AtomMediaType(String type, String subType, String... parameters) {
-		this.type = AtomContractConstraint.notNull("type", type);
-		this.subType = subType;
-	}
-
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder(this.type);
-		if (this.subType != null) {
-			builder.append("/").append(this.subType);
-		}
-		return builder.toString();
-	}
+/**
+ * Listenbeschreibung
+ * <p>
+ * Detailierte Beschreibung
+ * </p>
+ *
+ * @author stephan
+ *
+ */
+public class AtomRequest {
 
 }
