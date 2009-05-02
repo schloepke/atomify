@@ -31,9 +31,9 @@ import java.util.Map;
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 
-import org.atomify.model.syndication.AtomCommonAttributes.XmlSpace;
 import org.jbasics.parser.annotations.AnyAttribute;
 import org.jbasics.parser.annotations.Attribute;
+import org.jbasics.xml.types.XmlSpaceType;
 
 public abstract class AtomCommonBuilder<T extends AtomCommonBuilder<?>> {
 	/**
@@ -47,7 +47,7 @@ public abstract class AtomCommonBuilder<T extends AtomCommonBuilder<?>> {
 	/**
 	 * <b>Optional:</b> xml:space attribute.
 	 */
-	private XmlSpace xmlSpace;
+	private XmlSpaceType xmlSpace;
 	/**
 	 * <b>Optional</b> any other attribute which is NOT local:*.
 	 */
@@ -69,7 +69,7 @@ public abstract class AtomCommonBuilder<T extends AtomCommonBuilder<?>> {
 
 	@SuppressWarnings("unchecked")
 	@Attribute(name = "base", namespace = XMLConstants.XML_NS_URI)
-	public final T setXmlSpace(XmlSpace xmlSpace) {
+	public final T setXmlSpace(XmlSpaceType xmlSpace) {
 		this.xmlSpace = xmlSpace;
 		return (T) this;
 	}

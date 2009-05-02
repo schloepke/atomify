@@ -30,6 +30,8 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
+import org.jbasics.xml.types.XmlSpaceType;
+
 /**
  * Atom common attributes construct.
  * <p>
@@ -51,27 +53,11 @@ public abstract class AtomCommonAttributes {
 	/**
 	 * <b>Optional:</b> xml:space attribute.
 	 */
-	private XmlSpace xmlSpace;
+	private XmlSpaceType xmlSpace;
 	/**
 	 * <b>Optional</b> any other attribute which is NOT local:*.
 	 */
 	private Map<QName, String> undefinedAttributes;
-
-	/**
-	 * xml:space enum type.
-	 * 
-	 * @author Stephan Schloepke
-	 */
-	public static enum XmlSpace {
-		/**
-		 * Default behavior of XML space.
-		 */
-		DEFAULT,
-		/**
-		 * Preserve the spaces in the element.
-		 */
-		PRESERVED;
-	}
 
 	/**
 	 * Set the xml:base value.
@@ -114,7 +100,7 @@ public abstract class AtomCommonAttributes {
 	 * 
 	 * @param xmlSpace the xmlSpace to set
 	 */
-	public void setXmlSpace(final XmlSpace xmlSpace) {
+	public void setXmlSpace(final XmlSpaceType xmlSpace) {
 		this.xmlSpace = xmlSpace;
 	}
 
@@ -123,7 +109,7 @@ public abstract class AtomCommonAttributes {
 	 * 
 	 * @return the xmlSpace
 	 */
-	public XmlSpace getXmlSpace() {
+	public XmlSpaceType getXmlSpace() {
 		return this.xmlSpace;
 	}
 

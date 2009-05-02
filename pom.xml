@@ -19,7 +19,7 @@
 	</modules>
 
 	<organization>
-		<name>Atomify</name>
+		<name>Atomify.org (Stephan Schloepke and innoQ Deutschland GmbH)</name>
 		<url>http://www.atomify.org</url>
 	</organization>
 
@@ -56,6 +56,43 @@
 		</snapshotRepository>
 	</distributionManagement>
 
+	<developers>
+		<developer>
+			<id>schloepke</id>
+			<name>Stephan Schlöpke</name>
+			<email>stephan@schloepke.de</email>
+			<url>http://www.schloepke.de</url>
+			<organization>IT Consulting Stephan Schlöpke</organization>
+			<organizationUrl>http://www.schloepke.de</organizationUrl>
+			<timezone>+1</timezone>
+			<roles>
+				<role>Project manager</role>
+				<role>Build manager</role>
+				<role>Developer</role>
+				<role>Architect</role>
+			</roles>
+		</developer>
+	</developers>
+	
+	<contributors>
+		<contributor>
+			<name>Stefan Tilkov</name>
+			<email>stefan.tilkov@innoq.com</email>
+			<url>http://www.innoq.com/blog/st/</url>
+			<organization>innoQ Deutschland GmbH</organization>
+			<organizationUrl>http://www.innoq.com</organizationUrl>
+			<timezone>+1</timezone>
+		</contributor>
+		<contributor>
+			<name>Philipp Ghadir</name>
+			<email>philipp.ghadir@innoq.com</email>
+			<url>http://www.ghadir.de/blog/</url>
+			<organization>innoQ Deutschland GmbH</organization>
+			<organizationUrl>http://www.innoq.com</organizationUrl>
+			<timezone>+1</timezone>
+		</contributor>
+	</contributors>
+
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
@@ -63,6 +100,16 @@
 			<version>4.4</version>
 		</dependency>
 	</dependencies>
+	
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.jbasics</groupId>
+				<artifactId>jbasics</artifactId>
+				<version>1.0.0-SNAPSHOT</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 
 	<properties>
 		<maven.compiler.encoding>ISO-8859-1</maven.compiler.encoding>
@@ -100,6 +147,19 @@
 				<configuration>
 					<header>LICENSE</header>
 					<encoding>iso-8859-1</encoding>
+					<failIfMissing>true</failIfMissing>
+					<useDefaultMapping>true</useDefaultMapping>
+					<mapping>
+						<java>SLASHSTAR_STYLE</java>
+					</mapping>
+					<aggregate>true</aggregate>
+                    <includes>
+                        <include>src/**</include>
+                    </includes>
+                    <excludes>
+                        <exclude>.git/**</exclude>
+                    </excludes>
+                	<useDefaultExcludes>true</useDefaultExcludes>
 				</configuration>
 				<executions>
 					<execution>
@@ -120,15 +180,11 @@
 						<goals>
 							<goal>enforce</goal>
 						</goals>
-						<!--
-							We need to bind the enforcing rules to the verify phase instead
-							of validate because inside eclipse it produces an error otherwise
-						-->
 						<phase>verify</phase>
 						<configuration>
 							<rules>
 								<requireMavenVersion>
-									<version>2.0.9</version>
+									<version>2.1.0</version>
 								</requireMavenVersion>
 								<requireJavaVersion>
 									<version>1.5</version>
@@ -151,24 +207,6 @@
 				</executions>
 			</plugin>
 			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>buildnumber-maven-plugin</artifactId>
-				<executions>
-					<execution>
-						<phase>validate</phase>
-						<goals>
-							<goal>create</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<doCheck>false</doCheck>
-					<doUpdate>false</doUpdate>
-					<revisionOnScmFailure>unknown</revisionOnScmFailure>
-					<timestampPropertyName>buildTimestamp</timestampPropertyName>
-				</configuration>
-			</plugin>
-			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
 				<configuration>
@@ -177,21 +215,9 @@
 							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
 						</manifest>
 						<manifestEntries>
-							<Implementation-Build>${buildNumber} at ${buildTimestamp}</Implementation-Build>
-						</manifestEntries>
-					</archive>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-war-plugin</artifactId>
-				<configuration>
-					<archive>
-						<manifest>
-							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-						</manifest>
-						<manifestEntries>
-							<Implementation-Build>${buildNumber} at ${buildTimestamp}</Implementation-Build>
+							<Implementation-Build>${project.version}</Implementation-Build>
+							<Maven-GroupId>${project.groupId}</Maven-GroupId>
+							<Maven-ArtifactId>${project.artifactId}</Maven-ArtifactId>
 						</manifestEntries>
 					</archive>
 				</configuration>
@@ -244,15 +270,6 @@
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-changelog-plugin</artifactId>
-				<configuration>
-					<connectionType>developerConnection</connectionType>
-					<type>range</type>
-					<range>150</range>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-changes-plugin</artifactId>
 				<configuration>
 					<issueLinkTemplate>%URL%#issue/%ISSUE%</issueLinkTemplate>
@@ -286,17 +303,6 @@
 			</plugin>
 
 			<!-- Metric and bug finding -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-checkstyle-plugin</artifactId>
-				<configuration>
-					<linkXRef>true</linkXRef>
-					<configLocation>etc/checkstyle.xml</configLocation>
-					<consoleOutput>true</consoleOutput>
-					<encoding>iso-8859-1</encoding>
-					<suppressionsLocation>etc/checkstyle-suppressions.xml</suppressionsLocation>
-				</configuration>
-			</plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>jdepend-maven-plugin</artifactId>
