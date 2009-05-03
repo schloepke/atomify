@@ -1,0 +1,12 @@
+The atom-service consists of types used in
+combination with JAX-RS to provide an AtomPub
+service with the desired feeds and entries.
+
+It is supposed to make it easy to implement
+an atom and atom-pub enabled service.
+
+For license agreement see the LICENSE file.
+
+http://www.atomify.org
+
+Copyright (c) 2009 Stephan Schloepke and innoQ Deutschland GmbH

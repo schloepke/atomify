@@ -1,0 +1,12 @@
+The atom-model consists of types implementing the model for
+atom and atom-pub as java types combined with a parser
+validating the correctness of the atom types.
+
+Additionally it offers easy support for atom extensions as
+well as third party extensions.
+
+For license agreement see the LICENSE file.
+
+http://www.atomify.org
+
+Copyright (c) 2009 Stephan Schloepke and innoQ Deutschland GmbH
