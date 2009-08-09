@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2009 Stephan Schloepke and innoQ Deutschland GmbH
  *
  * Stephan Schloepke: http://www.schloepke.de/
@@ -27,6 +27,7 @@ package org.atomify.model.syndication;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.atomify.model.AtomCommonBuilder;
 import org.jbasics.pattern.builder.Builder;
 
 public class AtomEntryBuilder extends AtomCommonBuilder<AtomEntryBuilder>

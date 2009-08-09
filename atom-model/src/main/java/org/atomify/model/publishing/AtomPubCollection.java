@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2009 Stephan Schloepke and innoQ Deutschland GmbH
  *
  * Stephan Schloepke: http://www.schloepke.de/
@@ -27,6 +27,7 @@ package org.atomify.model.publishing;
 import java.net.URI;
 import java.util.List;
 
+import org.atomify.model.AtomContractConstraint;
 import org.atomify.model.syndication.AtomCommonAttributes;
 import org.atomify.model.syndication.AtomExtension;
 import org.atomify.model.syndication.AtomText;
@@ -41,7 +42,8 @@ import org.atomify.model.syndication.AtomText;
  */
 public class AtomPubCollection extends AtomCommonAttributes {
 	/**
-	 * <b>Optional:</b> the external href URI attribute. If set non of the other are alowed to be set.
+	 * <b>Optional:</b> the external href URI attribute. If set non of the other are alowed to be
+	 * set.
 	 */
 	private URI href;
 	/**
@@ -56,4 +58,16 @@ public class AtomPubCollection extends AtomCommonAttributes {
 	 * @todo TODO: needs to be AtomPubExtension
 	 */
 	private List<AtomExtension> extensions;
+
+	public AtomPubCollection(AtomText title) {
+		setTitle(title);
+	}
+
+	public void setTitle(AtomText title) {
+		this.title = AtomContractConstraint.notNull("title", title);
+	}
+
+	public static AtomPubCollectionBuilder newBuilder() {
+		return new AtomPubCollectionBuilder();
+	}
 }

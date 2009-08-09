@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2009 Stephan Schloepke and innoQ Deutschland GmbH
  *
  * Stephan Schloepke: http://www.schloepke.de/
@@ -33,15 +33,17 @@ import org.atomify.model.syndication.AtomCommonAttributes;
  * <p>
  * Detailierte Beschreibung
  * </p>
- *
+ * 
  * @author stephan
- *
  */
 public class AtomPubCategories extends AtomCommonAttributes implements AtomDocument {
 	public static final AtomMediaType MEDIA_TYPE = new AtomMediaType("application", "atomcat+xml");
-	
+
 	public AtomMediaType getMediaType() {
-	    return MEDIA_TYPE;
+		return MEDIA_TYPE;
 	}
 
+	public static AtomPubCategoriesBuilder newBuilder() {
+		return new AtomPubCategoriesBuilder();
+	}
 }

@@ -22,51 +22,39 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.atomify.model.syndication;
+package org.atomify.model.publishing;
 
-import java.net.URI;
+import javax.xml.namespace.QName;
 
+import org.atomify.model.AtomConstants;
 import org.atomify.model.AtomContractConstraint;
 
-/**
- * Represents an atom logo.
- * 
- * @author Stephan Schloepke
- */
-public class AtomLogo extends AtomCommonAttributes {
+public abstract class AtomPubExtension {
 	/**
-	 * <b>Required:</b> URI content.
-	 * <p>
-	 * TODO: must be an iri reference.
-	 * </p>
+	 * <b>Required:</b> The fully qualified name of the extension element. Must not be the atom name space.
 	 */
-	private URI logoIRI;
+	private final QName extensionName;
 
 	/**
-	 * Creates an atom logo with the given logo IRI (must not be null).
+	 * Creates an extension with given name.
 	 * 
-	 * @param logoIRI The logo IRI (must not be null).
+	 * @param extensionName The extension name.
 	 */
-	public AtomLogo(final URI logoIRI) {
-		setLogoIRI(logoIRI);
+	public AtomPubExtension(final QName extensionName) {
+		this.extensionName = AtomContractConstraint.notNull("extensionName", extensionName);
+		if (AtomConstants.ATOM_NS_URI.equals(this.extensionName.getNamespaceURI())) {
+			throw new IllegalArgumentException("Extention QName cannot be of the atom name space " + extensionName);
+		}
 	}
 
 	/**
-	 * Set the logo IRI (must not be null).
+	 * Returns the fully qualified name of the extension.
 	 * 
-	 * @param logoIRI The logo IRI (must not be null).
+	 * @return The fully qualified name.
 	 */
-	public void setLogoIRI(final URI logoIRI) {
-		this.logoIRI = AtomContractConstraint.notNull("logoIRI", logoIRI);
+	public QName getExtensionName() {
+		return this.extensionName;
 	}
 
-	/**
-	 * Returns the logo IRI.
-	 * 
-	 * @return the logoIRI
-	 */
-	public URI getLogoIRI() {
-		return this.logoIRI;
-	}
 
 }

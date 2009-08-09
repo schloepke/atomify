@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2009 Stephan Schloepke and innoQ Deutschland GmbH
  *
  * Stephan Schloepke: http://www.schloepke.de/
@@ -24,6 +24,7 @@
  */
 package org.atomify.model.syndication;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
@@ -47,8 +48,7 @@ public class AtomDate extends AtomCommonAttributes {
 	/**
 	 * Creates a date with the given date content.
 	 * 
-	 * @param date
-	 *            The date content.
+	 * @param date The date content.
 	 */
 	public AtomDate(final XMLGregorianCalendar date) {
 		this.value = AtomContractConstraint.notNull("date", date);
@@ -74,10 +74,8 @@ public class AtomDate extends AtomCommonAttributes {
 
 	public static AtomDate valueOf(String dateValue) {
 		try {
-			return new AtomDate(DatatypeFactory.newInstance()
-					.newXMLGregorianCalendar(
-							AtomContractConstraint.notNull("dateValue",
-									dateValue)));
+			return new AtomDate(DatatypeFactory.newInstance().newXMLGregorianCalendar(
+					AtomContractConstraint.notNull("dateValue", dateValue)));
 		} catch (DatatypeConfigurationException e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}
@@ -86,16 +84,13 @@ public class AtomDate extends AtomCommonAttributes {
 	/**
 	 * Creates a date construct with the given java date.
 	 * 
-	 * @param date
-	 *            The java date.
+	 * @param date The java date.
 	 */
 	public static AtomDate valueOf(final Date date) {
 		try {
-			GregorianCalendar cal = (GregorianCalendar) GregorianCalendar
-					.getInstance();
+			GregorianCalendar cal = (GregorianCalendar) Calendar.getInstance();
 			cal.setTime(date);
-			return new AtomDate(DatatypeFactory.newInstance()
-					.newXMLGregorianCalendar(cal));
+			return new AtomDate(DatatypeFactory.newInstance().newXMLGregorianCalendar(cal));
 		} catch (DatatypeConfigurationException e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}

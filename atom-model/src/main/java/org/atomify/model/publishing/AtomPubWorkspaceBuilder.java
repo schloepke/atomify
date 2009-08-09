@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2009 Stephan Schloepke and innoQ Deutschland GmbH
  *
  * Stephan Schloepke: http://www.schloepke.de/
@@ -27,15 +27,16 @@ package org.atomify.model.publishing;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.atomify.model.AtomCommonBuilder;
 import org.atomify.model.AtomConstants;
-import org.atomify.model.syndication.AtomCommonBuilder;
 import org.atomify.model.syndication.AtomExtension;
 import org.atomify.model.syndication.AtomText;
 import org.jbasics.parser.annotations.AnyElement;
 import org.jbasics.parser.annotations.Element;
 import org.jbasics.pattern.builder.Builder;
 
-public class AtomPubWorkspaceBuilder extends AtomCommonBuilder<AtomPubWorkspaceBuilder> implements Builder<AtomPubWorkspace>{
+public class AtomPubWorkspaceBuilder extends AtomCommonBuilder<AtomPubWorkspaceBuilder> implements
+		Builder<AtomPubWorkspace> {
 	private AtomText title;
 	private List<AtomPubCollection> collections;
 	private List<AtomExtension> extensions;
@@ -43,11 +44,11 @@ public class AtomPubWorkspaceBuilder extends AtomCommonBuilder<AtomPubWorkspaceB
 	public static AtomPubWorkspaceBuilder newInstance() {
 		return new AtomPubWorkspaceBuilder();
 	}
-	
+
 	private AtomPubWorkspaceBuilder() {
 		// Empty to avoid instantiation
 	}
-	
+
 	public AtomPubWorkspace build() {
 		AtomPubWorkspace result = new AtomPubWorkspace(this.title);
 		attachCommonAttributes(result);
@@ -61,14 +62,16 @@ public class AtomPubWorkspaceBuilder extends AtomCommonBuilder<AtomPubWorkspaceB
 	}
 
 	public void reset() {
+		// TODO: Implement
+		throw new UnsupportedOperationException();
 	}
-	
+
 	@Element(name = "title", namespace = AtomConstants.ATOM_NS_URI, minOccurs = 1)
 	public AtomPubWorkspaceBuilder setTitle(AtomText title) {
 		this.title = title;
 		return this;
 	}
-	
+
 	@Element(name = "collection", namespace = AtomConstants.ATOM_PUB_NS_URI, minOccurs = 0, maxOccurs = Element.UNBOUND)
 	public AtomPubWorkspaceBuilder addCollection(AtomPubCollection collection) {
 		if (this.collections == null) {
@@ -77,14 +80,14 @@ public class AtomPubWorkspaceBuilder extends AtomCommonBuilder<AtomPubWorkspaceB
 		this.collections.add(collection);
 		return this;
 	}
-	
-	@AnyElement
+
+//	@AnyElement
 	public AtomPubWorkspaceBuilder addExtension(AtomExtension extension) {
 		if (this.extensions == null) {
 			this.extensions = new ArrayList<AtomExtension>();
 		}
 		this.extensions.add(extension);
-		
+
 		return this;
 	}
 

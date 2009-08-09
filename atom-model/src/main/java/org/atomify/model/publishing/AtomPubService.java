@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2009 Stephan Schloepke and innoQ Deutschland GmbH
  *
  * Stephan Schloepke: http://www.schloepke.de/
@@ -30,7 +30,6 @@ import java.util.List;
 import org.atomify.model.AtomDocument;
 import org.atomify.model.AtomMediaType;
 import org.atomify.model.syndication.AtomCommonAttributes;
-import org.atomify.model.syndication.AtomExtension;
 
 /**
  * Listenbeschreibung
@@ -49,7 +48,7 @@ public class AtomPubService extends AtomCommonAttributes implements AtomDocument
 	 * TODO: We need to actually make this an AtomPubExtension maybe derived
 	 * from AtomExtenion or a common base type
 	 */
-	private List<AtomExtension> extensions;
+	private List<AtomPubExtension> extensions;
 
 	public AtomMediaType getMediaType() {
 		return MEDIA_TYPE;
@@ -68,9 +67,9 @@ public class AtomPubService extends AtomCommonAttributes implements AtomDocument
 	/**
 	 * @return the foreignMarkup
 	 */
-	public List<AtomExtension> getExtensions() {
+	public List<AtomPubExtension> getExtensions() {
 		if (this.extensions == null) {
-			this.extensions = new ArrayList<AtomExtension>();
+			this.extensions = new ArrayList<AtomPubExtension>();
 		}
 		return this.extensions;
 	}

@@ -22,51 +22,40 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.atomify.model.syndication;
+package org.atomify.model;
 
-import java.net.URI;
+import java.util.Map;
 
-import org.atomify.model.AtomContractConstraint;
+import javax.xml.namespace.QName;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 
-/**
- * Represents an atom logo.
- * 
- * @author Stephan Schloepke
- */
-public class AtomLogo extends AtomCommonAttributes {
-	/**
-	 * <b>Required:</b> URI content.
-	 * <p>
-	 * TODO: must be an iri reference.
-	 * </p>
-	 */
-	private URI logoIRI;
+import org.jbasics.parser.AnnotationScanner;
+import org.jbasics.parser.BuilderContentHandler;
+import org.jbasics.parser.ParsingInfo;
+import org.junit.Test;
 
-	/**
-	 * Creates an atom logo with the given logo IRI (must not be null).
-	 * 
-	 * @param logoIRI The logo IRI (must not be null).
-	 */
-	public AtomLogo(final URI logoIRI) {
-		setLogoIRI(logoIRI);
+public class AtomModelParser {
+
+	@Test
+	public void testAnnotationScanner() {
+		AnnotationScanner scanner = new AnnotationScanner();
+		Map<QName, ParsingInfo> result = scanner.scan(AtomDocument.class);
+		System.out.println(result);
 	}
 
-	/**
-	 * Set the logo IRI (must not be null).
-	 * 
-	 * @param logoIRI The logo IRI (must not be null).
-	 */
-	public void setLogoIRI(final URI logoIRI) {
-		this.logoIRI = AtomContractConstraint.notNull("logoIRI", logoIRI);
-	}
+	@Test
+	public void testAtomModelParsing() throws Exception {
 
-	/**
-	 * Returns the logo IRI.
-	 * 
-	 * @return the logoIRI
-	 */
-	public URI getLogoIRI() {
-		return this.logoIRI;
+		SAXParserFactory factory = SAXParserFactory.newInstance();
+		factory.setNamespaceAware(true);
+		SAXParser parser = factory.newSAXParser();
+
+		BuilderContentHandler<AtomDocument> handler = new BuilderContentHandler<AtomDocument>(AtomDocument.class);
+		parser.parse(getClass().getResource("publishing/atom-service-document.xml").toString(), handler);
+
+		AtomDocument result = handler.getParsingResult();
+		System.out.println(result);
 	}
 
 }

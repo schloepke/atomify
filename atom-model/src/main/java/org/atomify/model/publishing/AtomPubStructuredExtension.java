@@ -22,51 +22,61 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.atomify.model.syndication;
+package org.atomify.model.publishing;
 
-import java.net.URI;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import org.atomify.model.AtomContractConstraint;
+import javax.xml.namespace.QName;
 
 /**
- * Represents an atom logo.
+ * A complex and structured atom extension. Must not be of the atom name space. Must at least
+ * contain one attribute or any sub element.
  * 
  * @author Stephan Schloepke
  */
-public class AtomLogo extends AtomCommonAttributes {
+public class AtomPubStructuredExtension extends AtomPubExtension {
 	/**
-	 * <b>Required:</b> URI content.
-	 * <p>
-	 * TODO: must be an iri reference.
-	 * </p>
+	 * <b>Optional:</b> The attributes of the extension element.
 	 */
-	private URI logoIRI;
+	private Map<QName, String> attributes;
+	/**
+	 * <b>Optional:</b> the mixed content.
+	 */
+	private List<Object> mixedContent;
 
 	/**
-	 * Creates an atom logo with the given logo IRI (must not be null).
+	 * Creates a structure extension with the given name.
 	 * 
-	 * @param logoIRI The logo IRI (must not be null).
+	 * @param extensionName The name of the extension (must not be null).
 	 */
-	public AtomLogo(final URI logoIRI) {
-		setLogoIRI(logoIRI);
+	public AtomPubStructuredExtension(final QName extensionName) {
+		super(extensionName);
 	}
 
 	/**
-	 * Set the logo IRI (must not be null).
+	 * Returns the lazy initialized attributes.
 	 * 
-	 * @param logoIRI The logo IRI (must not be null).
+	 * @return The attribute map (cannot be null).
 	 */
-	public void setLogoIRI(final URI logoIRI) {
-		this.logoIRI = AtomContractConstraint.notNull("logoIRI", logoIRI);
+	public Map<QName, String> getAttributes() {
+		if (this.attributes == null) {
+			this.attributes = new HashMap<QName, String>();
+		}
+		return this.attributes;
 	}
 
 	/**
-	 * Returns the logo IRI.
+	 * Returns the lazy initialized content of this structured extension.
 	 * 
-	 * @return the logoIRI
+	 * @return The content list (cannot be null).
 	 */
-	public URI getLogoIRI() {
-		return this.logoIRI;
+	public List<Object> getMixedContent() {
+		if (this.mixedContent == null) {
+			this.mixedContent = new ArrayList<Object>();
+		}
+		return this.mixedContent;
 	}
-
 }

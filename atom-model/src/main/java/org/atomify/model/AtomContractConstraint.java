@@ -30,7 +30,7 @@ package org.atomify.model;
  * @author Stephan Schloepke
  * @since 1.0.0
  */
-public class AtomContractConstraint {
+public final class AtomContractConstraint {
 
 	/**
 	 * Checks if the given instance is not null

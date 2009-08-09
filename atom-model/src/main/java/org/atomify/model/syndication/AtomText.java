@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2009 Stephan Schloepke and innoQ Deutschland GmbH
  *
  * Stephan Schloepke: http://www.schloepke.de/
@@ -86,6 +86,10 @@ public abstract class AtomText extends AtomCommonAttributes {
 	 */
 	public boolean isXHtmlType() {
 		return Type.xhtml == getType();
+	}
+	
+	public static AtomTextBuilder newBuilder() {
+		return new AtomTextBuilder();
 	}
 
 }

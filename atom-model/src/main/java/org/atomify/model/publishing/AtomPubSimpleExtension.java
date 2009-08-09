@@ -22,51 +22,50 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.atomify.model.syndication;
+package org.atomify.model.publishing;
 
-import java.net.URI;
+import javax.xml.namespace.QName;
 
 import org.atomify.model.AtomContractConstraint;
 
 /**
- * Represents an atom logo.
+ * A simple extension has no attributes and only a text content.
  * 
  * @author Stephan Schloepke
  */
-public class AtomLogo extends AtomCommonAttributes {
+public class AtomPubSimpleExtension extends AtomPubExtension {
 	/**
-	 * <b>Required:</b> URI content.
-	 * <p>
-	 * TODO: must be an iri reference.
-	 * </p>
+	 * <b>Required:</b> text content of the simple extension.
 	 */
-	private URI logoIRI;
+	private String value;
 
 	/**
-	 * Creates an atom logo with the given logo IRI (must not be null).
+	 * Creates a simple extension with the name and content.
 	 * 
-	 * @param logoIRI The logo IRI (must not be null).
+	 * @param extensionName The name of the extension (must not be null).
+	 * @param value The content of the extension.
 	 */
-	public AtomLogo(final URI logoIRI) {
-		setLogoIRI(logoIRI);
+	public AtomPubSimpleExtension(final QName extensionName, final String value) {
+		super(extensionName);
+		setValue(value);
 	}
 
 	/**
-	 * Set the logo IRI (must not be null).
+	 * Sets the text value of the simple extension.
 	 * 
-	 * @param logoIRI The logo IRI (must not be null).
+	 * @param value the value to set
 	 */
-	public void setLogoIRI(final URI logoIRI) {
-		this.logoIRI = AtomContractConstraint.notNull("logoIRI", logoIRI);
+	public void setValue(final String value) {
+		this.value = AtomContractConstraint.notNull("value", value);
 	}
 
 	/**
-	 * Returns the logo IRI.
+	 * Returns the text value of the simple extension.
 	 * 
-	 * @return the logoIRI
+	 * @return The text value of the simple extension.
 	 */
-	public URI getLogoIRI() {
-		return this.logoIRI;
+	public String getValue() {
+		return this.value;
 	}
 
 }

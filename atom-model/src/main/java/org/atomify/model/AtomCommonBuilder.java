@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2009 Stephan Schloepke and innoQ Deutschland GmbH
  *
  * Stephan Schloepke: http://www.schloepke.de/
@@ -22,7 +22,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.atomify.model.syndication;
+package org.atomify.model;
 
 import java.net.URI;
 import java.util.HashMap;
@@ -31,6 +31,8 @@ import java.util.Map;
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 
+import org.atomify.model.syndication.AtomCommonAttributes;
+import org.atomify.model.syndication.AtomLanguage;
 import org.jbasics.parser.annotations.AnyAttribute;
 import org.jbasics.parser.annotations.Attribute;
 import org.jbasics.xml.types.XmlSpaceType;
@@ -61,14 +63,14 @@ public abstract class AtomCommonBuilder<T extends AtomCommonBuilder<?>> {
 	}
 
 	@SuppressWarnings("unchecked")
-	@Attribute(name = "base", namespace = XMLConstants.XML_NS_URI)
+	@Attribute(name = "lang", namespace = XMLConstants.XML_NS_URI)
 	public final T setXmlLang(AtomLanguage xmlLang) {
 		this.xmlLang = xmlLang;
 		return (T) this;
 	}
 
 	@SuppressWarnings("unchecked")
-	@Attribute(name = "base", namespace = XMLConstants.XML_NS_URI)
+	@Attribute(name = "space", namespace = XMLConstants.XML_NS_URI)
 	public final T setXmlSpace(XmlSpaceType xmlSpace) {
 		this.xmlSpace = xmlSpace;
 		return (T) this;

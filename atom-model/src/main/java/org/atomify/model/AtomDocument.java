@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2009 Stephan Schloepke and innoQ Deutschland GmbH
  *
  * Stephan Schloepke: http://www.schloepke.de/
@@ -24,6 +24,11 @@
  */
 package org.atomify.model;
 
+import org.atomify.model.publishing.AtomPubCategories;
+import org.atomify.model.publishing.AtomPubService;
+import org.jbasics.parser.annotations.ElementImplementor;
+import org.jbasics.parser.annotations.ElementImplementors;
+
 /**
  * Listenbeschreibung
  * <p>
@@ -32,6 +37,9 @@ package org.atomify.model;
  * 
  * @author stephan
  */
+@ElementImplementors( {
+		@ElementImplementor(builderClass = AtomPubService.class, namespace = AtomConstants.ATOM_PUB_NS_URI, localName = "service"),
+		@ElementImplementor(builderClass = AtomPubCategories.class, namespace = AtomConstants.ATOM_PUB_NS_URI, localName = "categories"), })
 public interface AtomDocument {
 
 	public abstract AtomMediaType getMediaType();

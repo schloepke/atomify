@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2009 Stephan Schloepke and innoQ Deutschland GmbH
  *
  * Stephan Schloepke: http://www.schloepke.de/
@@ -27,16 +27,15 @@ package org.atomify.model.publishing;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.atomify.model.AtomCommonBuilder;
 import org.atomify.model.AtomConstants;
-import org.atomify.model.syndication.AtomCommonBuilder;
-import org.atomify.model.syndication.AtomExtension;
 import org.jbasics.parser.annotations.AnyElement;
 import org.jbasics.parser.annotations.Element;
 import org.jbasics.pattern.builder.Builder;
 
 public class AtomPubServiceBuilder extends AtomCommonBuilder<AtomPubServiceBuilder> implements Builder<AtomPubService> {
 	private List<AtomPubWorkspace> workspaces;
-	private List<AtomExtension> extensions;
+	private List<AtomPubExtension> extensions;
 
 	public static AtomPubServiceBuilder newInstance() {
 		return new AtomPubServiceBuilder();
@@ -70,10 +69,10 @@ public class AtomPubServiceBuilder extends AtomCommonBuilder<AtomPubServiceBuild
 		return this;
 	}
 	
-	@AnyElement
-	public AtomPubServiceBuilder addExtension(AtomExtension extension) {
+//	@AnyElement
+	public AtomPubServiceBuilder addExtension(AtomPubExtension extension) {
 		if (this.extensions == null) {
-			this.extensions = new ArrayList<AtomExtension>();
+			this.extensions = new ArrayList<AtomPubExtension>();
 		}
 		this.extensions.add(extension);
 		return this;
