@@ -26,6 +26,8 @@ package org.atomify.model.syndication;
 
 import java.net.URI;
 
+import org.atomify.model.AtomCommonAttributes;
+
 /**
  * Describes a atom generator field.
  * 

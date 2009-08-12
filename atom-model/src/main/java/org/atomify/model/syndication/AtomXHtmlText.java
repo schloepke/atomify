@@ -51,7 +51,7 @@ public class AtomXHtmlText extends AtomText {
 	 * 
 	 * @param xhtmlDivElement
 	 *            The xhtml:div element
-	 * @todo TODO: Need to refactor the element from {@link AnyElement} to a
+	 * @todo TODO: Need to refactor the element from {@link AtomPubExtension} to a
 	 *       real xhtml:div element.
 	 */
 	public AtomXHtmlText(final Node xhtmlDivElement) {

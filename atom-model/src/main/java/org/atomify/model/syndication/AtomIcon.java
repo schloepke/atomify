@@ -26,6 +26,7 @@ package org.atomify.model.syndication;
 
 import java.net.URI;
 
+import org.atomify.model.AtomCommonAttributes;
 import org.atomify.model.AtomContractConstraint;
 
 /**

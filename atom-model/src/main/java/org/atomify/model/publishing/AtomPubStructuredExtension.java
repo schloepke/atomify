@@ -25,11 +25,14 @@
 package org.atomify.model.publishing;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
+
+import org.atomify.model.AtomContractConstraint;
 
 /**
  * A complex and structured atom extension. Must not be of the atom name space. Must at least
@@ -41,19 +44,29 @@ public class AtomPubStructuredExtension extends AtomPubExtension {
 	/**
 	 * <b>Optional:</b> The attributes of the extension element.
 	 */
-	private Map<QName, String> attributes;
+	private final Map<QName, String> attributes;
 	/**
 	 * <b>Optional:</b> the mixed content.
 	 */
-	private List<Object> mixedContent;
+	private final List<Object> chlidrean;
 
 	/**
 	 * Creates a structure extension with the given name.
 	 * 
 	 * @param extensionName The name of the extension (must not be null).
 	 */
-	public AtomPubStructuredExtension(final QName extensionName) {
+	public AtomPubStructuredExtension(final QName extensionName, Map<QName, String> attributes, List<Object> chlidrean) {
 		super(extensionName);
+		if (attributes == null || attributes.isEmpty()) {
+			this.attributes = Collections.emptyMap();
+		} else {
+			this.attributes = Collections.unmodifiableMap(new HashMap<QName, String>(attributes));
+		}
+		if (chlidrean == null || chlidrean.isEmpty()) {
+			this.chlidrean = Collections.emptyList();
+		} else {
+			this.chlidrean = Collections.unmodifiableList(new ArrayList<Object>(chlidrean));
+		}
 	}
 
 	/**
@@ -62,10 +75,11 @@ public class AtomPubStructuredExtension extends AtomPubExtension {
 	 * @return The attribute map (cannot be null).
 	 */
 	public Map<QName, String> getAttributes() {
-		if (this.attributes == null) {
-			this.attributes = new HashMap<QName, String>();
-		}
 		return this.attributes;
+	}
+
+	public String getAttribute(QName name) {
+		return this.attributes.get(AtomContractConstraint.notNull("name", name));
 	}
 
 	/**
@@ -73,10 +87,12 @@ public class AtomPubStructuredExtension extends AtomPubExtension {
 	 * 
 	 * @return The content list (cannot be null).
 	 */
-	public List<Object> getMixedContent() {
-		if (this.mixedContent == null) {
-			this.mixedContent = new ArrayList<Object>();
-		}
-		return this.mixedContent;
+	public List<Object> getChlidrean() {
+		return this.chlidrean;
+	}
+
+	@Override
+	public boolean isStructured() {
+		return true;
 	}
 }

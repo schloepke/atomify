@@ -24,6 +24,7 @@
  */
 package org.atomify.model.syndication;
 
+import org.atomify.model.AtomCommonAttributes;
 import org.atomify.model.AtomMediaType;
 
 /**

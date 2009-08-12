@@ -27,6 +27,7 @@ package org.atomify.model.syndication;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.atomify.model.AtomCommonAttributes;
 import org.atomify.model.AtomConstants;
 import org.atomify.model.AtomContractConstraint;
 import org.atomify.model.AtomDocument;

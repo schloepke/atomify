@@ -29,7 +29,6 @@ import java.util.List;
 
 import org.atomify.model.AtomCommonBuilder;
 import org.atomify.model.AtomConstants;
-import org.atomify.model.syndication.AtomExtension;
 import org.atomify.model.syndication.AtomText;
 import org.jbasics.parser.annotations.AnyElement;
 import org.jbasics.parser.annotations.Element;
@@ -39,7 +38,7 @@ public class AtomPubWorkspaceBuilder extends AtomCommonBuilder<AtomPubWorkspaceB
 		Builder<AtomPubWorkspace> {
 	private AtomText title;
 	private List<AtomPubCollection> collections;
-	private List<AtomExtension> extensions;
+	private List<AtomPubExtension> extensions;
 
 	public static AtomPubWorkspaceBuilder newInstance() {
 		return new AtomPubWorkspaceBuilder();
@@ -50,20 +49,20 @@ public class AtomPubWorkspaceBuilder extends AtomCommonBuilder<AtomPubWorkspaceB
 	}
 
 	public AtomPubWorkspace build() {
-		AtomPubWorkspace result = new AtomPubWorkspace(this.title);
+		AtomPubWorkspace result = new AtomPubWorkspace(this.title, this.collections, this.extensions);
 		attachCommonAttributes(result);
-		if (this.collections != null && this.collections.size() > 0) {
-			result.getCollections().addAll(this.collections);
-		}
-		if (this.extensions != null && this.extensions.size() > 0) {
-			result.getExtensions().addAll(this.extensions);
-		}
 		return result;
 	}
 
 	public void reset() {
-		// TODO: Implement
-		throw new UnsupportedOperationException();
+		super.reset();
+		this.title = null;
+		if (this.collections != null) {
+			this.collections.clear();
+		}
+		if (this.extensions != null) {
+			this.extensions.clear();
+		}
 	}
 
 	@Element(name = "title", namespace = AtomConstants.ATOM_NS_URI, minOccurs = 1)
@@ -81,13 +80,12 @@ public class AtomPubWorkspaceBuilder extends AtomCommonBuilder<AtomPubWorkspaceB
 		return this;
 	}
 
-//	@AnyElement
-	public AtomPubWorkspaceBuilder addExtension(AtomExtension extension) {
+	@AnyElement
+	public AtomPubWorkspaceBuilder addExtension(AtomPubExtension extension) {
 		if (this.extensions == null) {
-			this.extensions = new ArrayList<AtomExtension>();
+			this.extensions = new ArrayList<AtomPubExtension>();
 		}
 		this.extensions.add(extension);
-
 		return this;
 	}
 

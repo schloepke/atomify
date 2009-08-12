@@ -26,8 +26,10 @@ package org.atomify.model.syndication;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+import org.atomify.model.AtomCommonAttributes;
 import org.atomify.model.AtomContractConstraint;
 
 /**
@@ -39,43 +41,42 @@ public class AtomPerson extends AtomCommonAttributes {
 	/**
 	 * <b>Required:</b> atom:name element.
 	 */
-	private String name;
+	private final String name;
 	/**
 	 * <b>Optional:</b> atom:uri element.
 	 * <p>
 	 * TODO: Needs to be an IRI not an URI.
 	 * </p>
 	 */
-	private URI uri;
+	private final URI uri;
 	/**
 	 * <b>Optional:</b> atom:email element.
 	 */
-	private String email;
+	private final String email;
 	/**
 	 * <b>Optional:</b> any number of atom extension elements.
 	 */
-	private List<AtomExtension> extensions;
-
-	protected AtomPerson() {
-		// Available for JAXB compatibility
-	}
+	private final List<AtomExtension> extensions;
 	
+	public static AtomPersonBuilder newBuilder() {
+		return AtomPersonBuilder.newInstance();
+	}
+
 	/**
 	 * Create a person instance for the given name.
 	 * 
 	 * @param name The name of the atom person.
 	 */
-	public AtomPerson(final String name) {
+	protected AtomPerson(String name, String email, URI uri, List<AtomExtension> extensions) {
 		this.name = AtomContractConstraint.notNull("name", name);
-	}
-
-	/**
-	 * Set the name of this person.
-	 * 
-	 * @param name The name of the person (must not be null).
-	 */
-	public void setName(final String name) {
-		this.name = AtomContractConstraint.notNull("name", name);
+		// TODO: We need to match the email if it is not null
+		this.email = email;
+		this.uri = uri;
+		if (extensions == null || extensions.isEmpty()) {
+			this.extensions = Collections.emptyList();
+		} else {
+			this.extensions = Collections.unmodifiableList(new ArrayList<AtomExtension>(extensions));
+		}
 	}
 
 	/**
@@ -88,30 +89,12 @@ public class AtomPerson extends AtomCommonAttributes {
 	}
 
 	/**
-	 * Set the URI of the person.
-	 * 
-	 * @param uri Returns the URI of the person.
-	 */
-	public void setUri(final URI uri) {
-		this.uri = uri;
-	}
-
-	/**
 	 * Get the URI of this person.
 	 * 
 	 * @return The URI of the person.
 	 */
 	public URI getUri() {
 		return this.uri;
-	}
-
-	/**
-	 * Set the eMail of this person.
-	 * 
-	 * @param email The eMail of the person.
-	 */
-	public void setEmail(final String email) {
-		this.email = email;
 	}
 
 	/**
@@ -129,9 +112,6 @@ public class AtomPerson extends AtomCommonAttributes {
 	 * @return The lazy initialized list of extensions.
 	 */
 	public List<AtomExtension> getExtensions() {
-		if (this.extensions == null) {
-			this.extensions = new ArrayList<AtomExtension>();
-		}
 		return this.extensions;
 	}
 

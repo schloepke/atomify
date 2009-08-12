@@ -1,41 +1,77 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
-<!--
+	<!--
 
-    Copyright (c) 2009 Stephan Schloepke and innoQ Deutschland GmbH
+		Copyright (c) 2009 Stephan Schloepke and innoQ Deutschland GmbH
 
-    Stephan Schloepke: http://www.schloepke.de/
-    innoQ Deutschland GmbH: http://www.innoq.com/
+		Stephan Schloepke: http://www.schloepke.de/ innoQ Deutschland GmbH:
+		http://www.innoq.com/ Permission is hereby granted, free of charge, to
+		any person obtaining a copy of this software and associated
+		documentation files (the "Software"), to deal in the Software without
+		restriction, including without limitation the rights to use, copy,
+		modify, merge, publish, distribute, sublicense, and/or sell copies of
+		the Software, and to permit persons to whom the Software is furnished
+		to do so, subject to the following conditions: The above copyright
+		notice and this permission notice shall be included in all copies or
+		substantial portions of the Software. THE SOFTWARE IS PROVIDED "AS
+		IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+		NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+		PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
+		OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+		LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+		ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+		OTHER DEALINGS IN THE SOFTWARE.
+	-->
 
-    Permission is hereby granted, free of charge, to any person obtaining a copy
-    of this software and associated documentation files (the "Software"), to deal
-    in the Software without restriction, including without limitation the rights
-    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-    copies of the Software, and to permit persons to whom the Software is
-    furnished to do so, subject to the following conditions:
+<app:service xmlns:app="http://www.w3.org/2007/app"
+	xmlns:atom="http://www.w3.org/2005/Atom" xml:base="http://example.org/atom/pub">
 
-    The above copyright notice and this permission notice shall be included in
-    all copies or substantial portions of the Software.
-
-    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-    THE SOFTWARE.
-
--->
-
-<app:service xmlns:app="http://www.w3.org/2007/app" xmlns:atom="http://www.w3.org/2005/Atom"
-		xml:base="http://example.org/atom/pub">
-		
-	<test-one xmlns="http://www.example.org/other">TestVaule</test-one>
+	<simple-service-extension xmlns="http://www.example.org/other">TestVaule</simple-service-extension>
 
 	<app:workspace>
-		<atom:title type="text">A very simple workspace</atom:title>
-		<app:collection href="data">
-			<atom:title type="text">A simple collection</atom:title>
+		<atom:title type="text" xml:space="preserved">Stephan Schloepke</atom:title>
+		<app:collection href="family-blog" xml:lang="de" xml:space="preserved">
+			<atom:title type="text">My Family Blog</atom:title>
 		</app:collection>
+		<app:collection href="family-pictures">
+			<atom:title>My Family Pictures</atom:title>
+			<app:accept>image/png</app:accept>
+			<app:accept>image/jpg</app:accept>
+			<app:categories fixed="yes" scheme="http://example.com/atom/scheme/myTest">
+				<atom:category term="vacation" scheme="http://example.com" label="My first test Category" />
+				<atom:category term="home" scheme="http://example.com" label="My first test Category" />
+				<atom:category term="outdoor" scheme="http://example.com" label="My first test Category" />
+				<atom:category term="friends" scheme="http://example.com" label="My second test Category">
+					Here is some undefined content consisting of text and foreign
+					elements
+					<div xmlns="http://www.w3.org/1999/xhtml">
+						<h1>This would be a headline</h1>
+						<p>And this is just a freaky other paragraph</p>
+					</div>
+				</atom:category>
+			</app:categories>
+			<access-list xmlns="http://schloepke.de/atom/access">
+				<allowed>
+					<name>Stephan</name>
+					<name>Doro</name>
+					<name>Dani</name>
+					<name>Katja</name>
+					<name>Uschi</name>
+					<name>Karl-Heinz</name>
+				</allowed>
+				<dissallow>
+					<any />
+				</dissallow>
+			</access-list>
+		</app:collection>
+		<simple-workspace-extension xmlns="http://www.example.org/other">TestVaule</simple-workspace-extension>
+		<structured-workspace-extnesion xmlns="http://www.example.org/other" not-simple="yes">
+			<elo-1>Some element with simple content</elo-1>
+			<elo-2 not-simple="yes">Some element with more than <span>simple</span> content</elo-2>
+		</structured-workspace-extnesion>
+	</app:workspace>
+
+	<app:workspace>
+		<atom:title>Yet another workspace without any collection</atom:title>
 	</app:workspace>
 
 	<test-two xmlns="http://www.example.org/other/second">TestVauleSecond</test-two>

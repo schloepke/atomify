@@ -10,6 +10,30 @@ public class AtomTextBuilder extends AtomCommonBuilder<AtomTextBuilder> implemen
 	private AtomText.Type type;
 	private String content;
 
+	public static AtomTextBuilder newInstance() {
+		return new AtomTextBuilder();
+	}
+
+	private AtomTextBuilder() {
+		// disallow instantiation
+	}
+
+	public AtomText build() {
+		if (this.type == Type.xhtml) {
+			throw new UnsupportedOperationException("XHtml type is not yet supported");
+		}
+		AtomText temp = new AtomPlainText(this.type == Type.html, this.content);
+		attachCommonAttributes(temp);
+		return temp;
+	}
+
+	@Override
+	public void reset() {
+		super.reset();
+		this.type = null;
+		this.content = null;
+	}
+
 	@Attribute(namespace = "", name = "type", required = true)
 	public AtomTextBuilder setType(AtomText.Type type) {
 		this.type = type;
@@ -20,13 +44,6 @@ public class AtomTextBuilder extends AtomCommonBuilder<AtomTextBuilder> implemen
 	public AtomTextBuilder setContent(String content) {
 		this.content = content;
 		return this;
-	}
-
-	public AtomText build() {
-		if (this.type == Type.xhtml) {
-			throw new UnsupportedOperationException("XHtml type is not yet supported");
-		}
-		return new AtomPlainText(this.type == Type.html, this.content);
 	}
 
 }

@@ -26,6 +26,8 @@ package org.atomify.model;
 
 import org.atomify.model.publishing.AtomPubCategories;
 import org.atomify.model.publishing.AtomPubService;
+import org.atomify.model.syndication.AtomEntry;
+import org.atomify.model.syndication.AtomFeed;
 import org.jbasics.parser.annotations.ElementImplementor;
 import org.jbasics.parser.annotations.ElementImplementors;
 
@@ -39,7 +41,9 @@ import org.jbasics.parser.annotations.ElementImplementors;
  */
 @ElementImplementors( {
 		@ElementImplementor(builderClass = AtomPubService.class, namespace = AtomConstants.ATOM_PUB_NS_URI, localName = "service"),
-		@ElementImplementor(builderClass = AtomPubCategories.class, namespace = AtomConstants.ATOM_PUB_NS_URI, localName = "categories"), })
+		@ElementImplementor(builderClass = AtomPubCategories.class, namespace = AtomConstants.ATOM_PUB_NS_URI, localName = "categories"),
+		@ElementImplementor(builderClass = AtomFeed.class, namespace = AtomConstants.ATOM_NS_URI, localName = "feed"),
+		@ElementImplementor(builderClass = AtomEntry.class, namespace = AtomConstants.ATOM_NS_URI, localName = "entry") })
 public interface AtomDocument {
 
 	public abstract AtomMediaType getMediaType();

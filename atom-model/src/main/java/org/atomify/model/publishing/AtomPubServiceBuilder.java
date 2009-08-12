@@ -40,18 +40,22 @@ public class AtomPubServiceBuilder extends AtomCommonBuilder<AtomPubServiceBuild
 	public static AtomPubServiceBuilder newInstance() {
 		return new AtomPubServiceBuilder();
 	}
-	
+
+	private AtomPubServiceBuilder() {
+		// disallow instantiation
+	}
+
 	public AtomPubService build() {
 		if (this.workspaces == null || this.workspaces.size() == 0) {
 			throw new RuntimeException("AtomPubService building error: Must have at least one workspace");
 		}
-		AtomPubService result = new AtomPubService();
+		AtomPubService result = new AtomPubService(this.workspaces, this.extensions);
 		attachCommonAttributes(result);
-		result.getWorkspaces().addAll(this.workspaces);
 		return result;
 	}
 
 	public void reset() {
+		super.reset();
 		if (this.workspaces != null) {
 			this.workspaces.clear();
 		}
@@ -59,7 +63,7 @@ public class AtomPubServiceBuilder extends AtomCommonBuilder<AtomPubServiceBuild
 			this.extensions.clear();
 		}
 	}
-	
+
 	@Element(name = "workspace", namespace = AtomConstants.ATOM_PUB_NS_URI, minOccurs = 1, maxOccurs = Element.UNBOUND)
 	public AtomPubServiceBuilder addWorkspace(AtomPubWorkspace workspace) {
 		if (this.workspaces == null) {
@@ -68,8 +72,8 @@ public class AtomPubServiceBuilder extends AtomCommonBuilder<AtomPubServiceBuild
 		this.workspaces.add(workspace);
 		return this;
 	}
-	
-//	@AnyElement
+
+	@AnyElement
 	public AtomPubServiceBuilder addExtension(AtomPubExtension extension) {
 		if (this.extensions == null) {
 			this.extensions = new ArrayList<AtomPubExtension>();
@@ -77,5 +81,5 @@ public class AtomPubServiceBuilder extends AtomCommonBuilder<AtomPubServiceBuild
 		this.extensions.add(extension);
 		return this;
 	}
-	
+
 }

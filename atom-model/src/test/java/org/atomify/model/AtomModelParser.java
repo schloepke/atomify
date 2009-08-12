@@ -24,36 +24,43 @@
  */
 package org.atomify.model;
 
-import java.util.Map;
-
-import javax.xml.namespace.QName;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.jbasics.parser.AnnotationScanner;
 import org.jbasics.parser.BuilderContentHandler;
-import org.jbasics.parser.ParsingInfo;
+import org.junit.Before;
 import org.junit.Test;
 
 public class AtomModelParser {
-
+	private SAXParser parser;
+	
+	
+	@Before
+	public void createSaxParser() throws Exception {
+		SAXParserFactory factory = SAXParserFactory.newInstance();
+		factory.setNamespaceAware(true);
+		this.parser = factory.newSAXParser();
+	}
+	
 	@Test
-	public void testAnnotationScanner() {
-		AnnotationScanner scanner = new AnnotationScanner();
-		Map<QName, ParsingInfo> result = scanner.scan(AtomDocument.class);
+	public void testAtomServiceDocumentParsing() throws Exception {
+		BuilderContentHandler<AtomDocument> handler = new BuilderContentHandler<AtomDocument>(AtomDocument.class);
+		this.parser.parse(getClass().getResource("publishing/atom-service-document.xml").toString(), handler);
+		AtomDocument result = handler.getParsingResult();
 		System.out.println(result);
 	}
 
 	@Test
-	public void testAtomModelParsing() throws Exception {
-
-		SAXParserFactory factory = SAXParserFactory.newInstance();
-		factory.setNamespaceAware(true);
-		SAXParser parser = factory.newSAXParser();
-
+	public void testAtomCategoriesDocumentParsing() throws Exception {
 		BuilderContentHandler<AtomDocument> handler = new BuilderContentHandler<AtomDocument>(AtomDocument.class);
-		parser.parse(getClass().getResource("publishing/atom-service-document.xml").toString(), handler);
-
+		this.parser.parse(getClass().getResource("publishing/atom-categories-document.xml").toString(), handler);
+		AtomDocument result = handler.getParsingResult();
+		System.out.println(result);
+	}
+	@Test
+	public void testAtomFeedDocumentParsing() throws Exception {
+		BuilderContentHandler<AtomDocument> handler = new BuilderContentHandler<AtomDocument>(AtomDocument.class);
+		this.parser.parse(getClass().getResource("syndication/atom-feed-document.xml").toString(), handler);
 		AtomDocument result = handler.getParsingResult();
 		System.out.println(result);
 	}

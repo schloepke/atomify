@@ -31,9 +31,14 @@ import org.atomify.model.AtomContractConstraint;
 
 public abstract class AtomPubExtension {
 	/**
-	 * <b>Required:</b> The fully qualified name of the extension element. Must not be the atom name space.
+	 * <b>Required:</b> The fully qualified name of the extension element. Must not be the atom name
+	 * space.
 	 */
 	private final QName extensionName;
+
+	public static AtomPubExtensionBuilder newBuilder() {
+		return AtomPubExtensionBuilder.newInstance();
+	}
 
 	/**
 	 * Creates an extension with given name.
@@ -42,8 +47,8 @@ public abstract class AtomPubExtension {
 	 */
 	public AtomPubExtension(final QName extensionName) {
 		this.extensionName = AtomContractConstraint.notNull("extensionName", extensionName);
-		if (AtomConstants.ATOM_NS_URI.equals(this.extensionName.getNamespaceURI())) {
-			throw new IllegalArgumentException("Extention QName cannot be of the atom name space " + extensionName);
+		if (AtomConstants.ATOM_PUB_NS_URI.equals(this.extensionName.getNamespaceURI())) {
+			throw new IllegalArgumentException("Extension QName cannot be of the atom publishing name space " + extensionName);
 		}
 	}
 
@@ -55,6 +60,7 @@ public abstract class AtomPubExtension {
 	public QName getExtensionName() {
 		return this.extensionName;
 	}
-
+	
+	public abstract boolean isStructured();
 
 }

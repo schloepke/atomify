@@ -25,11 +25,13 @@
 package org.atomify.model.publishing;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
+import org.atomify.model.AtomCommonAttributes;
+import org.atomify.model.AtomConstants;
 import org.atomify.model.AtomContractConstraint;
-import org.atomify.model.syndication.AtomCommonAttributes;
-import org.atomify.model.syndication.AtomExtension;
 import org.atomify.model.syndication.AtomText;
 
 /**
@@ -40,17 +42,32 @@ import org.atomify.model.syndication.AtomText;
  * 
  * @author stephan
  */
-public class AtomPubWorkspace extends AtomCommonAttributes {
-	private AtomText title;
-	private List<AtomPubCollection> collections;
+public class AtomPubWorkspace extends AtomCommonAttributes implements Iterable<AtomPubCollection> {
+	private final AtomText title;
+	private final List<AtomPubCollection> collections;
+	private final List<AtomPubExtension> extensions;
 
-	/**
-	 * TODO: needs to be an AtomPubExtension excluding also atom:title.
-	 */
-	private List<AtomExtension> extensions;
+	public static AtomPubWorkspaceBuilder newBuilder() {
+		return AtomPubWorkspaceBuilder.newInstance();
+	}
 
-	public AtomPubWorkspace(AtomText title) {
-		setTitle(title);
+	protected AtomPubWorkspace(AtomText title, List<AtomPubCollection> collections, List<AtomPubExtension> extensions) {
+		this.title = AtomContractConstraint.notNull("title", title);
+		if (collections != null && collections.size() > 0) {
+			this.collections = Collections.unmodifiableList(new ArrayList<AtomPubCollection>(collections));
+		} else {
+			this.collections = Collections.emptyList();
+		}
+		if (extensions == null || extensions.isEmpty()) {
+			this.extensions = Collections.emptyList();
+		} else {
+			for(AtomPubExtension extension : extensions) {
+				if (AtomConstants.ATOM_TITLE_QNAME.equals(extension.getExtensionName())) {
+					throw new IllegalArgumentException("Atom Publishing Workspace cannot have an atom:title extension");
+				}
+			}
+			this.extensions = Collections.unmodifiableList(new ArrayList<AtomPubExtension>(extensions));
+		}
 	}
 
 	/**
@@ -61,34 +78,21 @@ public class AtomPubWorkspace extends AtomCommonAttributes {
 	}
 
 	/**
-	 * @param title the title to set
-	 */
-	public void setTitle(AtomText title) {
-		this.title = AtomContractConstraint.notNull("title", title);
-	}
-
-	/**
 	 * @return the collections
 	 */
 	public List<AtomPubCollection> getCollections() {
-		if (this.collections == null) {
-			this.collections = new ArrayList<AtomPubCollection>();
-		}
 		return this.collections;
 	}
 
 	/**
 	 * @return the extensions
 	 */
-	public List<AtomExtension> getExtensions() {
-		if (this.extensions == null) {
-			this.extensions = new ArrayList<AtomExtension>();
-		}
+	public List<AtomPubExtension> getExtensions() {
 		return this.extensions;
 	}
-	
-	public static AtomPubWorkspaceBuilder newBuilder() {
-		return AtomPubWorkspaceBuilder.newInstance();
+
+	public Iterator<AtomPubCollection> iterator() {
+		return this.collections.iterator();
 	}
 
 }

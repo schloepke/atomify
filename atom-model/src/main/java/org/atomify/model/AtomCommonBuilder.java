@@ -31,10 +31,10 @@ import java.util.Map;
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 
-import org.atomify.model.syndication.AtomCommonAttributes;
 import org.atomify.model.syndication.AtomLanguage;
 import org.jbasics.parser.annotations.AnyAttribute;
 import org.jbasics.parser.annotations.Attribute;
+import org.jbasics.xml.types.XMLAttributeNames;
 import org.jbasics.xml.types.XmlSpaceType;
 
 public abstract class AtomCommonBuilder<T extends AtomCommonBuilder<?>> {
@@ -78,11 +78,22 @@ public abstract class AtomCommonBuilder<T extends AtomCommonBuilder<?>> {
 
 	@SuppressWarnings("unchecked")
 	@AnyAttribute
-	public final T addUndefinedAttribute(QName name, String value) {
+	public final T setUndefinedAttribute(QName name, String value) {
 		if (this.undefinedAttributes == null) {
 			this.undefinedAttributes = new HashMap<QName, String>();
 		}
-		this.undefinedAttributes.put(name, value);
+		String tempNS = AtomContractConstraint.notNull("name", name).getNamespaceURI();
+		if (tempNS == null || tempNS.length() == 0) {
+			throw new IllegalArgumentException("Undefined attributee local:* is not allowed");
+		} else if (XMLAttributeNames.XML_BASE_QNAME.equals(name)) {
+			setXmlBase(URI.create(value));
+		} else if (XMLAttributeNames.XML_LANG_QNAME.equals(name)) {
+			setXmlLang(AtomLanguage.valueOf(value));
+		} else if (XMLAttributeNames.XML_SPACE_QNAME.equals(name)) {
+			setXmlSpace(XmlSpaceType.valueOf(value));
+		} else {
+			this.undefinedAttributes.put(name, value);
+		}
 		return (T) this;
 	}
 
@@ -90,10 +101,7 @@ public abstract class AtomCommonBuilder<T extends AtomCommonBuilder<?>> {
 		instance.setXmlBase(this.xmlBase);
 		instance.setXmlLang(this.xmlLang);
 		instance.setXmlSpace(this.xmlSpace);
-		if (this.undefinedAttributes != null
-				&& this.undefinedAttributes.size() > 0) {
-			instance.getUndefinedAttributes().putAll(this.undefinedAttributes);
-		}
+		instance.setUndefinedAttributes(this.undefinedAttributes);
 	}
 
 	public void reset() {
@@ -105,4 +113,8 @@ public abstract class AtomCommonBuilder<T extends AtomCommonBuilder<?>> {
 		}
 	}
 
+	protected boolean hasCommonAttributes() {
+		return this.xmlBase != null || this.xmlLang != null || this.xmlSpace != null
+				|| (this.undefinedAttributes != null && !this.undefinedAttributes.isEmpty());
+	}
 }

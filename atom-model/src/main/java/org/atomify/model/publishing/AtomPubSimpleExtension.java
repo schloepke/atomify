@@ -26,8 +26,6 @@ package org.atomify.model.publishing;
 
 import javax.xml.namespace.QName;
 
-import org.atomify.model.AtomContractConstraint;
-
 /**
  * A simple extension has no attributes and only a text content.
  * 
@@ -37,7 +35,7 @@ public class AtomPubSimpleExtension extends AtomPubExtension {
 	/**
 	 * <b>Required:</b> text content of the simple extension.
 	 */
-	private String value;
+	private final String value;
 
 	/**
 	 * Creates a simple extension with the name and content.
@@ -47,16 +45,7 @@ public class AtomPubSimpleExtension extends AtomPubExtension {
 	 */
 	public AtomPubSimpleExtension(final QName extensionName, final String value) {
 		super(extensionName);
-		setValue(value);
-	}
-
-	/**
-	 * Sets the text value of the simple extension.
-	 * 
-	 * @param value the value to set
-	 */
-	public void setValue(final String value) {
-		this.value = AtomContractConstraint.notNull("value", value);
+		this.value = value;
 	}
 
 	/**
@@ -66,6 +55,11 @@ public class AtomPubSimpleExtension extends AtomPubExtension {
 	 */
 	public String getValue() {
 		return this.value;
+	}
+	
+	@Override
+	public boolean isStructured() {
+		return false;
 	}
 
 }

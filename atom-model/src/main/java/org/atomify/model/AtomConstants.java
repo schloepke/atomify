@@ -26,6 +26,7 @@ package org.atomify.model;
 
 import javax.xml.namespace.QName;
 
+
 /**
  * Constants for the Atom Syndication Format (short Atom) and the Atom Publishing Protocol (short AtomPub).
  * 
@@ -53,16 +54,20 @@ public class AtomConstants {
 	/**
 	 * The media type for an atom syndication feed.
 	 */
-	public static final AtomMediaType ATOM_FEED_MEDIA_TYPE = new AtomMediaType("application", "atoms+xml", "type=feed");
+	public static final AtomMediaType ATOM_FEED_MEDIA_TYPE = new AtomMediaType("application", "atom+xml", "type=feed");
 	/**
 	 * The media type for an atom syndication entry.
 	 */
-	public static final AtomMediaType ATOM_ENTRY_MEDIA_TYPE = new AtomMediaType("application", "atoms+xml", "type=entry");
-	
-	
-	public static final QName ATOM_PUB_SERVICE_QNAME = new QName(AtomConstants.ATOM_PUB_NS_URI, "service", AtomConstants.ATOM_PUB_NS_PREFIX);
-	public static final QName ATOM_PUB_WORKSPACE_QNAME = new QName(AtomConstants.ATOM_PUB_NS_URI, "workspace", AtomConstants.ATOM_PUB_NS_PREFIX);
-	public static final QName ATOM_PUB_COLLECTION_QNAME = new QName(AtomConstants.ATOM_PUB_NS_URI, "collection", AtomConstants.ATOM_PUB_NS_PREFIX);
+	public static final AtomMediaType ATOM_ENTRY_MEDIA_TYPE = new AtomMediaType("application", "atom+xml", "type=entry");
 
+	/**
+	 * The media type for an atom publishing categories document.
+	 */
+	public static final AtomMediaType ATOM_PUB_CATEGORIES_MEDIA_TYPE = new AtomMediaType("application", "atomcat+xml");
+	
+	/**
+	 * The atom:title elements QName used in checks for the extensionSansTitleElement.
+	 */
+	public static final QName ATOM_TITLE_QNAME = new QName(ATOM_NS_URI, "title");
 
 }

@@ -29,10 +29,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.atomify.model.AtomCommonBuilder;
+import org.atomify.model.AtomContractConstraint;
+import org.atomify.model.common.UndefinedElement;
+import org.jbasics.parser.annotations.AnyElement;
+import org.jbasics.parser.annotations.Attribute;
+import org.jbasics.parser.annotations.Content;
 import org.jbasics.pattern.builder.Builder;
 
-public class AtomCategoryBuilder extends AtomCommonBuilder<AtomCategoryBuilder>
-		implements Builder<AtomCategory> {
+public class AtomCategoryBuilder extends AtomCommonBuilder<AtomCategoryBuilder> implements Builder<AtomCategory> {
 	/**
 	 * <b>Required:</b> term attribute.
 	 */
@@ -49,8 +53,8 @@ public class AtomCategoryBuilder extends AtomCommonBuilder<AtomCategoryBuilder>
 	 */
 	private String label;
 	/**
-	 * <b>Optional:</b> mixed content (text|element). Any direct element must
-	 * not be of the atom name space.
+	 * <b>Optional:</b> mixed content (text|element). Any direct element must not be of the atom
+	 * name space.
 	 */
 	private List<Object> undefinedContent;
 
@@ -58,41 +62,14 @@ public class AtomCategoryBuilder extends AtomCommonBuilder<AtomCategoryBuilder>
 		return new AtomCategoryBuilder();
 	}
 
-	public AtomCategory build() {
-		AtomCategory result = new AtomCategory(this.term, this.scheme,
-				this.label);
-		attachCommonAttributes(result);
-		if (this.undefinedContent != null && this.undefinedContent.size() > 0) {
-			result.getUndefinedContent().addAll(this.undefinedContent);
-		}
-		return result;
-	}
-
 	private AtomCategoryBuilder() {
 		// Avoid instantiation
 	}
 
-	public AtomCategoryBuilder setTerm(String term) {
-		this.term = term;
-		return this;
-	}
-
-	public AtomCategoryBuilder setScheme(URI scheme) {
-		this.scheme = scheme;
-		return this;
-	}
-
-	public AtomCategoryBuilder setLabel(String label) {
-		this.label = label;
-		return this;
-	}
-
-	public AtomCategoryBuilder addUndefinedContent(Object content) {
-		if (this.undefinedContent == null) {
-			this.undefinedContent = new ArrayList<Object>();
-		}
-		this.undefinedContent.add(content);
-		return this;
+	public AtomCategory build() {
+		AtomCategory result = new AtomCategory(this.term, this.scheme, this.label, this.undefinedContent);
+		attachCommonAttributes(result);
+		return result;
 	}
 
 	public void reset() {
@@ -104,4 +81,42 @@ public class AtomCategoryBuilder extends AtomCommonBuilder<AtomCategoryBuilder>
 			this.undefinedContent.clear();
 		}
 	}
+
+	@Attribute(name = "term", namespace = "", required = true)
+	public AtomCategoryBuilder setTerm(String term) {
+		this.term = term;
+		return this;
+	}
+
+	@Attribute(name = "scheme", namespace = "", required = false)
+	public AtomCategoryBuilder setScheme(URI scheme) {
+		this.scheme = scheme;
+		return this;
+	}
+
+	@Attribute(name = "label", namespace = "", required = false)
+	public AtomCategoryBuilder setLabel(String label) {
+		this.label = label;
+		return this;
+	}
+
+	@Content
+	public AtomCategoryBuilder appendUndefinedText(String text) {
+		getUndefinedContent().add(AtomContractConstraint.mustNotBeEmptyString(text, "text"));
+		return this;
+	}
+
+	@AnyElement
+	public AtomCategoryBuilder appendUndefinedElement(UndefinedElement element) {
+		getUndefinedContent().add(AtomContractConstraint.notNull("element", element));
+		return this;
+	}
+
+	public List<Object> getUndefinedContent() {
+		if (this.undefinedContent == null) {
+			this.undefinedContent = new ArrayList<Object>();
+		}
+		return this.undefinedContent;
+	}
+
 }

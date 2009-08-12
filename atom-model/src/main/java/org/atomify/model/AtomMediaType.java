@@ -27,10 +27,12 @@ package org.atomify.model;
 public class AtomMediaType {
 	private final String type;
 	private final String subType;
+	private final String[] parameters;
 
 	public AtomMediaType(String type, String subType, String... parameters) {
 		this.type = AtomContractConstraint.notNull("type", type);
 		this.subType = subType;
+		this.parameters = parameters;
 	}
 
 	@Override
@@ -38,6 +40,11 @@ public class AtomMediaType {
 		StringBuilder builder = new StringBuilder(this.type);
 		if (this.subType != null) {
 			builder.append("/").append(this.subType);
+		}
+		if (this.parameters != null && this.parameters.length > 0) {
+			for (String parameter : this.parameters) {
+				builder.append(";").append(parameter);
+			}
 		}
 		return builder.toString();
 	}

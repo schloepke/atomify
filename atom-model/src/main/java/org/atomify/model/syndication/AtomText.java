@@ -24,8 +24,11 @@
  */
 package org.atomify.model.syndication;
 
+import org.atomify.model.AtomCommonAttributes;
+
 /**
- * This is the atomTextConstruct. It is the abstract base class of {@link AtomPlainText} and {@link AtomXHtmlText}.
+ * This is the atomTextConstruct. It is the abstract base class of {@link AtomPlainText} and
+ * {@link AtomXHtmlText}.
  * 
  * @author Stephan Schloepke
  */
@@ -34,7 +37,8 @@ public abstract class AtomText extends AtomCommonAttributes {
 	/**
 	 * ENUM for the different types of text atom understands.
 	 * <p>
-	 * All ENUM values are lower case to reflect the exact text representation of the attribute in XML. This might change in the future.
+	 * All ENUM values are lower case to reflect the exact text representation of the attribute in
+	 * XML. This might change in the future.
 	 * </p>
 	 * 
 	 * @author Stephan Schloepke
@@ -52,6 +56,15 @@ public abstract class AtomText extends AtomCommonAttributes {
 		 * The XHTML mixed object type.
 		 */
 		xhtml
+	}
+
+	/**
+	 * Returns an {@link AtomTextBuilder} to build atom text constructs.
+	 * 
+	 * @return The empty {@link AtomTextBuilder}
+	 */
+	public static AtomTextBuilder newBuilder() {
+		return AtomTextBuilder.newInstance();
 	}
 
 	/**
@@ -86,10 +99,6 @@ public abstract class AtomText extends AtomCommonAttributes {
 	 */
 	public boolean isXHtmlType() {
 		return Type.xhtml == getType();
-	}
-	
-	public static AtomTextBuilder newBuilder() {
-		return new AtomTextBuilder();
 	}
 
 }

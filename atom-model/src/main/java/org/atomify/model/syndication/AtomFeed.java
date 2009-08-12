@@ -33,7 +33,8 @@ import org.atomify.model.AtomDocument;
 import org.atomify.model.AtomMediaType;
 
 /**
- * Represents an atom feed. The feed is derived from the atom:source since both cover mostly the same content.
+ * Represents an atom feed. The feed is derived from the atom:source since both cover mostly the
+ * same content.
  * <p>
  * The following additional restrictions apply for a feed compared to a source:
  * <ul>
@@ -52,6 +53,10 @@ public class AtomFeed extends AtomSource implements AtomDocument {
 	 */
 	private List<AtomEntry> entries;
 
+	public static AtomFeedBuilder newBuilder() {
+		return AtomFeedBuilder.newInstance();
+	}
+
 	/**
 	 * Creates an atom: feed with the given id, title and the updated date.
 	 * 
@@ -60,9 +65,8 @@ public class AtomFeed extends AtomSource implements AtomDocument {
 	 * @param updated The updated date (must not be null).
 	 */
 	public AtomFeed(final AtomId id, final AtomText title, final AtomDate updated) {
-		setId(id);
-		setTitle(title);
-		setUpdated(updated);
+		super(AtomContractConstraint.notNull("id", id), AtomContractConstraint.notNull("title", title),
+				AtomContractConstraint.notNull("updated", updated));
 	}
 
 	/**
@@ -75,39 +79,6 @@ public class AtomFeed extends AtomSource implements AtomDocument {
 			this.entries = new ArrayList<AtomEntry>();
 		}
 		return this.entries;
-	}
-
-	/**
-	 * Changes the constraint on the id which is now mandatory (must not be null).
-	 * 
-	 * @param id The id to set (must not be null).
-	 * @see org.atomify.model.syndication.AtomSource#setId(org.atomify.model.syndication.AtomId)
-	 */
-	@Override
-	public void setId(final AtomId id) {
-		super.setId(AtomContractConstraint.notNull("id", id));
-	}
-
-	/**
-	 * Changes the constraint on the title which is now mandatory (must not be null).
-	 * 
-	 * @param title The title to set (must not be null).
-	 * @see org.atomify.model.syndication.AtomSource#setTitle(org.atomify.model.syndication.AtomText)
-	 */
-	@Override
-	public void setTitle(final AtomText title) {
-		super.setTitle(AtomContractConstraint.notNull("title", title));
-	}
-
-	/**
-	 * Changes the constraint on the updated date which is now mandatory (must not be null).
-	 * 
-	 * @param updated The updated date to set (must not be null).
-	 * @see org.atomify.model.syndication.AtomSource#setUpdated(org.atomify.model.syndication.AtomDate)
-	 */
-	@Override
-	public void setUpdated(final AtomDate updated) {
-		super.setUpdated(AtomContractConstraint.notNull("updated", updated));
 	}
 
 	public AtomMediaType getMediaType() {

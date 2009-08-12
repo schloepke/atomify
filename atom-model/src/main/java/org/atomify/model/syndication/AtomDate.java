@@ -32,6 +32,7 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import org.atomify.model.AtomCommonAttributes;
 import org.atomify.model.AtomContractConstraint;
 
 /**
@@ -45,12 +46,16 @@ public class AtomDate extends AtomCommonAttributes {
 	 */
 	private final XMLGregorianCalendar value;
 
+	public static AtomDateBuilder newBuilder() {
+		return AtomDateBuilder.newInstance();
+	}
+	
 	/**
 	 * Creates a date with the given date content.
 	 * 
 	 * @param date The date content.
 	 */
-	public AtomDate(final XMLGregorianCalendar date) {
+	private AtomDate(final XMLGregorianCalendar date) {
 		this.value = AtomContractConstraint.notNull("date", date);
 	}
 

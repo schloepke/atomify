@@ -25,60 +25,67 @@
 package org.atomify.model.publishing;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
+import org.atomify.model.AtomCommonAttributes;
+import org.atomify.model.AtomContractConstraint;
 import org.atomify.model.AtomDocument;
 import org.atomify.model.AtomMediaType;
-import org.atomify.model.syndication.AtomCommonAttributes;
+import org.xml.sax.helpers.DefaultHandler;
 
 /**
- * Listenbeschreibung
+ * Represents the Atom Publishing Service Document.
  * <p>
- * Detailierte Beschreibung
+ * Every {@link AtomDocument} is immutable. This means you can only modify it or create it with a
+ * builder. Usually there is a static method {@link #newBuilder()} to create a builder for the type
+ * of document or sub document to create. All builders use the fluent interface to quickly build the
+ * document structure.
+ * </p>
+ * <p>
+ * The parsing of the documents are done by using a SAX {@link DefaultHandler} directly invoking the
+ * builder and it's methods. The builder checks if the content is correct. In order to parse a
+ * document it must comply 100% to the standard. No exceptions are allowed. However since it is
+ * sometimes possible that you need to parse malformed atom documents you may want to put a
+ * transformer ahead of it to transform the malformed data to be a valid atom document.
  * </p>
  * 
- * @author stephan
+ * @author Stephan Schloepke
  */
-public class AtomPubService extends AtomCommonAttributes implements AtomDocument {
+public class AtomPubService extends AtomCommonAttributes implements AtomDocument, Iterable<AtomPubWorkspace> {
 	public static final AtomMediaType MEDIA_TYPE = new AtomMediaType("application", "atomsvc+xml");
 
-	private List<AtomPubWorkspace> workspaces;
-	
-	/**
-	 * TODO: We need to actually make this an AtomPubExtension maybe derived
-	 * from AtomExtenion or a common base type
-	 */
-	private List<AtomPubExtension> extensions;
+	private final List<AtomPubWorkspace> workspaces;
+	private final List<AtomPubExtension> extensions;
+
+	public static AtomPubServiceBuilder newBuilder() {
+		return AtomPubServiceBuilder.newInstance();
+	}
+
+	protected AtomPubService(List<AtomPubWorkspace> workspaces, List<AtomPubExtension> extensions) {
+		this.workspaces = Collections.unmodifiableList(new ArrayList<AtomPubWorkspace>(AtomContractConstraint
+				.mustNotBeEmpty(workspaces, "workspaces")));
+		if (extensions == null || extensions.isEmpty()) {
+			this.extensions = Collections.emptyList();
+		} else {
+			this.extensions = Collections.unmodifiableList(new ArrayList<AtomPubExtension>(extensions));
+		}
+	}
 
 	public AtomMediaType getMediaType() {
 		return MEDIA_TYPE;
 	}
 
-	/**
-	 * @return the workspaces
-	 */
 	public List<AtomPubWorkspace> getWorkspaces() {
-		if (this.workspaces == null) {
-			this.workspaces = new ArrayList<AtomPubWorkspace>();
-		}
 		return this.workspaces;
 	}
 
-	/**
-	 * @return the foreignMarkup
-	 */
 	public List<AtomPubExtension> getExtensions() {
-		if (this.extensions == null) {
-			this.extensions = new ArrayList<AtomPubExtension>();
-		}
 		return this.extensions;
 	}
 
-	public void addWorkspace(AtomPubWorkspace workspace) {
-		getWorkspaces().add(workspace);
-	}
-	
-	public static AtomPubServiceBuilder newBuilder() {
-		return AtomPubServiceBuilder.newInstance();
+	public Iterator<AtomPubWorkspace> iterator() {
+		return this.workspaces.iterator();
 	}
 }

@@ -24,23 +24,78 @@
  */
 package org.atomify.model.publishing;
 
-import org.atomify.model.syndication.AtomCommonAttributes;
+import org.atomify.model.AtomCommonAttributes;
+import org.jbasics.pattern.builder.Builder;
 
 /**
- * Listenbeschreibung
+ * The atom publishing accept element which occurs in the atom publishing collection.
  * <p>
- * Detailierte Beschreibung
+ * The accept element holds an accept media range. This indicates the media range which is accepted
+ * on post of the collection. A media range which is an empty string indicates that the collection
+ * is read only and does not accept any content. If no accept media type is present that means that
+ * the default atom entry is accepted.
  * </p>
- *
- * @author stephan
- *
+ * 
+ * @author Stephan Schloepke
  */
 public class AtomPubAccept extends AtomCommonAttributes {
 	/**
-	 * <b>Required:</b> the text only content being a media type (maybe even more?).
+	 * The media range. Can be the empty string.
 	 */
-	private String value;
-	
-	
+	private final String acceptMediaRange;
+
+	/**
+	 * Creates a new {@link Builder} for the {@link AtomPubAccept} element.
+	 * 
+	 * @return A newly created {@link Builder} for {@link AtomPubAccept}.
+	 */
+	public static AtomPubAcceptBuilder newBuilder() {
+		return AtomPubAcceptBuilder.newInstance();
+	}
+
+	/**
+	 * Creates an accept media range element with the given media range as acceptance.
+	 * 
+	 * @param acceptMediaRange create the accept media range.
+	 */
+	public AtomPubAccept(String acceptMediaRange) {
+		this.acceptMediaRange = acceptMediaRange == null ? "" : acceptMediaRange.trim();
+	}
+
+	/**
+	 * Returns the media range accepted by this accept element.
+	 * 
+	 * @return The media range accepted (cannot be null but empty string to accept nothing).
+	 */
+	public String getAcceptMediaRange() {
+		return this.acceptMediaRange;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + this.acceptMediaRange.hashCode();
+		return result;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		} else if (!super.equals(obj) || !(obj instanceof AtomPubAccept)) {
+			return false;
+		} else {
+			return this.acceptMediaRange.equals(((AtomPubAccept) obj).acceptMediaRange);
+		}
+	}
 
 }
