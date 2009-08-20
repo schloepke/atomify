@@ -27,8 +27,9 @@ package org.atomify.model.publishing;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.atomify.model.AtomCommonBuilder;
 import org.atomify.model.AtomConstants;
+import org.atomify.model.common.AtomCommonBuilder;
+import org.atomify.model.extension.AtomExtension;
 import org.atomify.model.syndication.AtomText;
 import org.jbasics.parser.annotations.AnyElement;
 import org.jbasics.parser.annotations.Element;
@@ -38,7 +39,7 @@ public class AtomPubWorkspaceBuilder extends AtomCommonBuilder<AtomPubWorkspaceB
 		Builder<AtomPubWorkspace> {
 	private AtomText title;
 	private List<AtomPubCollection> collections;
-	private List<AtomPubExtension> extensions;
+	private List<AtomExtension> extensions;
 
 	public static AtomPubWorkspaceBuilder newInstance() {
 		return new AtomPubWorkspaceBuilder();
@@ -81,9 +82,9 @@ public class AtomPubWorkspaceBuilder extends AtomCommonBuilder<AtomPubWorkspaceB
 	}
 
 	@AnyElement
-	public AtomPubWorkspaceBuilder addExtension(AtomPubExtension extension) {
+	public AtomPubWorkspaceBuilder addExtension(AtomExtension extension) {
 		if (this.extensions == null) {
-			this.extensions = new ArrayList<AtomPubExtension>();
+			this.extensions = new ArrayList<AtomExtension>();
 		}
 		this.extensions.add(extension);
 		return this;

@@ -22,7 +22,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.atomify.model.common;
+package org.atomify.model.extension;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,21 +38,28 @@ import org.jbasics.parser.annotations.Content;
 import org.jbasics.parser.annotations.QualifiedName;
 import org.jbasics.pattern.builder.Builder;
 
-public class UndefinedElementBuilder implements Builder<UndefinedElement> {
+public class AtomExtensionBuilder implements Builder<AtomExtension> {
 	private QName qualifiedName;
 	private Map<QName, String> attributes;
-	private List<Object> childrean;
+	private List<AtomForeignMarkup> childrean;
 
-	public static UndefinedElementBuilder newInstance() {
-		return new UndefinedElementBuilder();
+	public static AtomExtensionBuilder newInstance() {
+		return new AtomExtensionBuilder();
 	}
 
-	private UndefinedElementBuilder() {
+	private AtomExtensionBuilder() {
 		// disallow instantiation
 	}
 
-	public UndefinedElement build() {
-		return new UndefinedElement(this.qualifiedName, this.attributes, this.childrean);
+	public AtomExtension build() {
+		if ((this.childrean == null || this.childrean.isEmpty() || (this.childrean.size() == 1 && this.childrean.get(0)
+				.isSimpleContent()))
+				&& (this.attributes == null || this.attributes.isEmpty())) {
+			return new AtomSimpleExtension(this.qualifiedName,
+					this.childrean == null || this.childrean.isEmpty() ? null : this.childrean.get(0).getSimpleContent());
+		} else {
+			return new AtomStructuredExtension(this.qualifiedName, this.attributes, this.childrean);
+		}
 	}
 
 	public void reset() {
@@ -65,9 +72,9 @@ public class UndefinedElementBuilder implements Builder<UndefinedElement> {
 		}
 	}
 
-	public List<Object> getChildrean() {
+	public List<AtomForeignMarkup> getChildrean() {
 		if (this.childrean == null) {
-			this.childrean = new ArrayList<Object>();
+			this.childrean = new ArrayList<AtomForeignMarkup>();
 		}
 		return this.childrean;
 	}
@@ -80,27 +87,26 @@ public class UndefinedElementBuilder implements Builder<UndefinedElement> {
 	}
 
 	@QualifiedName
-	public UndefinedElementBuilder setQualifiedName(QName qualifiedName) {
+	public AtomExtensionBuilder setQualifiedName(QName qualifiedName) {
 		this.qualifiedName = qualifiedName;
 		return this;
 	}
 
 	@AnyAttribute
-	public UndefinedElementBuilder setAttribute(QName name, String value) {
+	public AtomExtensionBuilder setAttribute(QName name, String value) {
 		getAttributes().put(name, value);
 		return this;
 	}
 
 	@Content
-	public UndefinedElementBuilder appendText(String text) {
-		getChildrean().add(AtomContractConstraint.mustNotBeEmptyString(text, "text"));
+	public AtomExtensionBuilder appendText(String text) {
+		getChildrean().add(new AtomForeignTextContent(AtomContractConstraint.mustNotBeEmptyString(text, "text")));
 		return this;
 	}
 
 	@AnyElement
-	public UndefinedElementBuilder appendAnyElement(UndefinedElement element) {
+	public AtomExtensionBuilder appendAnyElement(AtomForeignMarkup element) {
 		getChildrean().add(AtomContractConstraint.notNull("element", element));
 		return this;
 	}
-
 }

@@ -24,8 +24,13 @@
  */
 package org.atomify.model.syndication;
 
+import javax.xml.namespace.QName;
+
 import org.atomify.model.AtomContractConstraint;
-import org.w3c.dom.Node;
+import org.atomify.model.common.XhtmlDivElement;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.AttributesImpl;
 
 /**
  * Atom XHTML text construct.
@@ -39,34 +44,20 @@ public class AtomXHtmlText extends AtomText {
 	/**
 	 * <b>Required:</b> xhtml:div element which is not part of the content.
 	 * <p>
-	 * TODO: Refactor to have the xml:div element only be rendered and not part
-	 * of the model.
+	 * TODO: Refactor to have the xml:div element only be rendered and not part of the model.
 	 * </p>
 	 */
-	private Node content;
+	private final XhtmlDivElement content;
 
 	/**
-	 * Creates an XHTML text construct with the given xhtml:div element
-	 * instance.
+	 * Creates an XHTML text construct with the given xhtml:div element instance.
 	 * 
-	 * @param xhtmlDivElement
-	 *            The xhtml:div element
-	 * @todo TODO: Need to refactor the element from {@link AtomPubExtension} to a
-	 *       real xhtml:div element.
+	 * @param xhtmlDivElement The xhtml:div element
+	 * @todo TODO: Need to refactor the element from {@link AbstractAtomExtension} to a real
+	 *       xhtml:div element.
 	 */
-	public AtomXHtmlText(final Node xhtmlDivElement) {
-		this.content = AtomContractConstraint.notNull("xhtmlDivElement",
-				xhtmlDivElement);
-	}
-
-	/**
-	 * Set the xhtml:div element.
-	 * 
-	 * @param content
-	 *            the content to set
-	 */
-	public void setContent(final Node content) {
-		this.content = AtomContractConstraint.notNull("content", content);
+	public AtomXHtmlText(final XhtmlDivElement xhtmlDivElement) {
+		this.content = AtomContractConstraint.notNull("xhtmlDivElement", xhtmlDivElement);
 	}
 
 	/**
@@ -74,13 +65,64 @@ public class AtomXHtmlText extends AtomText {
 	 * 
 	 * @return The xhtml:div element.
 	 */
-	public Node getContent() {
+	public XhtmlDivElement getContent() {
 		return this.content;
 	}
 
 	@Override
 	public Type getType() {
-		return Type.xhtml;
+		return Type.XHTML;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((this.content == null) ? 0 : this.content.hashCode());
+		return result;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!super.equals(obj)) {
+			return false;
+		}
+		if (!(obj instanceof AtomXHtmlText)) {
+			return false;
+		}
+		AtomXHtmlText other = (AtomXHtmlText) obj;
+		if (this.content == null) {
+			if (other.content != null) {
+				return false;
+			}
+		} else if (!this.content.equals(other.content)) {
+			return false;
+		}
+		return true;
+	}
+
+	// FIXME: Write a much better way of serialization
+
+	public void serialize(QName name, ContentHandler handler, AttributesImpl attributes) throws SAXException {
+		attributes = initCommonAttributes(attributes);
+		addAttribute(attributes, TYPE_QNAME, getType().toXmlString());
+		String namespace = name.getNamespaceURI();
+		String local = name.getLocalPart();
+		String qName = (name.getPrefix() != null && name.getPrefix().length() > 0 ? name.getPrefix() + ":" : "") + local;
+		handler.startElement(namespace, local, qName, attributes);
+		this.content.serialize(handler, attributes);
+		handler.endElement(namespace, local, qName);
 	}
 
 }

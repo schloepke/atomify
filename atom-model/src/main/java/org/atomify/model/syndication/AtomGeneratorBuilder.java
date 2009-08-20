@@ -24,58 +24,58 @@
  */
 package org.atomify.model.syndication;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.net.URI;
 
-import javax.xml.namespace.QName;
+import org.atomify.model.common.AtomCommonBuilder;
+import org.jbasics.parser.annotations.Attribute;
+import org.jbasics.parser.annotations.Content;
+import org.jbasics.pattern.builder.Builder;
 
-/**
- * A complex and structured atom extension. Must not be of the atom name space. Must at least contain one attribute or any sub element.
- * 
- * @author Stephan Schloepke
- */
-public class AtomStructuredExtension extends AtomExtension {
+public class AtomGeneratorBuilder extends AtomCommonBuilder<AtomGeneratorBuilder> implements Builder<AtomGenerator> {
 	/**
-	 * <b>Optional:</b> The attributes of the extension element.
+	 * <b>Required:</b> The human readable name of the generator as text content.
 	 */
-	private Map<QName, String> attributes;
+	private String description;
 	/**
-	 * <b>Optional:</b> the mixed content.
+	 * <b>Optional:</b> uri attribute.
+	 * <p>
+	 * TODO: Must be an IRI reference.
+	 * </p>
 	 */
-	private List<Object> mixedContent;
+	private URI uri;
+	/**
+	 * <b>Optional:</b> version attribute.
+	 */
+	private String version;
 
-	/**
-	 * Creates a structure extension with the given name.
-	 * 
-	 * @param extensionName The name of the extension (must not be null).
-	 */
-	public AtomStructuredExtension(final QName extensionName) {
-		super(extensionName);
+	public static AtomGeneratorBuilder newInstance() {
+		return new AtomGeneratorBuilder();
 	}
 
-	/**
-	 * Returns the lazy initialized attributes.
-	 * 
-	 * @return The attribute map (cannot be null).
-	 */
-	public Map<QName, String> getAttributes() {
-		if (this.attributes == null) {
-			this.attributes = new HashMap<QName, String>();
-		}
-		return this.attributes;
+	private AtomGeneratorBuilder() {
+		// disallow instantiation
 	}
 
-	/**
-	 * Returns the lazy initialized content of this structured extension.
-	 * 
-	 * @return The content list (cannot be null).
-	 */
-	public List<Object> getMixedContent() {
-		if (this.mixedContent == null) {
-			this.mixedContent = new ArrayList<Object>();
-		}
-		return this.mixedContent;
+	public AtomGenerator build() {
+		return attachCommonAttributes(new AtomGenerator(this.description, this.version, this.uri));
 	}
+
+	@Content
+	public AtomGeneratorBuilder setDescription(String description) {
+		this.description = description;
+		return this;
+	}
+
+	@Attribute(name = "version", required = false)
+	public AtomGeneratorBuilder setVersion(String version) {
+		this.version = version;
+		return this;
+	}
+
+	@Attribute(name = "uri", required = false)
+	public AtomGeneratorBuilder setUri(URI uri) {
+		this.uri = uri;
+		return this;
+	}
+
 }

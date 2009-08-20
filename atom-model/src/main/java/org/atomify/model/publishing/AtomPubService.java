@@ -29,10 +29,15 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.atomify.model.AtomCommonAttributes;
+import org.atomify.model.AtomConstants;
 import org.atomify.model.AtomContractConstraint;
 import org.atomify.model.AtomDocument;
 import org.atomify.model.AtomMediaType;
+import org.atomify.model.common.AtomCommonAttributes;
+import org.atomify.model.extension.AtomExtension;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.AttributesImpl;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
@@ -57,19 +62,19 @@ public class AtomPubService extends AtomCommonAttributes implements AtomDocument
 	public static final AtomMediaType MEDIA_TYPE = new AtomMediaType("application", "atomsvc+xml");
 
 	private final List<AtomPubWorkspace> workspaces;
-	private final List<AtomPubExtension> extensions;
+	private final List<AtomExtension> extensions;
 
 	public static AtomPubServiceBuilder newBuilder() {
 		return AtomPubServiceBuilder.newInstance();
 	}
 
-	protected AtomPubService(List<AtomPubWorkspace> workspaces, List<AtomPubExtension> extensions) {
+	protected AtomPubService(List<AtomPubWorkspace> workspaces, List<AtomExtension> extensions) {
 		this.workspaces = Collections.unmodifiableList(new ArrayList<AtomPubWorkspace>(AtomContractConstraint
 				.mustNotBeEmpty(workspaces, "workspaces")));
 		if (extensions == null || extensions.isEmpty()) {
 			this.extensions = Collections.emptyList();
 		} else {
-			this.extensions = Collections.unmodifiableList(new ArrayList<AtomPubExtension>(extensions));
+			this.extensions = Collections.unmodifiableList(new ArrayList<AtomExtension>(extensions));
 		}
 	}
 
@@ -81,11 +86,86 @@ public class AtomPubService extends AtomCommonAttributes implements AtomDocument
 		return this.workspaces;
 	}
 
-	public List<AtomPubExtension> getExtensions() {
+	public List<AtomExtension> getExtensions() {
 		return this.extensions;
 	}
 
 	public Iterator<AtomPubWorkspace> iterator() {
 		return this.workspaces.iterator();
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((this.extensions == null) ? 0 : this.extensions.hashCode());
+		result = prime * result + ((this.workspaces == null) ? 0 : this.workspaces.hashCode());
+		return result;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!super.equals(obj)) {
+			return false;
+		}
+		if (!(obj instanceof AtomPubService)) {
+			return false;
+		}
+		AtomPubService other = (AtomPubService) obj;
+		if (this.extensions == null) {
+			if (other.extensions != null) {
+				return false;
+			}
+		} else if (!this.extensions.equals(other.extensions)) {
+			return false;
+		}
+		if (this.workspaces == null) {
+			if (other.workspaces != null) {
+				return false;
+			}
+		} else if (!this.workspaces.equals(other.workspaces)) {
+			return false;
+		}
+		return true;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return new StringBuilder().append("AtomPubService [workspaces=").append(this.workspaces).append(", extensions=").append(this.extensions)
+				.append(", ").append(super.toString()).append("]").toString();
+	}
+
+	// --- From here all is serialization. We Still need to think about a good way to do so.
+
+	public void serialize(ContentHandler handler, AttributesImpl attributes) throws SAXException {
+		handler.startPrefixMapping(AtomConstants.ATOM_NS_PREFIX, AtomConstants.ATOM_NS_URI);
+		handler.startPrefixMapping(AtomConstants.ATOM_PUB_NS_PREFIX, AtomConstants.ATOM_PUB_NS_URI);
+		attributes = initCommonAttributes(attributes);
+		handler.startElement(AtomConstants.ATOM_PUB_NS_URI, "service", "app:service", attributes);
+		for (AtomPubWorkspace workspace : this.workspaces) {
+			workspace.serialize(handler, attributes);
+		}
+		for (AtomExtension extension : this.extensions) {
+			extension.serialize(handler, attributes);
+		}
+		handler.endElement(AtomConstants.ATOM_PUB_NS_URI, "service", "app:service");
+		handler.endPrefixMapping(AtomConstants.ATOM_NS_PREFIX);
+		handler.endPrefixMapping(AtomConstants.ATOM_PUB_NS_PREFIX);
+	}
+
 }

@@ -22,45 +22,49 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.atomify.model.publishing;
+package org.atomify.model.syndication;
 
-import javax.xml.namespace.QName;
+import java.net.URI;
 
-import org.atomify.model.AtomConstants;
-import org.atomify.model.AtomContractConstraint;
+import org.atomify.model.common.AtomCommonBuilder;
+import org.jbasics.parser.annotations.Content;
+import org.jbasics.pattern.builder.Builder;
 
-public abstract class AtomPubExtension {
+public class AtomIconBuilder extends AtomCommonBuilder<AtomIconBuilder> implements Builder<AtomIcon> {
 	/**
-	 * <b>Required:</b> The fully qualified name of the extension element. Must not be the atom name
-	 * space.
+	 * <b>Required:</b> IRI content.
+	 * <p>
+	 * TODO: must be an IRI reference.
+	 * </p>
 	 */
-	private final QName extensionName;
+	private URI uri;
 
-	public static AtomPubExtensionBuilder newBuilder() {
-		return AtomPubExtensionBuilder.newInstance();
+	public static AtomIconBuilder newInstance() {
+		return new AtomIconBuilder();
 	}
 
-	/**
-	 * Creates an extension with given name.
-	 * 
-	 * @param extensionName The extension name.
-	 */
-	public AtomPubExtension(final QName extensionName) {
-		this.extensionName = AtomContractConstraint.notNull("extensionName", extensionName);
-		if (AtomConstants.ATOM_PUB_NS_URI.equals(this.extensionName.getNamespaceURI())) {
-			throw new IllegalArgumentException("Extension QName cannot be of the atom publishing name space " + extensionName);
-		}
+	private AtomIconBuilder() {
+		// disallow instantiation
 	}
 
-	/**
-	 * Returns the fully qualified name of the extension.
-	 * 
-	 * @return The fully qualified name.
-	 */
-	public QName getExtensionName() {
-		return this.extensionName;
+	public AtomIcon build() {
+		return attachCommonAttributes(new AtomIcon(this.uri));
 	}
-	
-	public abstract boolean isStructured();
+
+	@Override
+	public void reset() {
+		super.reset();
+		this.uri = null;
+	}
+
+	public AtomIconBuilder setUri(URI uri) {
+		this.uri = uri;
+		return this;
+	}
+
+	@Content
+	public AtomIconBuilder setUri(String uri) {
+		return setUri(uri == null ? null : URI.create(uri));
+	}
 
 }

@@ -28,8 +28,9 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.atomify.model.AtomCommonBuilder;
 import org.atomify.model.AtomConstants;
+import org.atomify.model.common.AtomCommonBuilder;
+import org.atomify.model.extension.AtomExtension;
 import org.atomify.model.syndication.AtomText;
 import org.jbasics.parser.annotations.AnyElement;
 import org.jbasics.parser.annotations.Attribute;
@@ -59,7 +60,7 @@ public class AtomPubCollectionBuilder extends AtomCommonBuilder<AtomPubWorkspace
 	/**
 	 * <b>Optional:</b> extension elements (all non AtomPub namespace and not atom:title)
 	 */
-	private List<AtomPubExtension> extensions;
+	private List<AtomExtension> extensions;
 
 	public static AtomPubCollectionBuilder newInstance() {
 		return new AtomPubCollectionBuilder();
@@ -76,7 +77,7 @@ public class AtomPubCollectionBuilder extends AtomCommonBuilder<AtomPubWorkspace
 		return temp;
 	}
 
-	@Attribute(name = "href", namespace = "", required = false)
+	@Attribute(name = "href", required = true)
 	public AtomPubCollectionBuilder setHref(URI href) {
 		this.href = href;
 		return this;
@@ -107,9 +108,9 @@ public class AtomPubCollectionBuilder extends AtomCommonBuilder<AtomPubWorkspace
 	}
 
 	@AnyElement
-	public AtomPubCollectionBuilder addExtension(AtomPubExtension extension) {
+	public AtomPubCollectionBuilder addExtension(AtomExtension extension) {
 		if (this.extensions == null) {
-			this.extensions = new ArrayList<AtomPubExtension>();
+			this.extensions = new ArrayList<AtomExtension>();
 		}
 		this.extensions.add(extension);
 		return this;

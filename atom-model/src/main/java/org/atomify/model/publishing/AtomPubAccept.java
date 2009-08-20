@@ -24,8 +24,12 @@
  */
 package org.atomify.model.publishing;
 
-import org.atomify.model.AtomCommonAttributes;
+import org.atomify.model.AtomConstants;
+import org.atomify.model.common.AtomCommonAttributes;
 import org.jbasics.pattern.builder.Builder;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.AttributesImpl;
 
 /**
  * The atom publishing accept element which occurs in the atom publishing collection.
@@ -96,6 +100,27 @@ public class AtomPubAccept extends AtomCommonAttributes {
 		} else {
 			return this.acceptMediaRange.equals(((AtomPubAccept) obj).acceptMediaRange);
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return new StringBuilder().append("AtomPubAccept [acceptMediaRange=").append(this.acceptMediaRange)
+				.append(", ").append(super.toString()).append("]").toString();
+	}
+
+	// FIXME: Write a much better way of serialization
+
+	public void serialize(ContentHandler handler, AttributesImpl attributes) throws SAXException {
+		attributes = initCommonAttributes(attributes);
+		handler.startElement(AtomConstants.ATOM_PUB_NS_URI, "accept", AtomConstants.ATOM_PUB_NS_PREFIX + ":accept",
+				attributes);
+		char[] data = this.acceptMediaRange.toCharArray();
+		handler.characters(data, 0, data.length);
+		handler.endElement(AtomConstants.ATOM_PUB_NS_URI, "accept", AtomConstants.ATOM_PUB_NS_PREFIX + ":accept");
 	}
 
 }

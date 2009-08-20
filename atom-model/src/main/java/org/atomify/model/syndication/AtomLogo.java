@@ -26,8 +26,12 @@ package org.atomify.model.syndication;
 
 import java.net.URI;
 
-import org.atomify.model.AtomCommonAttributes;
+import org.atomify.model.AtomConstants;
 import org.atomify.model.AtomContractConstraint;
+import org.atomify.model.common.AtomCommonAttributes;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.AttributesImpl;
 
 /**
  * Represents an atom logo.
@@ -41,24 +45,19 @@ public class AtomLogo extends AtomCommonAttributes {
 	 * TODO: must be an iri reference.
 	 * </p>
 	 */
-	private URI logoIRI;
+	private final URI uri;
+
+	public static AtomLogoBuilder newBuilder() {
+		return AtomLogoBuilder.newInstance();
+	}
 
 	/**
 	 * Creates an atom logo with the given logo IRI (must not be null).
 	 * 
 	 * @param logoIRI The logo IRI (must not be null).
 	 */
-	public AtomLogo(final URI logoIRI) {
-		setLogoIRI(logoIRI);
-	}
-
-	/**
-	 * Set the logo IRI (must not be null).
-	 * 
-	 * @param logoIRI The logo IRI (must not be null).
-	 */
-	public void setLogoIRI(final URI logoIRI) {
-		this.logoIRI = AtomContractConstraint.notNull("logoIRI", logoIRI);
+	public AtomLogo(final URI uri) {
+		this.uri = AtomContractConstraint.notNull("uri", uri);
 	}
 
 	/**
@@ -66,8 +65,65 @@ public class AtomLogo extends AtomCommonAttributes {
 	 * 
 	 * @return the logoIRI
 	 */
-	public URI getLogoIRI() {
-		return this.logoIRI;
+	public URI getUri() {
+		return this.uri;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((this.uri == null) ? 0 : this.uri.hashCode());
+		return result;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!super.equals(obj)) {
+			return false;
+		}
+		if (!(obj instanceof AtomLogo)) {
+			return false;
+		}
+		AtomLogo other = (AtomLogo) obj;
+		if (this.uri == null) {
+			if (other.uri != null) {
+				return false;
+			}
+		} else if (!this.uri.equals(other.uri)) {
+			return false;
+		}
+		return true;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return new StringBuilder().append("AtomLogo [uri=").append(this.uri).append(", ").append(super.toString()).append("]").toString();
+	}
+
+	// FIXME: Write a much better way of serialization
+
+	public void serialize(ContentHandler handler, AttributesImpl attributes) throws SAXException {
+		attributes = initCommonAttributes(attributes);
+		handler.startElement(AtomConstants.ATOM_NS_URI, "logo", AtomConstants.ATOM_NS_PREFIX + ":logo", attributes);
+		char[] data = this.uri.toASCIIString().toCharArray();
+		handler.characters(data, 0, data.length);
+		handler.endElement(AtomConstants.ATOM_NS_URI, "logo", AtomConstants.ATOM_NS_PREFIX + ":logo");
 	}
 
 }

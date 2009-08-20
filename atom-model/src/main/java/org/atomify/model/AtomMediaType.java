@@ -24,6 +24,8 @@
  */
 package org.atomify.model;
 
+import java.util.Arrays;
+
 public class AtomMediaType {
 	private final String type;
 	private final String subType;
@@ -33,6 +35,56 @@ public class AtomMediaType {
 		this.type = AtomContractConstraint.notNull("type", type);
 		this.subType = subType;
 		this.parameters = parameters;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Arrays.hashCode(this.parameters);
+		result = prime * result + ((this.subType == null) ? 0 : this.subType.hashCode());
+		result = prime * result + ((this.type == null) ? 0 : this.type.hashCode());
+		return result;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof AtomMediaType)) {
+			return false;
+		}
+		AtomMediaType other = (AtomMediaType) obj;
+		if (!Arrays.equals(this.parameters, other.parameters)) {
+			return false;
+		}
+		if (this.subType == null) {
+			if (other.subType != null) {
+				return false;
+			}
+		} else if (!this.subType.equals(other.subType)) {
+			return false;
+		}
+		if (this.type == null) {
+			if (other.type != null) {
+				return false;
+			}
+		} else if (!this.type.equals(other.type)) {
+			return false;
+		}
+		return true;
 	}
 
 	@Override

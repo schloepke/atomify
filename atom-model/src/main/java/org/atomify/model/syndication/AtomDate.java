@@ -31,9 +31,13 @@ import java.util.GregorianCalendar;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
+import javax.xml.namespace.QName;
 
-import org.atomify.model.AtomCommonAttributes;
 import org.atomify.model.AtomContractConstraint;
+import org.atomify.model.common.AtomCommonAttributes;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.AttributesImpl;
 
 /**
  * Atom date construct.
@@ -49,7 +53,7 @@ public class AtomDate extends AtomCommonAttributes {
 	public static AtomDateBuilder newBuilder() {
 		return AtomDateBuilder.newInstance();
 	}
-	
+
 	/**
 	 * Creates a date with the given date content.
 	 * 
@@ -79,8 +83,7 @@ public class AtomDate extends AtomCommonAttributes {
 
 	public static AtomDate valueOf(String dateValue) {
 		try {
-			return new AtomDate(DatatypeFactory.newInstance().newXMLGregorianCalendar(
-					AtomContractConstraint.notNull("dateValue", dateValue)));
+			return new AtomDate(DatatypeFactory.newInstance().newXMLGregorianCalendar(AtomContractConstraint.notNull("dateValue", dateValue)));
 		} catch (DatatypeConfigurationException e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}
@@ -99,6 +102,66 @@ public class AtomDate extends AtomCommonAttributes {
 		} catch (DatatypeConfigurationException e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((this.value == null) ? 0 : this.value.hashCode());
+		return result;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!super.equals(obj)) {
+			return false;
+		}
+		if (!(obj instanceof AtomDate)) {
+			return false;
+		}
+		AtomDate other = (AtomDate) obj;
+		if (this.value == null) {
+			if (other.value != null) {
+				return false;
+			}
+		} else if (!this.value.equals(other.value)) {
+			return false;
+		}
+		return true;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return new StringBuilder().append("AtomDate [value=").append(this.value).append(", ").append(super.toString()).append("]").toString();
+	}
+
+	// FIXME: Write a much better way of serialization
+
+	public void serialize(QName name, ContentHandler handler, AttributesImpl attributes) throws SAXException {
+		attributes = initCommonAttributes(attributes);
+		String namespace = name.getNamespaceURI();
+		String local = name.getLocalPart();
+		String qName = (name.getPrefix() != null && name.getPrefix().length() > 0 ? name.getPrefix() + ":" : "") + local;
+		handler.startElement(namespace, local, qName, attributes);
+		char[] data = this.value.toXMLFormat().toCharArray();
+		handler.characters(data, 0, data.length);
+		handler.endElement(namespace, local, qName);
 	}
 
 }

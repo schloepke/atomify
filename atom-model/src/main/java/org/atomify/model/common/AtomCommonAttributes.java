@@ -22,17 +22,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.atomify.model;
+package org.atomify.model.common;
 
 import java.net.URI;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 
-import org.atomify.model.syndication.AtomLanguage;
 import org.jbasics.xml.types.XmlSpaceType;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.AttributesImpl;
 
 /**
  * Atom common attributes construct.
@@ -46,6 +48,7 @@ import org.jbasics.xml.types.XmlSpaceType;
  * @author stephan
  */
 public abstract class AtomCommonAttributes {
+
 	/**
 	 * <b>Optional:</b> xml:base attribute.
 	 */
@@ -147,7 +150,8 @@ public abstract class AtomCommonAttributes {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -161,7 +165,8 @@ public abstract class AtomCommonAttributes {
 		return result;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -184,5 +189,55 @@ public abstract class AtomCommonAttributes {
 		} else if (!this.xmlSpace.equals(other.xmlSpace)) return false;
 		return true;
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("AtomCommonAttributes [undefinedAttributes=").append(this.undefinedAttributes).append(
+				", xmlBase=").append(this.xmlBase).append(", xmlLang=").append(this.xmlLang).append(", xmlSpace=")
+				.append(this.xmlSpace).append("]");
+		return builder.toString();
+	}
+	
+	// --- From here all is serialization. We Still need to think about a good way to do so.
+
+	protected AttributesImpl initCommonAttributes(AttributesImpl attributes)
+			throws SAXException {
+		if (attributes == null) {
+			attributes = new AttributesImpl();
+		} else {
+			attributes.clear();
+		}
+		if (this.xmlBase != null) {
+			addAttribute(attributes, XML_BASE, this.xmlBase.toASCIIString());
+		}
+		if (this.xmlLang != null) {
+			addAttribute(attributes, XML_LANG, this.xmlLang.getLanguage());
+		}
+		if (this.xmlSpace != null) {
+			addAttribute(attributes, XML_SPACE, this.xmlSpace.toXmlString());
+		}
+		for (Map.Entry<QName, String> attr : this.undefinedAttributes.entrySet()) {
+			addAttribute(attributes, attr.getKey(), attr.getValue());
+		}
+		return attributes;
+	}
+
+	protected static void addAttribute(AttributesImpl attributes, QName name, String value) throws SAXException {
+		if (value != null) {
+			attributes.addAttribute(name.getNamespaceURI(), name.getLocalPart(), (name.getPrefix() != null && name.getPrefix().length() > 0 ? name
+					.getPrefix()
+					+ ":" : "")
+					+ name.getLocalPart(), "CDATA", value.toString());
+		}
+	}
+
+	private final static QName XML_BASE = new QName(XMLConstants.XML_NS_URI, "base", XMLConstants.XML_NS_PREFIX);
+	private final static QName XML_LANG = new QName(XMLConstants.XML_NS_URI, "lang", XMLConstants.XML_NS_PREFIX);
+	private final static QName XML_SPACE = new QName(XMLConstants.XML_NS_URI, "space", XMLConstants.XML_NS_PREFIX);
 
 }

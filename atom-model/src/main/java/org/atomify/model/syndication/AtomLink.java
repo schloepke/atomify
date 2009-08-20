@@ -24,15 +24,22 @@
  */
 package org.atomify.model.syndication;
 
-import java.awt.PageAttributes.MediaType;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 
-import org.atomify.model.AtomCommonAttributes;
+import javax.xml.namespace.QName;
+
+import org.atomify.model.AtomConstants;
 import org.atomify.model.AtomContractConstraint;
 import org.atomify.model.AtomMediaType;
+import org.atomify.model.common.AtomCommonAttributes;
+import org.atomify.model.common.AtomLanguage;
+import org.atomify.model.extension.AtomForeignMarkup;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.AttributesImpl;
 
 /**
  * Represents an atom link element.
@@ -46,45 +53,44 @@ public class AtomLink extends AtomCommonAttributes {
 	 * TODO: must be an IRI reference.
 	 * </p>
 	 */
-	private URI href; // REQUIRED
+	private final URI href; // REQUIRED
 	/**
 	 * <b>Optional:</b> relation(rel) attribute. If not present it is default <em>alternate</em>
 	 * <p>
-	 * TODO: it must be either an IRI or an atom NC name. Need to think about how to wrap this correctly.
+	 * TODO: it must be either an IRI or an atom NC name. Need to think about how to wrap this
+	 * correctly.
 	 * </p>
 	 */
-	private URI rel; // AtomNCName or AtomURI
+	private final URI rel; // AtomNCName or AtomURI
 	/**
 	 * <b>Optional:</b> type attribute holding the media type of the destination.
 	 */
-	private AtomMediaType type;
+	private final AtomMediaType type;
 	/**
 	 * <b>Optional:</b> hreflang attribute holding the language of the destination.
 	 */
-	private Locale hreflang;
+	private final AtomLanguage hreflang;
 	/**
 	 * <b>Optional:</b> title attribute. The title is language sensitive.
 	 */
-	private String title;
+	private final String title;
 	/**
 	 * <b>Optional:</b> length attribute.
 	 */
-	private Integer lenght;
+	private final Integer length;
 	/**
-	 * <b>Optional:</b> any mixed content holding text|element. Any direct element must not be of the atom name space.
+	 * <b>Optional:</b> any mixed content holding text|element. Any direct element must not be of
+	 * the atom name space.
 	 * <p>
 	 * TODO: Do we want to aktually make this a Node of DOM?
 	 * </p>
 	 */
-	private List<Object> undefinedContent;
+	private final List<AtomForeignMarkup> undefinedContent;
 
-	/**
-	 * Empty constructor used in conjunction with a builder.
-	 */
-	public AtomLink() {
-		// Empty constructor for builder.
+	public static AtomLinkBuilder newBuilder() {
+		return AtomLinkBuilder.newInstance();
 	}
-	
+
 	/**
 	 * Creates a link for the given href and relation and type.
 	 * 
@@ -92,17 +98,19 @@ public class AtomLink extends AtomCommonAttributes {
 	 * @param rel The relation of the link.
 	 * @param type The media type of the link.
 	 */
-	public AtomLink(final URI href, final String rel, final MediaType type) {
+	public AtomLink(final String title, final URI href, final URI rel, final AtomMediaType type, final AtomLanguage hrefLang, final Integer length,
+			final List<AtomForeignMarkup> undefinedContent) {
+		this.title = title;
 		this.href = AtomContractConstraint.notNull("href", href);
-	}
-
-	/**
-	 * Sets the link href URI (must not be null).
-	 * 
-	 * @param href the href to set
-	 */
-	public void setHref(final URI href) {
-		this.href = AtomContractConstraint.notNull("href", href);
+		this.rel = rel;
+		this.type = type;
+		this.hreflang = hrefLang;
+		this.length = length;
+		if (undefinedContent == null || undefinedContent.isEmpty()) {
+			this.undefinedContent = Collections.emptyList();
+		} else {
+			this.undefinedContent = Collections.unmodifiableList(new ArrayList<AtomForeignMarkup>(undefinedContent));
+		}
 	}
 
 	/**
@@ -115,30 +123,12 @@ public class AtomLink extends AtomCommonAttributes {
 	}
 
 	/**
-	 * Sets the link relation.
-	 * 
-	 * @param rel the rel to set
-	 */
-	public void setRel(final URI rel) {
-		this.rel = rel;
-	}
-
-	/**
 	 * Returns the link relation.
 	 * 
 	 * @return the rel
 	 */
 	public URI getRel() {
 		return this.rel;
-	}
-
-	/**
-	 * Sets the media type of the link destination.
-	 * 
-	 * @param type the type to set
-	 */
-	public void setType(final AtomMediaType type) {
-		this.type = type;
 	}
 
 	/**
@@ -151,33 +141,6 @@ public class AtomLink extends AtomCommonAttributes {
 	}
 
 	/**
-	 * Sets the href language.
-	 * 
-	 * @param hreflang the hreflang to set
-	 */
-	public void setHreflang(final Locale hreflang) {
-		this.hreflang = hreflang;
-	}
-
-	/**
-	 * Returnsthe href language.
-	 * 
-	 * @return the hreflang
-	 */
-	public Locale getHreflang() {
-		return this.hreflang;
-	}
-
-	/**
-	 * Sets the title.
-	 * 
-	 * @param title the title to set
-	 */
-	public void setTitle(final String title) {
-		this.title = title;
-	}
-
-	/**
 	 * Returns the title.
 	 * 
 	 * @return the title
@@ -187,33 +150,157 @@ public class AtomLink extends AtomCommonAttributes {
 	}
 
 	/**
-	 * Sets the length.
-	 * 
-	 * @param lenght the lenght to set
-	 */
-	public void setLenght(final Integer lenght) {
-		this.lenght = lenght;
-	}
-
-	/**
 	 * Returns the length.
 	 * 
 	 * @return the lenght
 	 */
-	public Integer getLenght() {
-		return this.lenght;
+	public Integer getLength() {
+		return this.length;
+	}
+
+	public AtomLanguage getHreflang() {
+		return this.hreflang;
 	}
 
 	/**
-	 * Returns the lazy initialized undefined content list.
+	 * Returns the undefined content list.
 	 * 
 	 * @return the undefinedContent
 	 */
-	public List<Object> getUndefinedContent() {
-		if (this.undefinedContent == null) {
-			this.undefinedContent = new ArrayList<Object>();
-		}
+	public List<AtomForeignMarkup> getUndefinedContent() {
 		return this.undefinedContent;
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((this.href == null) ? 0 : this.href.hashCode());
+		result = prime * result + ((this.hreflang == null) ? 0 : this.hreflang.hashCode());
+		result = prime * result + ((this.length == null) ? 0 : this.length.hashCode());
+		result = prime * result + ((this.rel == null) ? 0 : this.rel.hashCode());
+		result = prime * result + ((this.title == null) ? 0 : this.title.hashCode());
+		result = prime * result + ((this.type == null) ? 0 : this.type.hashCode());
+		result = prime * result + ((this.undefinedContent == null) ? 0 : this.undefinedContent.hashCode());
+		return result;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!super.equals(obj)) {
+			return false;
+		}
+		if (!(obj instanceof AtomLink)) {
+			return false;
+		}
+		AtomLink other = (AtomLink) obj;
+		if (this.href == null) {
+			if (other.href != null) {
+				return false;
+			}
+		} else if (!this.href.equals(other.href)) {
+			return false;
+		}
+		if (this.hreflang == null) {
+			if (other.hreflang != null) {
+				return false;
+			}
+		} else if (!this.hreflang.equals(other.hreflang)) {
+			return false;
+		}
+		if (this.length == null) {
+			if (other.length != null) {
+				return false;
+			}
+		} else if (!this.length.equals(other.length)) {
+			return false;
+		}
+		if (this.rel == null) {
+			if (other.rel != null) {
+				return false;
+			}
+		} else if (!this.rel.equals(other.rel)) {
+			return false;
+		}
+		if (this.title == null) {
+			if (other.title != null) {
+				return false;
+			}
+		} else if (!this.title.equals(other.title)) {
+			return false;
+		}
+		if (this.type == null) {
+			if (other.type != null) {
+				return false;
+			}
+		} else if (!this.type.equals(other.type)) {
+			return false;
+		}
+		if (this.undefinedContent == null) {
+			if (other.undefinedContent != null) {
+				return false;
+			}
+		} else if (!this.undefinedContent.equals(other.undefinedContent)) {
+			return false;
+		}
+		return true;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return new StringBuilder().append("AtomLink [title=").append(this.title).append(", href=").append(this.href).append(", rel=")
+				.append(this.rel).append(", type=").append(this.type).append(", hreflang=").append(this.hreflang).append(", length=").append(
+						this.length).append(", undefinedContent=").append(this.undefinedContent).append(", ").append(super.toString()).append("]")
+				.toString();
+	}
+
+	// FIXME: The following code is serialization which needs to be reimplemented
+
+	public void serialize(ContentHandler handler, AttributesImpl attributes) throws SAXException {
+		attributes = initCommonAttributes(attributes);
+		addAttribute(attributes, HREF_QNAME, this.href.toASCIIString());
+		if (this.rel != null) {
+			addAttribute(attributes, REL_QNAME, this.rel.toASCIIString());
+		}
+		if (this.type != null) {
+			addAttribute(attributes, TYPE_QNAME, this.type.toString());
+		}
+		if (this.length != null) {
+			addAttribute(attributes, LENGTH_QNAME, this.length.toString());
+		}
+		if (this.hreflang != null) {
+			addAttribute(attributes, HREFLANG_QNAME, this.hreflang.getLanguage());
+		}
+		if (this.title != null) {
+			addAttribute(attributes, TITLE_QNAME, this.title);
+		}
+		handler.startElement(AtomConstants.ATOM_NS_URI, "link", AtomConstants.ATOM_NS_PREFIX + ":link", attributes);
+		for (AtomForeignMarkup temp : this.undefinedContent) {
+			temp.serialize(handler, attributes);
+		}
+		handler.endElement(AtomConstants.ATOM_NS_URI, "link", AtomConstants.ATOM_NS_PREFIX + ":link");
+	}
+
+	private static final QName HREF_QNAME = new QName("href");
+	private static final QName REL_QNAME = new QName("rel");
+	private static final QName TYPE_QNAME = new QName("type");
+	private static final QName HREFLANG_QNAME = new QName("hreflang");
+	private static final QName TITLE_QNAME = new QName("title");
+	private static final QName LENGTH_QNAME = new QName("lenght");
 
 }

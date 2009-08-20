@@ -25,12 +25,16 @@
 package org.atomify.model.syndication;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.atomify.model.AtomConstants;
 import org.atomify.model.AtomContractConstraint;
 import org.atomify.model.AtomDocument;
 import org.atomify.model.AtomMediaType;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.AttributesImpl;
 
 /**
  * Represents an atom feed. The feed is derived from the atom:source since both cover mostly the
@@ -47,11 +51,11 @@ import org.atomify.model.AtomMediaType;
  * 
  * @author stephan
  */
-public class AtomFeed extends AtomSource implements AtomDocument {
+public class AtomFeed extends AbstractAtomSource implements AtomDocument {
 	/**
 	 * <b>Optional:</b> any number of entry elements.
 	 */
-	private List<AtomEntry> entries;
+	private final List<AtomEntry> entries;
 
 	public static AtomFeedBuilder newBuilder() {
 		return AtomFeedBuilder.newInstance();
@@ -64,9 +68,14 @@ public class AtomFeed extends AtomSource implements AtomDocument {
 	 * @param title The title of the atom feed (Must not be null).
 	 * @param updated The updated date (must not be null).
 	 */
-	public AtomFeed(final AtomId id, final AtomText title, final AtomDate updated) {
-		super(AtomContractConstraint.notNull("id", id), AtomContractConstraint.notNull("title", title),
-				AtomContractConstraint.notNull("updated", updated));
+	public AtomFeed(final AtomId id, final AtomText title, final AtomDate updated, List<AtomEntry> entries) {
+		super(AtomContractConstraint.notNull("id", id), AtomContractConstraint.notNull("title", title), AtomContractConstraint.notNull("updated",
+				updated));
+		if (entries == null || entries.isEmpty()) {
+			this.entries = Collections.emptyList();
+		} else {
+			this.entries = Collections.unmodifiableList(new ArrayList<AtomEntry>(entries));
+		}
 	}
 
 	/**
@@ -75,14 +84,72 @@ public class AtomFeed extends AtomSource implements AtomDocument {
 	 * @return The lazy initialized list of entries.
 	 */
 	public List<AtomEntry> getEntries() {
-		if (this.entries == null) {
-			this.entries = new ArrayList<AtomEntry>();
-		}
 		return this.entries;
 	}
 
 	public AtomMediaType getMediaType() {
 		return AtomConstants.ATOM_FEED_MEDIA_TYPE;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((this.entries == null) ? 0 : this.entries.hashCode());
+		return result;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!super.equals(obj)) {
+			return false;
+		}
+		if (!(obj instanceof AtomFeed)) {
+			return false;
+		}
+		AtomFeed other = (AtomFeed) obj;
+		if (this.entries == null) {
+			if (other.entries != null) {
+				return false;
+			}
+		} else if (!this.entries.equals(other.entries)) {
+			return false;
+		}
+		return true;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return new StringBuilder().append("AtomFeed [").append(super.toString()).append(", entries=").append(this.entries).append("]").toString();
+	}
+
+	// --- FIXME: From here all is serialization. We Still need to think about a good way to do so.
+
+	public void serialize(ContentHandler handler, AttributesImpl attributes) throws SAXException {
+		handler.startPrefixMapping(AtomConstants.ATOM_NS_PREFIX, AtomConstants.ATOM_NS_URI);
+		attributes = initCommonAttributes(attributes);
+		handler.startElement(AtomConstants.ATOM_NS_URI, "feed", AtomConstants.ATOM_NS_PREFIX + ":feed", attributes);
+		super.serializeContent(handler, attributes);
+		for (AtomEntry entry : this.entries) {
+			entry.serialize(handler, attributes);
+		}
+		handler.endElement(AtomConstants.ATOM_NS_URI, "feed", AtomConstants.ATOM_NS_PREFIX + ":feed");
+		handler.endPrefixMapping(AtomConstants.ATOM_NS_PREFIX);
 	}
 
 }

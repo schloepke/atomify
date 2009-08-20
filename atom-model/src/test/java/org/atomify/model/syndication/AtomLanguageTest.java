@@ -32,6 +32,7 @@ import static org.junit.Assert.fail;
 
 import java.util.Locale;
 
+import org.atomify.model.common.AtomLanguage;
 import org.junit.Test;
 
 public class AtomLanguageTest {

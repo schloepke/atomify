@@ -28,10 +28,11 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.atomify.model.AtomCommonBuilder;
 import org.atomify.model.AtomConstants;
 import org.atomify.model.AtomContractConstraint;
-import org.atomify.model.common.UndefinedElement;
+import org.atomify.model.common.AtomCommonBuilder;
+import org.atomify.model.extension.AtomForeignMarkup;
+import org.atomify.model.extension.AtomForeignTextContent;
 import org.atomify.model.syndication.AtomCategory;
 import org.jbasics.parser.annotations.AnyElement;
 import org.jbasics.parser.annotations.Attribute;
@@ -40,14 +41,13 @@ import org.jbasics.parser.annotations.Element;
 import org.jbasics.pattern.builder.Builder;
 import org.jbasics.xml.types.XmlBooleanYesNoType;
 
-public class AtomPubCategoriesBuilder extends AtomCommonBuilder<AtomPubCategoriesBuilder> implements
-		Builder<AtomPubCategories> {
+public class AtomPubCategoriesBuilder extends AtomCommonBuilder<AtomPubCategoriesBuilder> implements Builder<AtomPubCategories> {
 
 	private URI href;
 	private XmlBooleanYesNoType fixed;
 	private URI scheme;
 	private List<AtomCategory> categories;
-	private List<Object> undefinedContent;
+	private List<AtomForeignMarkup> undefinedContent;
 
 	public static AtomPubCategoriesBuilder newInstance() {
 		return new AtomPubCategoriesBuilder();
@@ -107,19 +107,23 @@ public class AtomPubCategoriesBuilder extends AtomCommonBuilder<AtomPubCategorie
 
 	@Content
 	public AtomPubCategoriesBuilder appendText(String text) {
-		getUndefinedContent().add(AtomContractConstraint.mustNotBeEmptyString(text, "text"));
+		// TODO: We need to figure out how we handle the extra content here. currently we just don't allow empty string
+		// extra content since that would come between the elements where no empty strings are allowed.
+		if (AtomContractConstraint.mustNotBeEmptyString(text, "text").trim().length() > 0) {
+			getUndefinedContent().add(new AtomForeignTextContent(text));
+		}
 		return this;
 	}
 
 	@AnyElement
-	public AtomPubCategoriesBuilder appendAnyElement(UndefinedElement element) {
+	public AtomPubCategoriesBuilder appendAnyElement(AtomForeignMarkup element) {
 		getUndefinedContent().add(AtomContractConstraint.notNull("element", element));
 		return this;
 	}
 
-	public List<Object> getUndefinedContent() {
+	public List<AtomForeignMarkup> getUndefinedContent() {
 		if (this.undefinedContent == null) {
-			this.undefinedContent = new ArrayList<Object>();
+			this.undefinedContent = new ArrayList<AtomForeignMarkup>();
 		}
 		return this.undefinedContent;
 	}

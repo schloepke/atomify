@@ -29,10 +29,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.atomify.model.AtomCommonAttributes;
+import javax.xml.namespace.QName;
+
 import org.atomify.model.AtomConstants;
 import org.atomify.model.AtomContractConstraint;
+import org.atomify.model.common.AtomCommonAttributes;
+import org.atomify.model.extension.AtomExtension;
 import org.atomify.model.syndication.AtomText;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.AttributesImpl;
 
 /**
  * Listenbeschreibung
@@ -63,14 +69,14 @@ public class AtomPubCollection extends AtomCommonAttributes {
 	/**
 	 * <b>Optional:</b> extension elements (all non AtomPub namespace and not atom:title)
 	 */
-	private final List<AtomPubExtension> extensions;
+	private final List<AtomExtension> extensions;
 
 	public static AtomPubCollectionBuilder newBuilder() {
 		return AtomPubCollectionBuilder.newInstance();
 	}
 
-	protected AtomPubCollection(AtomText title, URI href, List<AtomPubAccept> accepts,
-			List<AtomPubCategories> categories, List<AtomPubExtension> extensions) {
+	protected AtomPubCollection(AtomText title, URI href, List<AtomPubAccept> accepts, List<AtomPubCategories> categories,
+			List<AtomExtension> extensions) {
 		this.title = AtomContractConstraint.notNull("title", title);
 		this.href = AtomContractConstraint.notNull("href", href);
 		if (accepts != null && accepts.size() > 0) {
@@ -86,12 +92,12 @@ public class AtomPubCollection extends AtomCommonAttributes {
 		if (extensions == null || extensions.isEmpty()) {
 			this.extensions = Collections.emptyList();
 		} else {
-			for (AtomPubExtension extension : extensions) {
-				if (AtomConstants.ATOM_TITLE_QNAME.equals(extension.getExtensionName())) {
+			for (AtomExtension extension : extensions) {
+				if (AtomConstants.ATOM_TITLE_QNAME.equals(extension.getQualifiedName())) {
 					throw new IllegalArgumentException("Atom Publishing Collection cannot have an atom:title extension");
 				}
 			}
-			this.extensions = Collections.unmodifiableList(new ArrayList<AtomPubExtension>(extensions));
+			this.extensions = Collections.unmodifiableList(new ArrayList<AtomExtension>(extensions));
 		}
 	}
 
@@ -126,8 +132,110 @@ public class AtomPubCollection extends AtomCommonAttributes {
 	/**
 	 * @return the extensions
 	 */
-	public List<AtomPubExtension> getExtensions() {
+	public List<AtomExtension> getExtensions() {
 		return this.extensions;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((this.accepts == null) ? 0 : this.accepts.hashCode());
+		result = prime * result + ((this.categories == null) ? 0 : this.categories.hashCode());
+		result = prime * result + ((this.extensions == null) ? 0 : this.extensions.hashCode());
+		result = prime * result + ((this.href == null) ? 0 : this.href.hashCode());
+		result = prime * result + ((this.title == null) ? 0 : this.title.hashCode());
+		return result;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!super.equals(obj)) {
+			return false;
+		}
+		if (!(obj instanceof AtomPubCollection)) {
+			return false;
+		}
+		AtomPubCollection other = (AtomPubCollection) obj;
+		if (this.accepts == null) {
+			if (other.accepts != null) {
+				return false;
+			}
+		} else if (!this.accepts.equals(other.accepts)) {
+			return false;
+		}
+		if (this.categories == null) {
+			if (other.categories != null) {
+				return false;
+			}
+		} else if (!this.categories.equals(other.categories)) {
+			return false;
+		}
+		if (this.extensions == null) {
+			if (other.extensions != null) {
+				return false;
+			}
+		} else if (!this.extensions.equals(other.extensions)) {
+			return false;
+		}
+		if (this.href == null) {
+			if (other.href != null) {
+				return false;
+			}
+		} else if (!this.href.equals(other.href)) {
+			return false;
+		}
+		if (this.title == null) {
+			if (other.title != null) {
+				return false;
+			}
+		} else if (!this.title.equals(other.title)) {
+			return false;
+		}
+		return true;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return new StringBuilder().append("AtomPubCollection [title=").append(this.title).append(", href=").append(this.href).append(", accepts=")
+				.append(this.accepts).append(", categories=").append(this.categories).append(", extensions=").append(this.extensions).append(", ")
+				.append(super.toString()).append("]").toString();
+	}
+
+	// --- From here all is serialization. We Still need to think about a good way to do so.
+
+	public void serialize(ContentHandler handler, AttributesImpl attributes) throws SAXException {
+		attributes = initCommonAttributes(attributes);
+		addAttribute(attributes, HREF_ATTRIBUTE_QNAME, this.href.toASCIIString());
+		handler.startElement(AtomConstants.ATOM_PUB_NS_URI, "collection", "app:collection", attributes);
+		this.title.serialize(TITLE_QNAME, handler, attributes);
+		for (AtomPubAccept accept : this.accepts) {
+			accept.serialize(handler, attributes);
+		}
+		for (AtomPubCategories categories : this.categories) {
+			categories.serialize(handler, attributes);
+		}
+		for (AtomExtension extension : this.extensions) {
+			extension.serialize(handler, attributes);
+		}
+		handler.endElement(AtomConstants.ATOM_PUB_NS_URI, "collection", "app:collection");
+	}
+
+	private static final QName TITLE_QNAME = new QName(AtomConstants.ATOM_NS_URI, "title", AtomConstants.ATOM_NS_PREFIX);
+	private static final QName HREF_ATTRIBUTE_QNAME = new QName("href");
 }

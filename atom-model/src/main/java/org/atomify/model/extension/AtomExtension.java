@@ -22,44 +22,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.atomify.model.publishing;
+package org.atomify.model.extension;
 
-import javax.xml.namespace.QName;
+import org.jbasics.parser.annotations.ElementBuilder;
 
-/**
- * A simple extension has no attributes and only a text content.
- * 
- * @author Stephan Schloepke
- */
-public class AtomPubSimpleExtension extends AtomPubExtension {
-	/**
-	 * <b>Required:</b> text content of the simple extension.
-	 */
-	private final String value;
-
-	/**
-	 * Creates a simple extension with the name and content.
-	 * 
-	 * @param extensionName The name of the extension (must not be null).
-	 * @param value The content of the extension.
-	 */
-	public AtomPubSimpleExtension(final QName extensionName, final String value) {
-		super(extensionName);
-		this.value = value;
-	}
-
-	/**
-	 * Returns the text value of the simple extension.
-	 * 
-	 * @return The text value of the simple extension.
-	 */
-	public String getValue() {
-		return this.value;
-	}
-	
-	@Override
-	public boolean isStructured() {
-		return false;
-	}
-
+@ElementBuilder(AtomExtensionBuilder.class)
+public interface AtomExtension extends AtomForeignMarkup {
+	// Tagging interface to separate extension from foreign markup
 }

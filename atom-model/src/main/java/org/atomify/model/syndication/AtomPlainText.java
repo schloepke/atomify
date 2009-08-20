@@ -24,15 +24,22 @@
  */
 package org.atomify.model.syndication;
 
+import javax.xml.namespace.QName;
+
 import org.atomify.model.AtomContractConstraint;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.AttributesImpl;
 
 /**
  * The Atom plain text construct.
  * <p>
- * The atom plain text construct is defined in section <a href="http://www.atompub.org/rfc4287.html#text.constructs">3.1 of the atom 1.0
- * specification</a> <blockquote> A Text construct contains human-readable text, usually in small quantities. The content of Text constructs is
- * Language-Sensitive. </blockquote> This instance covers only the plain text construct which is derived from the {@link AtomText} which represents
- * all atom text constructs. <blockquote>
+ * The atom plain text construct is defined in section <a
+ * href="http://www.atompub.org/rfc4287.html#text.constructs">3.1 of the atom 1.0 specification</a>
+ * <blockquote> A Text construct contains human-readable text, usually in small quantities. The
+ * content of Text constructs is Language-Sensitive. </blockquote> This instance covers only the
+ * plain text construct which is derived from the {@link AtomText} which represents all atom text
+ * constructs. <blockquote>
  * 
  * <pre>
  * atomPlainTextConstruct =
@@ -48,7 +55,8 @@ import org.atomify.model.AtomContractConstraint;
  */
 public class AtomPlainText extends AtomText {
 	/**
-	 * <b>Optional:</b> type attribute true means type <em>html</em> false means <em>text</em>. If not specified <em>text</em> is default.
+	 * <b>Optional:</b> type attribute true means type <em>html</em> false means <em>text</em>. If
+	 * not specified <em>text</em> is default.
 	 */
 	private boolean html;
 	/**
@@ -112,7 +120,73 @@ public class AtomPlainText extends AtomText {
 
 	@Override
 	public Type getType() {
-		return this.html ? Type.html : Type.text;
+		return this.html ? Type.HTML : Type.TEXT;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + (this.html ? 1231 : 1237);
+		result = prime * result + ((this.value == null) ? 0 : this.value.hashCode());
+		return result;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!super.equals(obj)) {
+			return false;
+		}
+		if (!(obj instanceof AtomPlainText)) {
+			return false;
+		}
+		AtomPlainText other = (AtomPlainText) obj;
+		if (this.html != other.html) {
+			return false;
+		}
+		if (this.value == null) {
+			if (other.value != null) {
+				return false;
+			}
+		} else if (!this.value.equals(other.value)) {
+			return false;
+		}
+		return true;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return new StringBuilder().append("AtomPlainText [html=").append(this.html).append(", value=").append(this.value).append(", ").append(
+				super.toString()).append("]").toString();
+	}
+
+	// FIXME: Write a much better way of serialization
+
+	public void serialize(QName name, ContentHandler handler, AttributesImpl attributes) throws SAXException {
+		attributes = initCommonAttributes(attributes);
+		addAttribute(attributes, TYPE_QNAME, getType().toXmlString());
+		String namespace = name.getNamespaceURI();
+		String local = name.getLocalPart();
+		String qName = (name.getPrefix() != null && name.getPrefix().length() > 0 ? name.getPrefix() + ":" : "") + local;
+		handler.startElement(namespace, local, qName, attributes);
+		char[] data = this.value.toCharArray();
+		handler.characters(data, 0, data.length);
+		handler.endElement(namespace, local, qName);
 	}
 
 }

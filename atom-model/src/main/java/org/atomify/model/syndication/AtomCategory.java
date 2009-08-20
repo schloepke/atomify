@@ -29,10 +29,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.atomify.model.AtomCommonAttributes;
+import javax.xml.namespace.QName;
+
 import org.atomify.model.AtomConstants;
 import org.atomify.model.AtomContractConstraint;
-import org.atomify.model.common.UndefinedElement;
+import org.atomify.model.common.AtomCommonAttributes;
+import org.atomify.model.extension.AtomForeignMarkup;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.AttributesImpl;
 
 /**
  * Holds an Atom category.
@@ -59,7 +64,7 @@ public class AtomCategory extends AtomCommonAttributes {
 	 * <b>Optional:</b> mixed content (text|element). Any direct element must not be of the atom
 	 * name space.
 	 */
-	private final List<Object> undefinedContent;
+	private final List<AtomForeignMarkup> undefinedContent;
 
 	public static AtomCategoryBuilder newBuilder() {
 		return AtomCategoryBuilder.newInstance();
@@ -84,23 +89,14 @@ public class AtomCategory extends AtomCommonAttributes {
 	 * @param scheme The scheme.
 	 * @param label The label.
 	 */
-	public AtomCategory(final String term, final URI scheme, final String label, final List<Object> undefinedContent) {
+	public AtomCategory(final String term, final URI scheme, final String label, final List<AtomForeignMarkup> undefinedContent) {
 		this.term = AtomContractConstraint.notNull("term", term);
 		this.scheme = scheme;
 		this.label = label;
 		if (undefinedContent == null || undefinedContent.isEmpty()) {
 			this.undefinedContent = Collections.emptyList();
 		} else {
-			for (Object temp : undefinedContent) {
-				if (temp instanceof UndefinedElement) {
-					if (AtomConstants.ATOM_NS_URI
-							.equals(((UndefinedElement) temp).getQualifiedName().getNamespaceURI())) {
-						throw new IllegalArgumentException(
-								"Category undefiend content cannot have elements of the atom namespace");
-					}
-				}
-			}
-			this.undefinedContent = Collections.unmodifiableList(new ArrayList<Object>(undefinedContent));
+			this.undefinedContent = Collections.unmodifiableList(new ArrayList<AtomForeignMarkup>(undefinedContent));
 		}
 	}
 
@@ -136,13 +132,104 @@ public class AtomCategory extends AtomCommonAttributes {
 	 * 
 	 * @return the undefinedContent
 	 */
-	public List<Object> getUndefinedContent() {
+	public List<AtomForeignMarkup> getUndefinedContent() {
 		return this.undefinedContent;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((this.label == null) ? 0 : this.label.hashCode());
+		result = prime * result + ((this.scheme == null) ? 0 : this.scheme.hashCode());
+		result = prime * result + ((this.term == null) ? 0 : this.term.hashCode());
+		result = prime * result + ((this.undefinedContent == null) ? 0 : this.undefinedContent.hashCode());
+		return result;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!super.equals(obj)) {
+			return false;
+		}
+		if (!(obj instanceof AtomCategory)) {
+			return false;
+		}
+		AtomCategory other = (AtomCategory) obj;
+		if (this.label == null) {
+			if (other.label != null) {
+				return false;
+			}
+		} else if (!this.label.equals(other.label)) {
+			return false;
+		}
+		if (this.scheme == null) {
+			if (other.scheme != null) {
+				return false;
+			}
+		} else if (!this.scheme.equals(other.scheme)) {
+			return false;
+		}
+		if (this.term == null) {
+			if (other.term != null) {
+				return false;
+			}
+		} else if (!this.term.equals(other.term)) {
+			return false;
+		}
+		if (this.undefinedContent == null) {
+			if (other.undefinedContent != null) {
+				return false;
+			}
+		} else if (!this.undefinedContent.equals(other.undefinedContent)) {
+			return false;
+		}
+		return true;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
-		return "Category {term: " + this.term + ", scheme: " + this.scheme + ", label" + this.label
-				+ ", undefined content: " + (this.undefinedContent != null && this.undefinedContent.size() > 0) + "}";
+		return new StringBuilder().append("AtomCategory [label=").append(this.label).append(", scheme=").append(this.scheme).append(", term=")
+				.append(this.term).append(", undefinedContent=").append(this.undefinedContent).append(", ").append(super.toString()).append("]")
+				.toString();
 	}
+
+	// FIXME: The following code is serialization which needs to be reimplemented
+
+	public void serialize(ContentHandler handler, AttributesImpl attributes) throws SAXException {
+		attributes = initCommonAttributes(attributes);
+		if (this.term != null) {
+			addAttribute(attributes, TERM_QNAME, this.term);
+		}
+		if (this.label != null) {
+			addAttribute(attributes, LABEL_QNAME, this.label);
+		}
+		if (this.scheme != null) {
+			addAttribute(attributes, SCHEME_QNAME, this.scheme.toASCIIString());
+		}
+		handler.startElement(AtomConstants.ATOM_NS_URI, "category", AtomConstants.ATOM_NS_PREFIX + ":category", attributes);
+		for (AtomForeignMarkup temp : this.undefinedContent) {
+			temp.serialize(handler, attributes);
+		}
+		handler.endElement(AtomConstants.ATOM_NS_URI, "category", AtomConstants.ATOM_NS_PREFIX + ":category");
+	}
+
+	private static final QName TERM_QNAME = new QName("term");
+	private static final QName LABEL_QNAME = new QName("label");
+	private static final QName SCHEME_QNAME = new QName("scheme");
 }

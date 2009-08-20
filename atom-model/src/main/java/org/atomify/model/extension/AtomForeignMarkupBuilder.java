@@ -22,7 +22,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.atomify.model.publishing;
+package org.atomify.model.extension;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,35 +32,27 @@ import java.util.Map;
 import javax.xml.namespace.QName;
 
 import org.atomify.model.AtomContractConstraint;
-import org.atomify.model.common.UndefinedElement;
 import org.jbasics.parser.annotations.AnyAttribute;
 import org.jbasics.parser.annotations.AnyElement;
 import org.jbasics.parser.annotations.Content;
 import org.jbasics.parser.annotations.QualifiedName;
 import org.jbasics.pattern.builder.Builder;
 
-public class AtomPubExtensionBuilder implements Builder<AtomPubExtension> {
+public class AtomForeignMarkupBuilder implements Builder<AtomForeignMarkup> {
 	private QName qualifiedName;
 	private Map<QName, String> attributes;
-	private List<Object> childrean;
+	private List<AtomForeignMarkup> childrean;
 
-	public static AtomPubExtensionBuilder newInstance() {
-		return new AtomPubExtensionBuilder();
+	public static AtomForeignMarkupBuilder newInstance() {
+		return new AtomForeignMarkupBuilder();
 	}
 
-	private AtomPubExtensionBuilder() {
+	private AtomForeignMarkupBuilder() {
 		// disallow instantiation
 	}
 
-	public AtomPubExtension build() {
-		if ((this.childrean == null || this.childrean.isEmpty()
-				|| (this.childrean.size() == 1 && this.childrean.get(0) instanceof String)) && (this.attributes == null
-				|| this.attributes.isEmpty())) {
-			return new AtomPubSimpleExtension(this.qualifiedName,
-					this.childrean == null || this.childrean.isEmpty() ? null : this.childrean.get(0).toString());
-		} else {
-			return new AtomPubStructuredExtension(this.qualifiedName, this.attributes, this.childrean);
-		}
+	public AtomForeignMarkup build() {
+		return new AtomForeignElementContent(this.qualifiedName, this.attributes, this.childrean);
 	}
 
 	public void reset() {
@@ -73,9 +65,9 @@ public class AtomPubExtensionBuilder implements Builder<AtomPubExtension> {
 		}
 	}
 
-	public List<Object> getChildrean() {
+	public List<AtomForeignMarkup> getChildrean() {
 		if (this.childrean == null) {
-			this.childrean = new ArrayList<Object>();
+			this.childrean = new ArrayList<AtomForeignMarkup>();
 		}
 		return this.childrean;
 	}
@@ -88,26 +80,27 @@ public class AtomPubExtensionBuilder implements Builder<AtomPubExtension> {
 	}
 
 	@QualifiedName
-	public AtomPubExtensionBuilder setQualifiedName(QName qualifiedName) {
+	public AtomForeignMarkupBuilder setQualifiedName(QName qualifiedName) {
 		this.qualifiedName = qualifiedName;
 		return this;
 	}
 
 	@AnyAttribute
-	public AtomPubExtensionBuilder setAttribute(QName name, String value) {
+	public AtomForeignMarkupBuilder setAttribute(QName name, String value) {
 		getAttributes().put(name, value);
 		return this;
 	}
 
 	@Content
-	public AtomPubExtensionBuilder appendText(String text) {
-		getChildrean().add(AtomContractConstraint.mustNotBeEmptyString(text, "text"));
+	public AtomForeignMarkupBuilder appendText(String text) {
+		getChildrean().add(new AtomForeignTextContent(AtomContractConstraint.mustNotBeEmptyString(text, "text")));
 		return this;
 	}
 
 	@AnyElement
-	public AtomPubExtensionBuilder appendAnyElement(UndefinedElement element) {
+	public AtomForeignMarkupBuilder appendAnyElement(AtomForeignMarkup element) {
 		getChildrean().add(AtomContractConstraint.notNull("element", element));
 		return this;
 	}
+
 }

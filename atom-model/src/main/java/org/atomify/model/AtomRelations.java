@@ -94,4 +94,14 @@ public class AtomRelations {
 	 * A link relation pointing on a resource where the entry can be modified (Defined by RFC 5023 / Atom Publishing Protocol)
 	 */
 	public static final URI EDIT = URI.create("edit");
+
+	/**
+	 * A link relation pointing on a resource where the entry can be modified (Defined by RFC 5023 / Atom Publishing Protocol)
+	 */
+	public static final URI EDIT_MEDIA = URI.create("edit-media");
+	
+	/**
+	 * License relation (Defined by RFC 4946 - Atom License Extension).
+	 */
+	public static final URI LICENSE = URI.create("license");
 }

@@ -27,11 +27,13 @@ package org.atomify.model.syndication;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.atomify.model.AtomCommonBuilder;
+import org.atomify.model.AtomConstants;
+import org.atomify.model.common.AtomCommonBuilder;
+import org.atomify.model.extension.AtomExtension;
+import org.jbasics.parser.annotations.Element;
 import org.jbasics.pattern.builder.Builder;
 
-public class AtomEntryBuilder extends AtomCommonBuilder<AtomEntryBuilder>
-		implements Builder<AtomEntry> {
+public class AtomEntryBuilder extends AtomCommonBuilder<AtomEntryBuilder> implements Builder<AtomEntry> {
 	/**
 	 * <b>Required:</b> atom:id element.
 	 */
@@ -57,8 +59,8 @@ public class AtomEntryBuilder extends AtomCommonBuilder<AtomEntryBuilder>
 	 */
 	private AtomText rights;
 	/**
-	 * <b>Optional:</b> atom:author elements (required if the feed does not have
-	 * an author or the entry document is alone without a source author).
+	 * <b>Optional:</b> atom:author elements (required if the feed does not have an author or the
+	 * entry document is alone without a source author).
 	 */
 	private List<AtomPerson> authors;
 	/**
@@ -82,115 +84,29 @@ public class AtomEntryBuilder extends AtomCommonBuilder<AtomEntryBuilder>
 	 */
 	private AtomSource source;
 
+	private List<AtomExtension> extensions;
+
 	public static AtomEntryBuilder newInstance() {
 		return new AtomEntryBuilder();
 	}
 
+	private AtomEntryBuilder() {
+		// disallow instantiation.
+	}
+
 	public AtomEntry build() {
-		AtomEntry result = new AtomEntry(this.id, this.title, this.updated);
-		attachCommonAttributes(result);
+		AtomEntry result = new AtomEntry(this.id, this.title, this.updated, this.published);
+		result.setAuthors(this.authors);
+		result.setCategories(this.categories);
+		result.setContributors(this.contributors);
 		result.setContent(this.content);
-		if (this.published != null) {
-			result.setPublished(this.published);
-		}
-		if (this.summary != null) {
-			result.setSummary(this.summary);
-		}
-		if (this.rights != null) {
-			result.setRights(this.rights);
-		}
-		if (this.source != null) {
-			// TODO: We need to deeply clone the source in order to make sure
-			// the source can be modified in the entry
-			// also important is to make sure the xml:base resolving works in
-			// the new entry
-			result.setSource(this.source);
-		}
-		if (this.authors != null && this.authors.size() > 0) {
-			result.getAuthors().addAll(this.authors);
-		}
-		if (this.categories != null && this.categories.size() > 0) {
-			result.getCategories().addAll(this.categories);
-		}
-		if (this.contributors != null && this.contributors.size() > 0) {
-			result.getContributors().addAll(this.contributors);
-		}
-		if (this.links != null && this.links.size() > 0) {
-			result.getLinks().addAll(this.links);
-		}
+		result.setExtensions(this.extensions);
+		result.setLinks(this.links);
+		result.setRights(this.rights);
+		result.setSource(this.source);
+		result.setSummary(this.summary);
+		attachCommonAttributes(result);
 		return result;
-	}
-
-	public AtomEntryBuilder setId(AtomId id) {
-		this.id = id;
-		return this;
-	}
-
-	public AtomEntryBuilder setTitle(AtomText title) {
-		this.title = title;
-		return this;
-	}
-
-	public AtomEntryBuilder setUpdated(AtomDate updated) {
-		this.updated = updated;
-		return this;
-	}
-
-	public AtomEntryBuilder setPublished(AtomDate published) {
-		this.published = published;
-		return this;
-	}
-
-	public AtomEntryBuilder setSummary(AtomText summary) {
-		this.summary = summary;
-		return this;
-	}
-
-	public AtomEntryBuilder setRights(AtomText rights) {
-		this.rights = rights;
-		return this;
-	}
-
-	public AtomEntryBuilder setSource(AtomSource source) {
-		this.source = source;
-		return this;
-	}
-
-	public AtomEntryBuilder setContent(AtomContent content) {
-		this.content = content;
-		return this;
-	}
-
-	public AtomEntryBuilder addAuthor(AtomPerson author) {
-		if (this.authors == null) {
-			this.authors = new ArrayList<AtomPerson>();
-		}
-		this.authors.add(author);
-		return this;
-	}
-
-	public AtomEntryBuilder addCategory(AtomCategory category) {
-		if (this.categories == null) {
-			this.categories = new ArrayList<AtomCategory>();
-		}
-		this.categories.add(category);
-		return this;
-	}
-
-	public AtomEntryBuilder addContributor(AtomPerson contributor) {
-		if (this.contributors == null) {
-			this.contributors = new ArrayList<AtomPerson>();
-		}
-		this.contributors.add(contributor);
-		return this;
-	}
-
-	public AtomEntryBuilder addLink(AtomLink link) {
-		if (this.links == null) {
-			this.links = new ArrayList<AtomLink>();
-		}
-		this.links.add(link);
-		return this;
 	}
 
 	@Override
@@ -216,10 +132,93 @@ public class AtomEntryBuilder extends AtomCommonBuilder<AtomEntryBuilder>
 		if (this.links != null) {
 			this.links.clear();
 		}
+		if (this.extensions != null) {
+			this.extensions.clear();
+		}
 	}
 
-	private AtomEntryBuilder() {
-		// To avoid instantiation.
+	@Element(name = "id", namespace = AtomConstants.ATOM_NS_URI, minOccurs = 1, maxOccurs = 1)
+	public AtomEntryBuilder setId(AtomId id) {
+		this.id = id;
+		return this;
+	}
+
+	@Element(name = "title", namespace = AtomConstants.ATOM_NS_URI, minOccurs = 1, maxOccurs = 1)
+	public AtomEntryBuilder setTitle(AtomText title) {
+		this.title = title;
+		return this;
+	}
+
+	@Element(name = "updated", namespace = AtomConstants.ATOM_NS_URI, minOccurs = 1, maxOccurs = 1)
+	public AtomEntryBuilder setUpdated(AtomDate updated) {
+		this.updated = updated;
+		return this;
+	}
+
+	@Element(name = "published", namespace = AtomConstants.ATOM_NS_URI, minOccurs = 0, maxOccurs = 1)
+	public AtomEntryBuilder setPublished(AtomDate published) {
+		this.published = published;
+		return this;
+	}
+
+	@Element(name = "summary", namespace = AtomConstants.ATOM_NS_URI, minOccurs = 0, maxOccurs = 1)
+	public AtomEntryBuilder setSummary(AtomText summary) {
+		this.summary = summary;
+		return this;
+	}
+
+	@Element(name = "rights", namespace = AtomConstants.ATOM_NS_URI, minOccurs = 0, maxOccurs = 1)
+	public AtomEntryBuilder setRights(AtomText rights) {
+		this.rights = rights;
+		return this;
+	}
+
+	@Element(name = "source", namespace = AtomConstants.ATOM_NS_URI, minOccurs = 0, maxOccurs = 1)
+	public AtomEntryBuilder setSource(AtomSource source) {
+		this.source = source;
+		return this;
+	}
+
+	@Element(name = "content", namespace = AtomConstants.ATOM_NS_URI, minOccurs = 0, maxOccurs = 1)
+	public AtomEntryBuilder setContent(AtomContent content) {
+		this.content = content;
+		return this;
+	}
+
+	@Element(name = "author", namespace = AtomConstants.ATOM_NS_URI, minOccurs = 0, maxOccurs = Element.UNBOUND)
+	public AtomEntryBuilder addAuthor(AtomPerson author) {
+		if (this.authors == null) {
+			this.authors = new ArrayList<AtomPerson>();
+		}
+		this.authors.add(author);
+		return this;
+	}
+
+	@Element(name = "category", namespace = AtomConstants.ATOM_NS_URI, minOccurs = 0, maxOccurs = Element.UNBOUND)
+	public AtomEntryBuilder addCategory(AtomCategory category) {
+		if (this.categories == null) {
+			this.categories = new ArrayList<AtomCategory>();
+		}
+		this.categories.add(category);
+		return this;
+	}
+
+	@Element(name = "contributor", namespace = AtomConstants.ATOM_NS_URI, minOccurs = 0, maxOccurs = Element.UNBOUND)
+	public AtomEntryBuilder addContributor(AtomPerson contributor) {
+		if (this.contributors == null) {
+			this.contributors = new ArrayList<AtomPerson>();
+		}
+		this.contributors.add(contributor);
+		return this;
+	}
+
+	@Element(name = "link", namespace = AtomConstants.ATOM_NS_URI, minOccurs = 0, maxOccurs = Element.UNBOUND)
+	public AtomEntryBuilder addLink(AtomLink link) {
+		if (this.links == null) {
+			this.links = new ArrayList<AtomLink>();
+		}
+		this.links.add(link);
+		return this;
 	}
 
 }

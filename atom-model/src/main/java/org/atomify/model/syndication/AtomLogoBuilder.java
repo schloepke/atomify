@@ -25,76 +25,46 @@
 package org.atomify.model.syndication;
 
 import java.net.URI;
-import java.util.List;
 
-import org.atomify.model.AtomConstants;
 import org.atomify.model.common.AtomCommonBuilder;
-import org.atomify.model.extension.AtomExtension;
-import org.jbasics.parser.annotations.Element;
+import org.jbasics.parser.annotations.Content;
 import org.jbasics.pattern.builder.Builder;
 
-public class AtomPersonBuilder extends AtomCommonBuilder<AtomPersonBuilder> implements Builder<AtomPerson> {
+public class AtomLogoBuilder extends AtomCommonBuilder<AtomLogoBuilder> implements Builder<AtomLogo> {
 	/**
-	 * <b>Required:</b> atom:name element.
-	 */
-	private String name;
-	/**
-	 * <b>Optional:</b> atom:uri element.
+	 * <b>Required:</b> IRI content.
 	 * <p>
-	 * TODO: Needs to be an IRI not an URI.
+	 * TODO: must be an IRI reference.
 	 * </p>
 	 */
 	private URI uri;
-	/**
-	 * <b>Optional:</b> atom:email element.
-	 */
-	private String email;
-	/**
-	 * <b>Optional:</b> any number of atom extension elements.
-	 */
-	private List<AtomExtension> extensions;
 
-	public static AtomPersonBuilder newInstance() {
-		return new AtomPersonBuilder();
+	public static AtomLogoBuilder newInstance() {
+		return new AtomLogoBuilder();
 	}
-	
-	private AtomPersonBuilder() {
+
+	private AtomLogoBuilder() {
 		// disallow instantiation
 	}
-	
-	public AtomPerson build() {
-		AtomPerson temp = new AtomPerson(this.name, this.email, this.uri, this.extensions);
-		attachCommonAttributes(temp);
-		return temp;
+
+	public AtomLogo build() {
+		return attachCommonAttributes(new AtomLogo(this.uri));
 	}
 
 	@Override
 	public void reset() {
 		super.reset();
-		this.name = null;
-		this.email = null;
 		this.uri = null;
-		if (this.extensions != null) {
-			this.extensions.clear();
-		}
 	}
 
-	@Element(name = "name", namespace = AtomConstants.ATOM_NS_URI, minOccurs = 1, maxOccurs = 1)
-	public AtomPersonBuilder setName(String name) {
-		this.name = name;
-		return this;
-	}
-	
-	@Element(name = "email", namespace = AtomConstants.ATOM_NS_URI, minOccurs = 0, maxOccurs = 1)
-	public AtomPersonBuilder setEmail(String email) {
-		this.email = email;
-		return this;
-	}
-	
-	@Element(name = "uri", namespace = AtomConstants.ATOM_NS_URI, minOccurs = 1, maxOccurs = 1)
-	public AtomPersonBuilder setUri(URI uri) {
+	public AtomLogoBuilder setUri(URI uri) {
 		this.uri = uri;
 		return this;
+	}
+
+	@Content
+	public AtomLogoBuilder setUri(String uri) {
+		return setUri(uri == null ? null : URI.create(uri));
 	}
 
 }

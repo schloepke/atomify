@@ -28,10 +28,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.atomify.model.AtomCommonBuilder;
 import org.atomify.model.AtomConstants;
 import org.atomify.model.AtomContractConstraint;
 import org.atomify.model.AtomMediaType;
+import org.atomify.model.common.AtomCommonBuilder;
 import org.jbasics.parser.annotations.Content;
 import org.jbasics.pattern.builder.Builder;
 

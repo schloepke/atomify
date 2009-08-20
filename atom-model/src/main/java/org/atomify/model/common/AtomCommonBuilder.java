@@ -22,7 +22,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.atomify.model;
+package org.atomify.model.common;
 
 import java.net.URI;
 import java.util.HashMap;
@@ -31,7 +31,7 @@ import java.util.Map;
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 
-import org.atomify.model.syndication.AtomLanguage;
+import org.atomify.model.AtomContractConstraint;
 import org.jbasics.parser.annotations.AnyAttribute;
 import org.jbasics.parser.annotations.Attribute;
 import org.jbasics.xml.types.XMLAttributeNames;
@@ -84,7 +84,7 @@ public abstract class AtomCommonBuilder<T extends AtomCommonBuilder<?>> {
 		}
 		String tempNS = AtomContractConstraint.notNull("name", name).getNamespaceURI();
 		if (tempNS == null || tempNS.length() == 0) {
-			throw new IllegalArgumentException("Undefined attributee local:* is not allowed");
+			throw new IllegalArgumentException("Undefined attribute local:* is not allowed");
 		} else if (XMLAttributeNames.XML_BASE_QNAME.equals(name)) {
 			setXmlBase(URI.create(value));
 		} else if (XMLAttributeNames.XML_LANG_QNAME.equals(name)) {
@@ -97,11 +97,12 @@ public abstract class AtomCommonBuilder<T extends AtomCommonBuilder<?>> {
 		return (T) this;
 	}
 
-	protected final void attachCommonAttributes(AtomCommonAttributes instance) {
+	protected final <AT extends AtomCommonAttributes> AT attachCommonAttributes(AT instance) {
 		instance.setXmlBase(this.xmlBase);
 		instance.setXmlLang(this.xmlLang);
 		instance.setXmlSpace(this.xmlSpace);
 		instance.setUndefinedAttributes(this.undefinedAttributes);
+		return instance;
 	}
 
 	public void reset() {

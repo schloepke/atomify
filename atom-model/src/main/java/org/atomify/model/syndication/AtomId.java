@@ -26,8 +26,12 @@ package org.atomify.model.syndication;
 
 import java.net.URI;
 
-import org.atomify.model.AtomCommonAttributes;
+import org.atomify.model.AtomConstants;
 import org.atomify.model.AtomContractConstraint;
+import org.atomify.model.common.AtomCommonAttributes;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.AttributesImpl;
 
 /**
  * An atom identifier must be an IRI which is absolute.
@@ -69,6 +73,63 @@ public class AtomId extends AtomCommonAttributes {
 	 */
 	public URI getId() {
 		return this.id;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((this.id == null) ? 0 : this.id.hashCode());
+		return result;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!super.equals(obj)) {
+			return false;
+		}
+		if (!(obj instanceof AtomId)) {
+			return false;
+		}
+		AtomId other = (AtomId) obj;
+		if (this.id == null) {
+			if (other.id != null) {
+				return false;
+			}
+		} else if (!this.id.equals(other.id)) {
+			return false;
+		}
+		return true;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return new StringBuilder().append("AtomId [id=").append(this.id).append(", ").append(super.toString()).append("]").toString();
+	}
+
+	// FIXME: Write a much better way of serialization
+
+	public void serialize(ContentHandler handler, AttributesImpl attributes) throws SAXException {
+		attributes = initCommonAttributes(attributes);
+		handler.startElement(AtomConstants.ATOM_NS_URI, "id", AtomConstants.ATOM_NS_PREFIX + ":id", attributes);
+		char[] data = this.id.toASCIIString().toCharArray();
+		handler.characters(data, 0, data.length);
+		handler.endElement(AtomConstants.ATOM_NS_URI, "id", AtomConstants.ATOM_NS_PREFIX + ":id");
 	}
 
 }

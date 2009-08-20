@@ -24,8 +24,14 @@
  */
 package org.atomify.model.syndication;
 
-import org.atomify.model.AtomCommonAttributes;
+import javax.xml.namespace.QName;
+
+import org.atomify.model.AtomConstants;
 import org.atomify.model.AtomMediaType;
+import org.atomify.model.common.AtomCommonAttributes;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.AttributesImpl;
 
 /**
  * Listenbeschreibung
@@ -36,6 +42,10 @@ import org.atomify.model.AtomMediaType;
  * @author stephan
  */
 public class AtomContent extends AtomCommonAttributes {
+
+	public static AtomContentBuilder newBuilder() {
+		return AtomContentBuilder.newInstance();
+	}
 
 	public boolean isHtml() {
 		return false;
@@ -51,6 +61,47 @@ public class AtomContent extends AtomCommonAttributes {
 
 	public boolean isMediaType(final AtomMediaType type) {
 		return false;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		return result;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!super.equals(obj)) {
+			return false;
+		}
+		if (!(obj instanceof AtomContent)) {
+			return false;
+		}
+		return true;
+	}
+
+	// FIXME: Write a much better way of serialization
+
+	public void serialize(ContentHandler handler, AttributesImpl attributes) throws SAXException {
+		attributes = initCommonAttributes(attributes);
+		String namespace = AtomConstants.ATOM_NS_URI;
+		String local = "content";
+		String qName = AtomConstants.ATOM_NS_PREFIX + ":" + local;
+		handler.startElement(namespace, local, qName, attributes);
+		// Here we need to serialize the content
+		handler.endElement(namespace, local, qName);
 	}
 
 }

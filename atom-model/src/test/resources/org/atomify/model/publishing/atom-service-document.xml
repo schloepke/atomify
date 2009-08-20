@@ -51,12 +51,10 @@
 			</app:categories>
 			<access-list xmlns="http://schloepke.de/atom/access">
 				<allowed>
-					<name>Stephan</name>
-					<name>Doro</name>
-					<name>Dani</name>
-					<name>Katja</name>
-					<name>Uschi</name>
-					<name>Karl-Heinz</name>
+					<name>Jon Doe</name>
+					<name>Jane Doe</name>
+					<name>Mom Doe</name>
+					<name>Dad Doe</name>
 				</allowed>
 				<dissallow>
 					<any />

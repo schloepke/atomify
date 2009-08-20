@@ -25,13 +25,20 @@
 package org.atomify.model.syndication;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-import org.atomify.model.AtomCommonAttributes;
+import javax.xml.namespace.QName;
+
 import org.atomify.model.AtomConstants;
 import org.atomify.model.AtomContractConstraint;
 import org.atomify.model.AtomDocument;
 import org.atomify.model.AtomMediaType;
+import org.atomify.model.common.AtomCommonAttributes;
+import org.atomify.model.extension.AtomExtension;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.AttributesImpl;
 
 /**
  * Represents an atom entry element.
@@ -42,19 +49,19 @@ public class AtomEntry extends AtomCommonAttributes implements AtomDocument {
 	/**
 	 * <b>Required:</b> atom:id element.
 	 */
-	private AtomId id;
+	private final AtomId id;
 	/**
 	 * <b>Required:</b> atom:title element.
 	 */
-	private AtomText title;
+	private final AtomText title;
 	/**
 	 * <b>Required:</b> atom:updated element.
 	 */
-	private AtomDate updated;
+	private final AtomDate updated;
 	/**
 	 * <b>Optional:</b> atom:published element.
 	 */
-	private AtomDate published;
+	private final AtomDate published;
 	/**
 	 * <b>Optional:</b> atom:summary element.
 	 */
@@ -64,22 +71,22 @@ public class AtomEntry extends AtomCommonAttributes implements AtomDocument {
 	 */
 	private AtomText rights;
 	/**
-	 * <b>Optional:</b> atom:author elements (required if the feed does not have
-	 * an author or the entry document is alone without a source author).
+	 * <b>Optional:</b> atom:author elements (required if the feed does not have an author or the
+	 * entry document is alone without a source author).
 	 */
-	private List<AtomPerson> authors;
+	private List<AtomPerson> authors = Collections.emptyList();
 	/**
 	 * <b>Optional:</b> atom:category elements.
 	 */
-	private List<AtomCategory> categories;
+	private List<AtomCategory> categories = Collections.emptyList();
 	/**
 	 * <b>Optional:</b> atom:contributor elements.
 	 */
-	private List<AtomPerson> contributors;
+	private List<AtomPerson> contributors = Collections.emptyList();
 	/**
 	 * <b>Optional:</b> atom:link elements.
 	 */
-	private List<AtomLink> links;
+	private List<AtomLink> links = Collections.emptyList();
 	/**
 	 * <b>Optional/Required depending on other states:</b> atom:content element.
 	 */
@@ -93,6 +100,10 @@ public class AtomEntry extends AtomCommonAttributes implements AtomDocument {
 	 */
 	private List<AtomExtension> extensions;
 
+	public static AtomEntryBuilder newBuilder() {
+		return AtomEntryBuilder.newInstance();
+	}
+
 	public AtomMediaType getMediaType() {
 		return AtomConstants.ATOM_ENTRY_MEDIA_TYPE;
 	}
@@ -100,18 +111,15 @@ public class AtomEntry extends AtomCommonAttributes implements AtomDocument {
 	/**
 	 * Creates an atom entry for the given id, title and the updated date.
 	 * 
-	 * @param id
-	 *            The id of the entry (must not be null).
-	 * @param title
-	 *            The title of the entry (must not be null).
-	 * @param updated
-	 *            The updated date (must not be null).
+	 * @param id The id of the entry (must not be null).
+	 * @param title The title of the entry (must not be null).
+	 * @param updated The updated date (must not be null).
 	 */
-	public AtomEntry(final AtomId id, final AtomText title,
-			final AtomDate updated) {
-		setId(id);
-		setTitle(title);
-		setUpdated(updated);
+	public AtomEntry(final AtomId id, final AtomText title, final AtomDate updated, final AtomDate published) {
+		this.id = AtomContractConstraint.notNull("id", id);
+		this.title = AtomContractConstraint.notNull("title", title);
+		this.updated = AtomContractConstraint.notNull("updated", updated);
+		this.published = published;
 	}
 
 	/**
@@ -124,32 +132,12 @@ public class AtomEntry extends AtomCommonAttributes implements AtomDocument {
 	}
 
 	/**
-	 * Set the ID of the atom entry.
-	 * 
-	 * @param id
-	 *            The ID of the entry (must not be null).
-	 */
-	public void setId(final AtomId id) {
-		this.id = AtomContractConstraint.notNull("id", id);
-	}
-
-	/**
 	 * Returns the title of this entry.
 	 * 
 	 * @return The title of the entry.
 	 */
 	public AtomText getTitle() {
 		return this.title;
-	}
-
-	/**
-	 * Set the title of the entry (must not be null).
-	 * 
-	 * @param title
-	 *            The title to set (must not be null).
-	 */
-	public void setTitle(final AtomText title) {
-		this.title = AtomContractConstraint.notNull("title", title);
 	}
 
 	/**
@@ -162,32 +150,12 @@ public class AtomEntry extends AtomCommonAttributes implements AtomDocument {
 	}
 
 	/**
-	 * Sets the updated date of the entry (must not be null).
-	 * 
-	 * @param updated
-	 *            The updated date of the entry (must not be null).
-	 */
-	public void setUpdated(final AtomDate updated) {
-		this.updated = AtomContractConstraint.notNull("updated", updated);
-	}
-
-	/**
 	 * Returns the published date.
 	 * 
 	 * @return The published date.
 	 */
 	public AtomDate getPublished() {
 		return this.published;
-	}
-
-	/**
-	 * Sets the published date.
-	 * 
-	 * @param published
-	 *            The published date to set
-	 */
-	public void setPublished(final AtomDate published) {
-		this.published = published;
 	}
 
 	/**
@@ -200,16 +168,6 @@ public class AtomEntry extends AtomCommonAttributes implements AtomDocument {
 	}
 
 	/**
-	 * Sets the summary of the entry.
-	 * 
-	 * @param summary
-	 *            The summary of the entry.
-	 */
-	public void setSummary(final AtomText summary) {
-		this.summary = summary;
-	}
-
-	/**
 	 * Returns the rights of this entry.
 	 * 
 	 * @return The rights of this entry.
@@ -219,24 +177,11 @@ public class AtomEntry extends AtomCommonAttributes implements AtomDocument {
 	}
 
 	/**
-	 * Set the rights of this entry.
-	 * 
-	 * @param rights
-	 *            The rights of this entry.
-	 */
-	public void setRights(final AtomText rights) {
-		this.rights = rights;
-	}
-
-	/**
 	 * Returns the lazy initialized list of authors.
 	 * 
 	 * @return The lazy initialized list of authors.
 	 */
 	public List<AtomPerson> getAuthors() {
-		if (this.authors == null) {
-			this.authors = new ArrayList<AtomPerson>();
-		}
 		return this.authors;
 	}
 
@@ -246,9 +191,6 @@ public class AtomEntry extends AtomCommonAttributes implements AtomDocument {
 	 * @return The lazy initialized categories.
 	 */
 	public List<AtomCategory> getCategories() {
-		if (this.categories == null) {
-			this.categories = new ArrayList<AtomCategory>();
-		}
 		return this.categories;
 	}
 
@@ -258,9 +200,6 @@ public class AtomEntry extends AtomCommonAttributes implements AtomDocument {
 	 * @return The lazy initialized contributors.
 	 */
 	public List<AtomPerson> getContributors() {
-		if (this.contributors == null) {
-			this.contributors = new ArrayList<AtomPerson>();
-		}
 		return this.contributors;
 	}
 
@@ -270,9 +209,6 @@ public class AtomEntry extends AtomCommonAttributes implements AtomDocument {
 	 * @return The lazy initialized list of links.
 	 */
 	public List<AtomLink> getLinks() {
-		if (this.links == null) {
-			this.links = new ArrayList<AtomLink>();
-		}
 		return this.links;
 	}
 
@@ -286,16 +222,6 @@ public class AtomEntry extends AtomCommonAttributes implements AtomDocument {
 	}
 
 	/**
-	 * Sets the content of the entry.
-	 * 
-	 * @param content
-	 *            The content of the entry.
-	 */
-	public void setContent(final AtomContent content) {
-		this.content = content;
-	}
-
-	/**
 	 * Returns the source of the entry.
 	 * 
 	 * @return The source of the entry.
@@ -305,12 +231,247 @@ public class AtomEntry extends AtomCommonAttributes implements AtomDocument {
 	}
 
 	/**
+	 * Returns the lazy initialized collection of extensions.
+	 * 
+	 * @return the extensions
+	 */
+	public List<AtomExtension> getExtensions() {
+		return this.extensions;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((this.authors == null) ? 0 : this.authors.hashCode());
+		result = prime * result + ((this.categories == null) ? 0 : this.categories.hashCode());
+		result = prime * result + ((this.content == null) ? 0 : this.content.hashCode());
+		result = prime * result + ((this.contributors == null) ? 0 : this.contributors.hashCode());
+		result = prime * result + ((this.extensions == null) ? 0 : this.extensions.hashCode());
+		result = prime * result + ((this.id == null) ? 0 : this.id.hashCode());
+		result = prime * result + ((this.links == null) ? 0 : this.links.hashCode());
+		result = prime * result + ((this.published == null) ? 0 : this.published.hashCode());
+		result = prime * result + ((this.rights == null) ? 0 : this.rights.hashCode());
+		result = prime * result + ((this.source == null) ? 0 : this.source.hashCode());
+		result = prime * result + ((this.summary == null) ? 0 : this.summary.hashCode());
+		result = prime * result + ((this.title == null) ? 0 : this.title.hashCode());
+		result = prime * result + ((this.updated == null) ? 0 : this.updated.hashCode());
+		return result;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!super.equals(obj)) {
+			return false;
+		}
+		if (!(obj instanceof AtomEntry)) {
+			return false;
+		}
+		AtomEntry other = (AtomEntry) obj;
+		if (this.authors == null) {
+			if (other.authors != null) {
+				return false;
+			}
+		} else if (!this.authors.equals(other.authors)) {
+			return false;
+		}
+		if (this.categories == null) {
+			if (other.categories != null) {
+				return false;
+			}
+		} else if (!this.categories.equals(other.categories)) {
+			return false;
+		}
+		if (this.content == null) {
+			if (other.content != null) {
+				return false;
+			}
+		} else if (!this.content.equals(other.content)) {
+			return false;
+		}
+		if (this.contributors == null) {
+			if (other.contributors != null) {
+				return false;
+			}
+		} else if (!this.contributors.equals(other.contributors)) {
+			return false;
+		}
+		if (this.extensions == null) {
+			if (other.extensions != null) {
+				return false;
+			}
+		} else if (!this.extensions.equals(other.extensions)) {
+			return false;
+		}
+		if (this.id == null) {
+			if (other.id != null) {
+				return false;
+			}
+		} else if (!this.id.equals(other.id)) {
+			return false;
+		}
+		if (this.links == null) {
+			if (other.links != null) {
+				return false;
+			}
+		} else if (!this.links.equals(other.links)) {
+			return false;
+		}
+		if (this.published == null) {
+			if (other.published != null) {
+				return false;
+			}
+		} else if (!this.published.equals(other.published)) {
+			return false;
+		}
+		if (this.rights == null) {
+			if (other.rights != null) {
+				return false;
+			}
+		} else if (!this.rights.equals(other.rights)) {
+			return false;
+		}
+		if (this.source == null) {
+			if (other.source != null) {
+				return false;
+			}
+		} else if (!this.source.equals(other.source)) {
+			return false;
+		}
+		if (this.summary == null) {
+			if (other.summary != null) {
+				return false;
+			}
+		} else if (!this.summary.equals(other.summary)) {
+			return false;
+		}
+		if (this.title == null) {
+			if (other.title != null) {
+				return false;
+			}
+		} else if (!this.title.equals(other.title)) {
+			return false;
+		}
+		if (this.updated == null) {
+			if (other.updated != null) {
+				return false;
+			}
+		} else if (!this.updated.equals(other.updated)) {
+			return false;
+		}
+		return true;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("AtomEntry [authors=").append(this.authors).append(", categories=").append(this.categories).append(", content=").append(
+				this.content).append(", contributors=").append(this.contributors).append(", extensions=").append(this.extensions).append(", id=")
+				.append(this.id).append(", links=").append(this.links).append(", published=").append(this.published).append(", rights=").append(
+						this.rights).append(", source=").append(this.source).append(", summary=").append(this.summary).append(", title=").append(
+						this.title).append(", updated=").append(this.updated).append("]");
+		return builder.toString();
+	}
+
+	// --- FIXME: From here all is serialization. We Still need to think about a good way to do so.
+
+	public void serialize(ContentHandler handler, AttributesImpl attributes) throws SAXException {
+		handler.startPrefixMapping(AtomConstants.ATOM_NS_PREFIX, AtomConstants.ATOM_NS_URI);
+		attributes = initCommonAttributes(attributes);
+		handler.startElement(AtomConstants.ATOM_NS_URI, "entry", AtomConstants.ATOM_NS_PREFIX + ":entry", attributes);
+		this.id.serialize(handler, attributes);
+		this.title.serialize(TITLE_QNAME, handler, attributes);
+		this.updated.serialize(UPDATED_QNAME, handler, attributes);
+		if (this.published != null) {
+			this.published.serialize(PUBLISHED_QNAME, handler, attributes);
+		}
+		for (AtomLink link : this.links) {
+			link.serialize(handler, attributes);
+		}
+		for (AtomPerson author : this.authors) {
+			author.serialize(AUTHOR_QNAME, handler, attributes);
+		}
+		for (AtomPerson contributor : this.contributors) {
+			contributor.serialize(CONTRIBUTOR_QNAME, handler, attributes);
+		}
+		for (AtomCategory category : this.categories) {
+			category.serialize(handler, attributes);
+		}
+		if (this.rights != null) {
+			this.rights.serialize(RIGHTS_QNAME, handler, attributes);
+		}
+		if (this.source != null) {
+			this.source.serialize(handler, attributes);
+		}
+		if (this.summary != null) {
+			this.summary.serialize(SUMMARY_QNAME, handler, attributes);
+		}
+		this.content.serialize(handler, attributes);
+		for (AtomExtension extension : this.extensions) {
+			extension.serialize(handler, attributes);
+		}
+		handler.endElement(AtomConstants.ATOM_NS_URI, "entry", AtomConstants.ATOM_NS_PREFIX + ":entry");
+		handler.endPrefixMapping(AtomConstants.ATOM_NS_PREFIX);
+	}
+
+	private static final QName TITLE_QNAME = new QName(AtomConstants.ATOM_NS_URI, "title", AtomConstants.ATOM_NS_PREFIX);
+	private static final QName AUTHOR_QNAME = new QName(AtomConstants.ATOM_NS_URI, "author", AtomConstants.ATOM_NS_PREFIX);
+	private static final QName CONTRIBUTOR_QNAME = new QName(AtomConstants.ATOM_NS_URI, "contributor", AtomConstants.ATOM_NS_PREFIX);
+	private static final QName SUMMARY_QNAME = new QName(AtomConstants.ATOM_NS_URI, "summary", AtomConstants.ATOM_NS_PREFIX);
+	private static final QName UPDATED_QNAME = new QName(AtomConstants.ATOM_NS_URI, "updated", AtomConstants.ATOM_NS_PREFIX);
+	private static final QName PUBLISHED_QNAME = new QName(AtomConstants.ATOM_NS_URI, "published", AtomConstants.ATOM_NS_PREFIX);
+	private static final QName RIGHTS_QNAME = new QName(AtomConstants.ATOM_NS_URI, "rights", AtomConstants.ATOM_NS_PREFIX);
+
+	// protected area for the builder
+
+	/**
+	 * Sets the summary of the entry.
+	 * 
+	 * @param summary The summary of the entry.
+	 */
+	protected void setSummary(final AtomText summary) {
+		this.summary = summary;
+	}
+
+	/**
+	 * Set the rights of this entry.
+	 * 
+	 * @param rights The rights of this entry.
+	 */
+	protected void setRights(final AtomText rights) {
+		this.rights = rights;
+	}
+
+	/**
+	 * Sets the content of the entry.
+	 * 
+	 * @param content The content of the entry.
+	 */
+	protected void setContent(final AtomContent content) {
+		this.content = content;
+	}
+
+	/**
 	 * Sets the source of the atom entry.
 	 * 
-	 * @param source
-	 *            The source of the entry.
+	 * @param source The source of the entry.
 	 */
-	public void setSource(final AtomSource source) {
+	protected void setSource(final AtomSource source) {
 		this.source = source;
 	}
 
@@ -319,20 +480,63 @@ public class AtomEntry extends AtomCommonAttributes implements AtomDocument {
 	 * 
 	 * @return the extensions
 	 */
-	public List<AtomExtension> getExtensions() {
-		if (this.extensions == null) {
-			this.extensions = new ArrayList<AtomExtension>();
+	protected void setExtensions(List<AtomExtension> extensions) {
+		if (extensions == null || extensions.isEmpty()) {
+			this.extensions = Collections.emptyList();
+		} else {
+			this.extensions = Collections.unmodifiableList(new ArrayList<AtomExtension>(extensions));
 		}
-		return this.extensions;
 	}
 
 	/**
-	 * Returns a new builder to build an entry.
+	 * Returns the lazy initialized list of links.
 	 * 
-	 * @return The entry builder to build the entry.
+	 * @return The lazy initialized list of links.
 	 */
-	public static AtomEntryBuilder newBuilder() {
-		return AtomEntryBuilder.newInstance();
+	protected void setLinks(List<AtomLink> links) {
+		if (links == null || links.isEmpty()) {
+			this.links = Collections.emptyList();
+		} else {
+			this.links = Collections.unmodifiableList(new ArrayList<AtomLink>(links));
+		}
 	}
 
+	/**
+	 * Returns the lazy initialized contributors.
+	 * 
+	 * @return The lazy initialized contributors.
+	 */
+	protected void setContributors(List<AtomPerson> contributors) {
+		if (contributors == null || contributors.isEmpty()) {
+			this.contributors = Collections.emptyList();
+		} else {
+			this.contributors = Collections.unmodifiableList(new ArrayList<AtomPerson>(contributors));
+		}
+	}
+
+	/**
+	 * Returns the lazy initialized categories.
+	 * 
+	 * @return The lazy initialized categories.
+	 */
+	protected void setCategories(List<AtomCategory> categories) {
+		if (categories == null || categories.isEmpty()) {
+			this.categories = Collections.emptyList();
+		} else {
+			this.categories = Collections.unmodifiableList(new ArrayList<AtomCategory>(categories));
+		}
+	}
+
+	/**
+	 * Returns the lazy initialized list of authors.
+	 * 
+	 * @return The lazy initialized list of authors.
+	 */
+	protected void setAuthors(List<AtomPerson> authors) {
+		if (authors == null || authors.isEmpty()) {
+			this.authors = Collections.emptyList();
+		} else {
+			this.authors = Collections.unmodifiableList(new ArrayList<AtomPerson>(authors));
+		}
+	}
 }

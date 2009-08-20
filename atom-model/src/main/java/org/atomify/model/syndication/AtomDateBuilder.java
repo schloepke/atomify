@@ -24,7 +24,7 @@
  */
 package org.atomify.model.syndication;
 
-import org.atomify.model.AtomCommonBuilder;
+import org.atomify.model.common.AtomCommonBuilder;
 import org.jbasics.parser.annotations.Content;
 import org.jbasics.pattern.builder.Builder;
 

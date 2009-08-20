@@ -22,33 +22,53 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.atomify.model.syndication;
+package org.atomify.model.extension;
 
-import org.atomify.model.AtomConstants;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import javax.xml.namespace.QName;
+
+import org.atomify.model.AtomContractConstraint;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
-/**
- * Atom source is an element holding all information a feed holds but the entries.
- * <p>
- * The feed and source element in atom are in most cases equal. The difference is only in the
- * requirement of certain elements to be present and that the source has no entries compared to the
- * feed. Since the source would be embedded into an entry given the information of the feed it comes
- * from it is sufficient to think that a feed is a source as well. Thats why this implementation
- * derived the feed from the source element.
- * </p>
- * 
- * @author stephan
- */
-public class AtomSource extends AbstractAtomSource {
+public class AtomForeignTextContent implements AtomForeignMarkup {
+	private final String text;
 
-	public static AtomSourceBuilder newBuilder() {
-		return AtomSourceBuilder.newInstance();
+	public AtomForeignTextContent(String text) {
+		this.text = AtomContractConstraint.notNull("text", text);
 	}
 
-	public AtomSource(AtomId id, AtomText title, AtomDate updated) {
-		super(id, title, updated);
+	public Map<QName, String> getAttributes() {
+		return Collections.emptyMap();
+	}
+
+	public List<AtomForeignMarkup> getComplexContent() {
+		return Collections.emptyList();
+	}
+
+	public QName getQualifiedName() {
+		return null;
+	}
+
+	public boolean isSimpleContent() {
+		return true;
+	}
+
+	public String getSimpleContent() {
+		return this.text;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return new StringBuilder("AtomForeignTextContent [text=").append(this.text).append("]").toString();
 	}
 
 	/*
@@ -57,7 +77,7 @@ public class AtomSource extends AbstractAtomSource {
 	 */
 	@Override
 	public int hashCode() {
-		return 31 * super.hashCode();
+		return this.text.hashCode();
 	}
 
 	/*
@@ -68,29 +88,17 @@ public class AtomSource extends AbstractAtomSource {
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
-		}
-		if (!super.equals(obj) || !(obj instanceof AtomSource)) {
+		} else if (obj == null || !(obj instanceof AtomForeignTextContent)) {
 			return false;
 		}
-		return true;
+		return this.text.equals(((AtomForeignTextContent) obj).text);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		return new StringBuilder().append("AtomSource [").append(super.toString()).append("]").toString();
-	}
+	// --- FIXME: From here all is serialization. We Still need to think about a good way to do so.
 
 	public void serialize(ContentHandler handler, AttributesImpl attributes) throws SAXException {
-		handler.startPrefixMapping(AtomConstants.ATOM_NS_PREFIX, AtomConstants.ATOM_NS_URI);
-		attributes = initCommonAttributes(attributes);
-		handler.startElement(AtomConstants.ATOM_NS_URI, "source", AtomConstants.ATOM_NS_PREFIX + ":source", attributes);
-		super.serializeContent(handler, attributes);
-		handler.endElement(AtomConstants.ATOM_NS_URI, "source", AtomConstants.ATOM_NS_PREFIX + ":source");
-		handler.endPrefixMapping(AtomConstants.ATOM_NS_PREFIX);
+		char[] temp = this.text.toCharArray();
+		handler.characters(temp, 0, temp.length);
 	}
 
 }

@@ -1,0 +1,37 @@
+Atom Model:
+- xml:base needs to be derived somehow so that all elements are capable of resolving relative URIs
+	When the atom document is parsed we need to make sure that any set xml:base from the parent can be derived. This is required in order to be able to actually resolve relative URIs. It is questionable how to achive this goal when the parser is more or less generic.
+
+- Need to write better serializer
+	The serializer is currently hand coded on the type. This is not very effektiv and also not very good in order to be extended by third party elements. Especially when used in conjunction with generic constructs like the AtomTextConstruct. In this case the name of the element is defined by the parent rather than directly by the element.
+
+- xml:space handling needs to be thought about
+	xml:space has a defined meaning in an xml document. It is quite useful to trim the simple content of an element in case that xml:space is set to default rather than preserved. This is a concept which maybe is unexpected by an implementor though.
+
+- Currently the extension handling does not have any registry
+	Extensions needs to be registered at the level where they can appear. Like a collection extension or a service extension. We also need to consider the RFC for feature discovery. At the moment the extensions are directly defined by the atom model and it isn't possible to add any sort of extra extension.
+
+- Handling of the content type
+	In the content type we can easily support plain text since it is just plain text. Also html content should be easily handled since it is considered plain text. Any type of binary content can be put into a binary element without problem. However the xml content should be parsable by JAXB for now. To achive this we need to somehow attach a content handler for a certain media type or a media type range as well as maybe for a known xml root node.
+	In the final result not only xml should be plugable but any media type. The only difference must be that the media type xml requires a content handler to be registered and the other media types require a stream input. We could just say that plain text types only use the characters event of the content handler. This however does not work with binary since here we need to decode the binary data into a binary stream.
+
+- Alot more tests
+
+- Rethink the model structure and find a way to generalize the builder better
+	Some elements have the same structure. For instance AtomID, AtomLogo and AtomIcon are all AtomUriConstructs. Say they have a QName as element which can vary and holds the common attributes. Finally the simple content is always of type xs:uri. So it would be quite good to have only one data type for those rather than multiple extra elements. If we generlize these elements it is harder for the user to understand why an AtomID is of type AtomURI. Also future extensions to only one of these elements would result in requiring a refactoring on that side which could render the types incompatible to older versions.
+
+- Derived classes and the newBuilder() construct is somehow a problem due to Java's static binding when the derived class needs a newBuilder method with another type
+	This problem can currently be found in the AtomSource and AtomFeed elements since they both produce a Builder derived from AbstractAtomSourceBuilder where the result of the build method is not the same.
+
+- Accept Media Range parser required
+	We need to do the parsing of the accept media range for the AtomPubAccept element
+
+Atom Service:
+ Anything needs to be implemented and designed. Currently there are no open tasks known.
+
+Atom Client:
+ Anything needs to be implemented and designed. Currently there are no open tasks known.
+
+Atom JAX-RS bindings:
+- JAX-RS serializer needs to be developed and registered with the JAX-RS framework
+- JAX-RS deserializer needs to be implemented and registered with the JAX-RS framework

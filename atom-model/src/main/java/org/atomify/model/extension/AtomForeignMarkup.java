@@ -22,46 +22,32 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.atomify.model.syndication;
+package org.atomify.model.extension;
+
+import java.util.List;
+import java.util.Map;
 
 import javax.xml.namespace.QName;
 
-import org.atomify.model.AtomConstants;
-import org.atomify.model.AtomContractConstraint;
+import org.jbasics.parser.annotations.ElementBuilder;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.AttributesImpl;
 
-/**
- * Base class for the atom extension elements.
- * <p>
- * The restriction of an atom:extension is that it does not contain elements of the atom own name space.
- * </p>
- * 
- * @author Stephan Schloepke
- */
-public abstract class AtomExtension {
-	/**
-	 * <b>Required:</b> The fully qualified name of the extension element. Must not be the atom name space.
-	 */
-	private final QName extensionName;
+@ElementBuilder(AtomForeignMarkupBuilder.class)
+public interface AtomForeignMarkup {
 
-	/**
-	 * Creates an extension with given name.
-	 * 
-	 * @param extensionName The extension name.
-	 */
-	public AtomExtension(final QName extensionName) {
-		this.extensionName = AtomContractConstraint.notNull("extensionName", extensionName);
-		if (AtomConstants.ATOM_NS_URI.equals(this.extensionName.getNamespaceURI())) {
-			throw new IllegalArgumentException("Extention QName cannot be of the atom name space " + extensionName);
-		}
-	}
+	QName getQualifiedName();
 
-	/**
-	 * Returns the fully qualified name of the extension.
-	 * 
-	 * @return The fully qualified name.
-	 */
-	public QName getExtensionName() {
-		return this.extensionName;
-	}
+	boolean isSimpleContent();
+
+	String getSimpleContent();
+
+	Map<QName, String> getAttributes();
+
+	List<? extends AtomForeignMarkup> getComplexContent();
+
+	// FIXME: We need to find a better way of serialization
+	void serialize(ContentHandler handler, AttributesImpl attributes) throws SAXException;
 
 }

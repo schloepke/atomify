@@ -29,7 +29,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.atomify.model.AtomContractConstraint;
+import org.atomify.model.AtomMediaType;
 import org.atomify.model.common.AtomCommonBuilder;
+import org.atomify.model.common.AtomLanguage;
 import org.atomify.model.extension.AtomForeignMarkup;
 import org.atomify.model.extension.AtomForeignTextContent;
 import org.jbasics.parser.annotations.AnyElement;
@@ -37,87 +39,89 @@ import org.jbasics.parser.annotations.Attribute;
 import org.jbasics.parser.annotations.Content;
 import org.jbasics.pattern.builder.Builder;
 
-public class AtomCategoryBuilder extends AtomCommonBuilder<AtomCategoryBuilder> implements Builder<AtomCategory> {
-	/**
-	 * <b>Required:</b> term attribute.
-	 */
-	private String term;
-	/**
-	 * <b>Optional:</b> scheme attribute.
-	 * <p>
-	 * TODO: must be an IRI reference instead of an URI reference.
-	 * </p>
-	 */
-	private URI scheme;
-	/**
-	 * <b>Optional:</b> label attribute.
-	 */
-	private String label;
-	/**
-	 * <b>Optional:</b> mixed content (text|element). Any direct element must not be of the atom
-	 * name space.
-	 */
+public class AtomLinkBuilder extends AtomCommonBuilder<AtomLinkBuilder> implements Builder<AtomLink> {
+	private URI href; // REQUIRED
+	private URI rel; // AtomNCName or AtomURI
+	private AtomMediaType type;
+	private AtomLanguage hreflang;
+	private String title;
+	private Integer length;
 	private List<AtomForeignMarkup> undefinedContent;
 
-	public static AtomCategoryBuilder newInstance() {
-		return new AtomCategoryBuilder();
+	public static AtomLinkBuilder newInstance() {
+		return new AtomLinkBuilder();
 	}
 
-	private AtomCategoryBuilder() {
-		// Avoid instantiation
+	private AtomLinkBuilder() {
+		// disallow instantiation
 	}
 
-	public AtomCategory build() {
-		AtomCategory result = new AtomCategory(this.term, this.scheme, this.label, this.undefinedContent);
-		attachCommonAttributes(result);
-		return result;
+	public AtomLink build() {
+		return attachCommonAttributes(new AtomLink(this.title, this.href, this.rel, this.type, this.hreflang,
+				this.length, this.undefinedContent));
 	}
 
+	@Override
 	public void reset() {
 		super.reset();
-		this.label = null;
-		this.scheme = null;
-		this.term = null;
+		this.href = null;
+		this.rel = null;
+		this.type = null;
+		this.hreflang = null;
+		this.title = null;
+		this.length = null;
 		if (this.undefinedContent != null) {
 			this.undefinedContent.clear();
 		}
 	}
 
-	@Attribute(name = "term", namespace = "", required = true)
-	public AtomCategoryBuilder setTerm(String term) {
-		this.term = term;
+	@Attribute(name = "href", required = true)
+	public void setHref(URI href) {
+		this.href = href;
+	}
+
+	@Attribute(name = "rel")
+	public AtomLinkBuilder setRel(URI rel) {
+		this.rel = rel;
 		return this;
 	}
 
-	@Attribute(name = "scheme", namespace = "", required = false)
-	public AtomCategoryBuilder setScheme(URI scheme) {
-		this.scheme = scheme;
+// @Attribute(name = "type")
+	public AtomLinkBuilder setType(AtomMediaType type) {
+		this.type = type;
 		return this;
 	}
 
-	@Attribute(name = "label", namespace = "", required = false)
-	public AtomCategoryBuilder setLabel(String label) {
-		this.label = label;
+	@Attribute(name = "hreflang")
+	public AtomLinkBuilder setHreflang(AtomLanguage hreflang) {
+		this.hreflang = hreflang;
+		return this;
+	}
+
+	@Attribute(name = "title")
+	public AtomLinkBuilder setTitle(String title) {
+		this.title = title;
+		return this;
+	}
+
+	@Attribute(name = "length")
+	public AtomLinkBuilder setLength(Integer length) {
+		this.length = length;
 		return this;
 	}
 
 	@Content
-	public AtomCategoryBuilder appendUndefinedText(String text) {
-		getUndefinedContent().add(new AtomForeignTextContent(AtomContractConstraint.mustNotBeEmptyString(text, "text")));
-		return this;
+	public AtomLinkBuilder appendUndefinedContent(String text) {
+		return appendUndefinedContent(new AtomForeignTextContent(AtomContractConstraint.notNull("text", text)));
 	}
 
 	@AnyElement
-	public AtomCategoryBuilder appendUndefinedElement(AtomForeignMarkup element) {
-		getUndefinedContent().add(AtomContractConstraint.notNull("element", element));
-		return this;
-	}
-
-	public List<AtomForeignMarkup> getUndefinedContent() {
+	public AtomLinkBuilder appendUndefinedContent(AtomForeignMarkup undefinedContent) {
 		if (this.undefinedContent == null) {
 			this.undefinedContent = new ArrayList<AtomForeignMarkup>();
 		}
-		return this.undefinedContent;
+		this.undefinedContent.add(AtomContractConstraint.notNull("undefinedContent", undefinedContent));
+		return this;
 	}
 
 }

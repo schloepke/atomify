@@ -24,15 +24,18 @@
  */
 package org.atomify.model.syndication;
 
-import org.atomify.model.AtomCommonBuilder;
+import org.atomify.model.common.AtomCommonBuilder;
+import org.atomify.model.common.XhtmlDivElement;
 import org.atomify.model.syndication.AtomText.Type;
 import org.jbasics.parser.annotations.Attribute;
 import org.jbasics.parser.annotations.Content;
+import org.jbasics.parser.annotations.Element;
 import org.jbasics.pattern.builder.Builder;
 
 public class AtomTextBuilder extends AtomCommonBuilder<AtomTextBuilder> implements Builder<AtomText> {
 	private AtomText.Type type;
-	private String content;
+	private String textOrHtmlContent;
+	private XhtmlDivElement xhtmlContent;
 
 	public static AtomTextBuilder newInstance() {
 		return new AtomTextBuilder();
@@ -43,10 +46,12 @@ public class AtomTextBuilder extends AtomCommonBuilder<AtomTextBuilder> implemen
 	}
 
 	public AtomText build() {
-		if (this.type == Type.xhtml) {
-			throw new UnsupportedOperationException("XHtml type is not yet supported");
+		AtomText temp = null;
+		if (this.type == Type.XHTML) {
+			temp = new AtomXHtmlText(this.xhtmlContent);
+		} else {
+			temp = new AtomPlainText(this.type == Type.HTML, this.textOrHtmlContent);
 		}
-		AtomText temp = new AtomPlainText(this.type == Type.html, this.content);
 		attachCommonAttributes(temp);
 		return temp;
 	}
@@ -55,7 +60,7 @@ public class AtomTextBuilder extends AtomCommonBuilder<AtomTextBuilder> implemen
 	public void reset() {
 		super.reset();
 		this.type = null;
-		this.content = null;
+		this.textOrHtmlContent = null;
 	}
 
 	@Attribute(namespace = "", name = "type", required = true)
@@ -66,7 +71,42 @@ public class AtomTextBuilder extends AtomCommonBuilder<AtomTextBuilder> implemen
 
 	@Content(mixed = false)
 	public AtomTextBuilder setContent(String content) {
-		this.content = content;
+		if (this.type == Type.XHTML && content != null && content.trim().length() == 0) {
+			return this;
+		}
+		if (this.type == Type.XHTML) {
+			throw new IllegalStateException("Cannot add HTML or plain text content to " + this.type);
+		}
+		this.textOrHtmlContent = content;
+		return this;
+	}
+
+	public AtomTextBuilder setHtmlContent(String content) {
+		this.textOrHtmlContent = content;
+		if (this.type == null) {
+			this.type = Type.HTML;
+		} else if (this.type != Type.HTML) {
+			throw new IllegalStateException("Cannot add HTML content to a type " + this.type);
+		}
+		return this;
+	}
+
+	public AtomTextBuilder setTextContent(String content) {
+		this.textOrHtmlContent = content;
+		if (this.type != null && this.type != Type.TEXT) {
+			throw new IllegalStateException("Cannot add plain text content to a type " + this.type);
+		}
+		return this;
+	}
+
+	@Element(name = "div", namespace = "http://www.w3.org/1999/xhtml", minOccurs = 0, maxOccurs = 1)
+	public AtomTextBuilder setXhtmlContent(XhtmlDivElement content) {
+		this.xhtmlContent = content;
+		if (this.type == null) {
+			this.type = Type.XHTML;
+		} else if (this.type != Type.XHTML) {
+			throw new IllegalStateException("Cannot add XHTML content to a type " + this.type);
+		}
 		return this;
 	}
 

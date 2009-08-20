@@ -26,7 +26,14 @@ package org.atomify.model.syndication;
 
 import java.net.URI;
 
-import org.atomify.model.AtomCommonAttributes;
+import javax.xml.namespace.QName;
+
+import org.atomify.model.AtomConstants;
+import org.atomify.model.AtomContractConstraint;
+import org.atomify.model.common.AtomCommonAttributes;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.AttributesImpl;
 
 /**
  * Describes a atom generator field.
@@ -35,36 +42,33 @@ import org.atomify.model.AtomCommonAttributes;
  */
 public class AtomGenerator extends AtomCommonAttributes {
 	/**
+	 * <b>Required:</b> The human readable name of the generator as text content.
+	 */
+	private final String description;
+	/**
 	 * <b>Optional:</b> uri attribute.
 	 * <p>
 	 * TODO: Must be an IRI reference.
 	 * </p>
 	 */
-	private URI uri;
+	private final URI uri;
 	/**
 	 * <b>Optional:</b> version attribute.
 	 */
-	private String version;
-	/**
-	 * <b>Required:</b> The human readable name of the generator as text content.
-	 */
-	private String value;
+	private final String version;
+
+	public static AtomGeneratorBuilder newBuilder() {
+		return AtomGeneratorBuilder.newInstance();
+	}
 
 	/**
 	 * Creates a generator element with the specified text as value.
 	 * 
 	 * @param value The text as value.
 	 */
-	public AtomGenerator(final String value) {
-		this.value = value;
-	}
-
-	/**
-	 * Set the generators URI.
-	 * 
-	 * @param uri The URI of the generator.
-	 */
-	public void setUri(final URI uri) {
+	public AtomGenerator(final String description, final String version, final URI uri) {
+		this.description = AtomContractConstraint.notNull("description", description);
+		this.version = version;
 		this.uri = uri;
 	}
 
@@ -78,15 +82,6 @@ public class AtomGenerator extends AtomCommonAttributes {
 	}
 
 	/**
-	 * Set the version of the generator.
-	 * 
-	 * @param version the version to set
-	 */
-	public void setVersion(final String version) {
-		this.version = version;
-	}
-
-	/**
 	 * Returns the version of the generator.
 	 * 
 	 * @return the version
@@ -96,21 +91,98 @@ public class AtomGenerator extends AtomCommonAttributes {
 	}
 
 	/**
-	 * Sets the text value of the generator.
-	 * 
-	 * @param value the value to set
-	 */
-	public void setValue(final String value) {
-		this.value = value;
-	}
-
-	/**
-	 * Returns tha text value of the generator.
+	 * Returns the description of the generator.
 	 * 
 	 * @return the value
 	 */
-	public String getValue() {
-		return this.value;
+	public String getDescription() {
+		return this.description;
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((this.description == null) ? 0 : this.description.hashCode());
+		result = prime * result + ((this.uri == null) ? 0 : this.uri.hashCode());
+		result = prime * result + ((this.version == null) ? 0 : this.version.hashCode());
+		return result;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!super.equals(obj)) {
+			return false;
+		}
+		if (!(obj instanceof AtomGenerator)) {
+			return false;
+		}
+		AtomGenerator other = (AtomGenerator) obj;
+		if (this.description == null) {
+			if (other.description != null) {
+				return false;
+			}
+		} else if (!this.description.equals(other.description)) {
+			return false;
+		}
+		if (this.uri == null) {
+			if (other.uri != null) {
+				return false;
+			}
+		} else if (!this.uri.equals(other.uri)) {
+			return false;
+		}
+		if (this.version == null) {
+			if (other.version != null) {
+				return false;
+			}
+		} else if (!this.version.equals(other.version)) {
+			return false;
+		}
+		return true;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return new StringBuilder().append("AtomGenerator [description=").append(this.description).append(", uri=").append(this.uri).append(
+				", version=").append(this.version).append(", ").append(super.toString()).append("]").toString();
+	}
+
+	// FIXME: Write a much better way of serialization
+
+	public void serialize(ContentHandler handler, AttributesImpl attributes) throws SAXException {
+		attributes = initCommonAttributes(attributes);
+		if (this.uri != null) {
+			addAttribute(attributes, URI_QNAME, this.uri.toASCIIString());
+		}
+		if (this.version != null) {
+			addAttribute(attributes, VERSION_QNAME, this.version);
+		}
+		String namespace = AtomConstants.ATOM_NS_URI;
+		String local = "generator";
+		String qName = AtomConstants.ATOM_NS_PREFIX + ":" + local;
+		handler.startElement(namespace, local, qName, attributes);
+		char[] data = this.description.toCharArray();
+		handler.characters(data, 0, data.length);
+		handler.endElement(namespace, local, qName);
+	}
+
+	private final static QName URI_QNAME = new QName("uri");
+	private final static QName VERSION_QNAME = new QName("version");
 
 }

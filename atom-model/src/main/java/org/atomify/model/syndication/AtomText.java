@@ -24,7 +24,13 @@
  */
 package org.atomify.model.syndication;
 
-import org.atomify.model.AtomCommonAttributes;
+import javax.xml.XMLConstants;
+import javax.xml.namespace.QName;
+
+import org.atomify.model.common.AtomCommonAttributes;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.AttributesImpl;
 
 /**
  * This is the atomTextConstruct. It is the abstract base class of {@link AtomPlainText} and
@@ -36,10 +42,6 @@ public abstract class AtomText extends AtomCommonAttributes {
 
 	/**
 	 * ENUM for the different types of text atom understands.
-	 * <p>
-	 * All ENUM values are lower case to reflect the exact text representation of the attribute in
-	 * XML. This might change in the future.
-	 * </p>
 	 * 
 	 * @author Stephan Schloepke
 	 */
@@ -47,15 +49,43 @@ public abstract class AtomText extends AtomCommonAttributes {
 		/**
 		 * The plain text type.
 		 */
-		text,
+		TEXT("text"),
 		/**
 		 * The HTML text type.
 		 */
-		html,
+		HTML("html"),
 		/**
 		 * The XHTML mixed object type.
 		 */
-		xhtml
+		XHTML("xhtml");
+
+		private String xmlRepresentation;
+
+		private Type(String xmlRepresentation) {
+			assert xmlRepresentation != null;
+			this.xmlRepresentation = xmlRepresentation;
+		}
+
+		public String toXmlString() {
+			return this.xmlRepresentation;
+		}
+
+		public static Type xmlValueOf(String xmlRepresentation) {
+			if (xmlRepresentation == null) {
+				throw new IllegalArgumentException("Null parameter: xmlRepresentation");
+			}
+			if (TEXT.xmlRepresentation.equalsIgnoreCase(xmlRepresentation)) {
+				return TEXT;
+			} else if (HTML.xmlRepresentation.equalsIgnoreCase(xmlRepresentation)) {
+				return HTML;
+			} else if (XHTML.xmlRepresentation.equalsIgnoreCase(xmlRepresentation)) {
+				return XHTML;
+			} else {
+				throw new IllegalArgumentException("Not a valid AtomText.Type xml representation constant "
+						+ xmlRepresentation);
+			}
+		}
+
 	}
 
 	/**
@@ -80,7 +110,7 @@ public abstract class AtomText extends AtomCommonAttributes {
 	 * @return True if the content is plain text.
 	 */
 	public boolean isTextType() {
-		return Type.text == getType();
+		return Type.TEXT == getType();
 	}
 
 	/**
@@ -89,7 +119,7 @@ public abstract class AtomText extends AtomCommonAttributes {
 	 * @return True if the content is HTML.
 	 */
 	public boolean isHtmlType() {
-		return Type.html == getType();
+		return Type.HTML == getType();
 	}
 
 	/**
@@ -98,7 +128,12 @@ public abstract class AtomText extends AtomCommonAttributes {
 	 * @return True if the content is a XHTML content tree.
 	 */
 	public boolean isXHtmlType() {
-		return Type.xhtml == getType();
+		return Type.XHTML == getType();
 	}
+	
+	// FIXME: Write a much better way of serialization
+	
+	public abstract void serialize(QName name, ContentHandler handler, AttributesImpl attributes) throws SAXException;
+	protected final static QName TYPE_QNAME = new QName("type");
 
 }

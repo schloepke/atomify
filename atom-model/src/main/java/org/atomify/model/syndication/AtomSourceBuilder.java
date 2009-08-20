@@ -24,49 +24,54 @@
  */
 package org.atomify.model.syndication;
 
-import java.net.URI;
-
-import org.atomify.model.common.AtomCommonBuilder;
-import org.jbasics.parser.annotations.Content;
+import org.atomify.model.AtomContractConstraint;
 import org.jbasics.pattern.builder.Builder;
 
-public class AtomIdBuilder extends AtomCommonBuilder<AtomIdBuilder> implements Builder<AtomId> {
-	/**
-	 * <b>Required:</b> IRI referecnce. Must be absolute.
-	 * <p>
-	 * TODO: Must be an IRI reference.
-	 * </p>
-	 */
-	private URI id;
+public class AtomSourceBuilder extends AbstractAtomSourceBuilder<AtomSourceBuilder> implements Builder<AtomSource> {
 
-	public static AtomIdBuilder newInstance() {
-		return new AtomIdBuilder();
+	public static AtomSourceBuilder newInstance() {
+		return new AtomSourceBuilder();
 	}
 
-	private AtomIdBuilder() {
+	private AtomSourceBuilder() {
 		// disallow instantiation
 	}
 
-	public AtomId build() {
-		AtomId temp = new AtomId(this.id);
+	public AtomSource build() {
+		AtomSource temp = new AtomSource(this.id, this.title, this.updated);
+		temp.setCategories(this.categories);
+		temp.setAuthors(this.authors);
+		temp.setContributors(this.contributors);
+		temp.setLinks(this.links);
+		temp.setExtensions(this.extensions);
+		temp.setSubtitle(this.subtitle);
+		temp.setGenerator(this.generator);
+		temp.setIcon(this.icon);
+		temp.setLogo(this.logo);
+		temp.setRights(this.rights);
 		attachCommonAttributes(temp);
 		return temp;
 	}
 
-	@Override
-	public void reset() {
-		super.reset();
-		this.id = null;
-	}
-
-	public AtomIdBuilder setId(URI id) {
-		this.id = id;
+	public AtomSourceBuilder addAndSetAllFromFeed(AtomFeed feed) {
+		AtomContractConstraint.notNull("feed", feed);
+		setXmlBase(feed.getXmlBase());
+		setXmlLang(feed.getXmlLang());
+		setXmlSpace(feed.getXmlSpace());
+		setId(feed.getId());
+		setTitle(feed.getTitle());
+		setSubtitle(feed.getSubtitle());
+		setUpdated(feed.getUpdated());
+		setGenerator(feed.getGenerator());
+		setIcon(feed.getIcon());
+		setLogo(feed.getLogo());
+		setRights(feed.getRights());
+		addLinks(feed.getLinks());
+		addAuthors(feed.getAuthors());
+		addContributors(feed.getContributors());
+		addCategories(feed.getCategories());
+		addExtensions(feed.getExtensions());
 		return this;
 	}
 
-	@Content
-	public AtomIdBuilder setId(String id) {
-		return setId(URI.create(id));
-	}
-	
 }

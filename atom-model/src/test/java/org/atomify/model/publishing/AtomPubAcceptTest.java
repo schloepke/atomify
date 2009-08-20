@@ -30,7 +30,7 @@ import java.net.URI;
 import java.util.Locale;
 
 import org.atomify.model.AtomConstants;
-import org.atomify.model.syndication.AtomLanguage;
+import org.atomify.model.common.AtomLanguage;
 import org.jbasics.xml.types.XmlSpaceType;
 import org.junit.Test;
 

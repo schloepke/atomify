@@ -34,9 +34,12 @@ import org.atomify.model.AtomConstants;
 import org.atomify.model.AtomContractConstraint;
 import org.atomify.model.AtomDocument;
 import org.atomify.model.AtomMediaType;
-import org.atomify.model.common.UndefinedElement;
+import org.atomify.model.extension.AtomForeignMarkup;
 import org.atomify.model.syndication.AtomCategory;
 import org.jbasics.xml.types.XmlBooleanYesNoType;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.AttributesImpl;
 
 /**
  * Represents either the Categories Document or the link to a Categories Document
@@ -67,7 +70,7 @@ public class AtomPubCategories implements AtomDocument, Iterable<AtomCategory> {
 	/**
 	 * Optional Mixed (text | anyForeignElement)
 	 */
-	private final List<Object> undefinedContent;
+	private final List<AtomForeignMarkup> undefinedContent;
 
 	/**
 	 * Creates a new builder to build {@link AtomPubCategories}.
@@ -85,7 +88,7 @@ public class AtomPubCategories implements AtomDocument, Iterable<AtomCategory> {
 	 * @param undefinedContent The undefined content of the element or document (can be null or
 	 *            empty)
 	 */
-	public AtomPubCategories(URI href, List<Object> undefinedContent) {
+	public AtomPubCategories(URI href, List<AtomForeignMarkup> undefinedContent) {
 		this.href = AtomContractConstraint.notNull("href", href);
 		this.fixed = null;
 		this.scheme = null;
@@ -93,16 +96,15 @@ public class AtomPubCategories implements AtomDocument, Iterable<AtomCategory> {
 		if (undefinedContent == null || undefinedContent.isEmpty()) {
 			this.undefinedContent = Collections.emptyList();
 		} else {
-			for (Object temp : undefinedContent) {
-				if (temp instanceof UndefinedElement) {
-					if (AtomConstants.ATOM_PUB_NS_URI.equals(((UndefinedElement) temp).getQualifiedName()
-							.getNamespaceURI())) {
+			for (AtomForeignMarkup temp : undefinedContent) {
+				if (temp.getQualifiedName() != null) {
+					if (AtomConstants.ATOM_PUB_NS_URI.equals(temp.getQualifiedName().getNamespaceURI())) {
 						throw new IllegalArgumentException(
 								"Categories undefiend content cannot have elements of the atom publishing namespace");
 					}
 				}
 			}
-			this.undefinedContent = Collections.unmodifiableList(new ArrayList<Object>(undefinedContent));
+			this.undefinedContent = Collections.unmodifiableList(new ArrayList<AtomForeignMarkup>(undefinedContent));
 		}
 	}
 
@@ -115,7 +117,7 @@ public class AtomPubCategories implements AtomDocument, Iterable<AtomCategory> {
 	 * @param undefinedContent The undefined content following the categories (can be null or empty)
 	 */
 	public AtomPubCategories(XmlBooleanYesNoType fixed, URI scheme, List<AtomCategory> categories,
-			List<Object> undefinedContent) {
+			List<AtomForeignMarkup> undefinedContent) {
 		this.href = null;
 		this.fixed = fixed;
 		this.scheme = scheme;
@@ -127,16 +129,15 @@ public class AtomPubCategories implements AtomDocument, Iterable<AtomCategory> {
 		if (undefinedContent == null || undefinedContent.isEmpty()) {
 			this.undefinedContent = Collections.emptyList();
 		} else {
-			for (Object temp : undefinedContent) {
-				if (temp instanceof UndefinedElement) {
-					if (AtomConstants.ATOM_PUB_NS_URI
-							.equals(((UndefinedElement) temp).getQualifiedName().getNamespaceURI())) {
+			for (AtomForeignMarkup temp : undefinedContent) {
+				if (temp.getQualifiedName() != null) {
+					if (AtomConstants.ATOM_PUB_NS_URI.equals(temp.getQualifiedName().getNamespaceURI())) {
 						throw new IllegalArgumentException(
 								"Categories undefiend content cannot have elements of the atom publishing namespace");
 					}
 				}
 			}
-			this.undefinedContent = Collections.unmodifiableList(new ArrayList<Object>(undefinedContent));
+			this.undefinedContent = Collections.unmodifiableList(new ArrayList<AtomForeignMarkup>(undefinedContent));
 		}
 	}
 
@@ -172,7 +173,7 @@ public class AtomPubCategories implements AtomDocument, Iterable<AtomCategory> {
 	}
 
 	public boolean isFixed() {
-		return this.fixed != null && XmlBooleanYesNoType.YES.equals(this.fixed);
+		return XmlBooleanYesNoType.YES == this.fixed;
 	}
 
 	public URI getScheme() {
@@ -183,7 +184,7 @@ public class AtomPubCategories implements AtomDocument, Iterable<AtomCategory> {
 		return this.categories;
 	}
 
-	public List<Object> getUndefinedContent() {
+	public List<AtomForeignMarkup> getUndefinedContent() {
 		return this.undefinedContent;
 	}
 
@@ -191,21 +192,126 @@ public class AtomPubCategories implements AtomDocument, Iterable<AtomCategory> {
 		return this.categories.iterator();
 	}
 
+	
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((this.categories == null) ? 0 : this.categories.hashCode());
+		result = prime * result + ((this.fixed == null) ? 0 : this.fixed.hashCode());
+		result = prime * result + ((this.href == null) ? 0 : this.href.hashCode());
+		result = prime * result + ((this.scheme == null) ? 0 : this.scheme.hashCode());
+		result = prime * result + ((this.undefinedContent == null) ? 0 : this.undefinedContent.hashCode());
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof AtomPubCategories)) {
+			return false;
+		}
+		AtomPubCategories other = (AtomPubCategories) obj;
+		if (this.categories == null) {
+			if (other.categories != null) {
+				return false;
+			}
+		} else if (!this.categories.equals(other.categories)) {
+			return false;
+		}
+		if (this.fixed == null) {
+			if (other.fixed != null) {
+				return false;
+			}
+		} else if (!this.fixed.equals(other.fixed)) {
+			return false;
+		}
+		if (this.href == null) {
+			if (other.href != null) {
+				return false;
+			}
+		} else if (!this.href.equals(other.href)) {
+			return false;
+		}
+		if (this.scheme == null) {
+			if (other.scheme != null) {
+				return false;
+			}
+		} else if (!this.scheme.equals(other.scheme)) {
+			return false;
+		}
+		if (this.undefinedContent == null) {
+			if (other.undefinedContent != null) {
+				return false;
+			}
+		} else if (!this.undefinedContent.equals(other.undefinedContent)) {
+			return false;
+		}
+		return true;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
-		StringBuilder temp = new StringBuilder("Categories ");
-		if (this.href != null) {
-			return temp.append("{link: ").append(this.href).append("}").toString();
+		return new StringBuilder().append("AtomPubCategories [categories=").append(this.categories).append(", fixed=")
+				.append(this.fixed).append(", href=").append(this.href).append(", scheme=").append(this.scheme).append(
+						", undefinedContent=").append(this.undefinedContent).append("]").toString();
+	}
+
+	// FIXME: The following code is serialization which needs to be reimplemented
+
+	public void serialize(ContentHandler handler, AttributesImpl attributes) throws SAXException {
+		handler.startPrefixMapping(AtomConstants.ATOM_NS_PREFIX, AtomConstants.ATOM_NS_URI);
+		handler.startPrefixMapping(AtomConstants.ATOM_PUB_NS_PREFIX, AtomConstants.ATOM_PUB_NS_URI);
+		if (attributes == null) {
+			attributes = new AttributesImpl();
 		} else {
-			temp.append(" {fixed: ").append(this.fixed).append(", scheme: ").append(this.scheme).append(
-					", categories [");
-			if (this.categories != null && this.categories.size() > 0) {
-				for (AtomCategory category : this.categories) {
-					temp.append(category).append(", ");
-				}
-				temp.setLength(temp.length() - 2);
+			attributes.clear();
+		}
+		if (this.href != null) {
+			addAttribute(attributes, "href", this.href.toASCIIString());
+		} else {
+			if (this.scheme != null) {
+				addAttribute(attributes, "scheme", this.scheme.toASCIIString());
 			}
-			return temp.append("]}").toString();
+			if (this.fixed != null) {
+				addAttribute(attributes, "fixed", this.fixed.toXmlString());
+			}
+		}
+		handler.startElement(AtomConstants.ATOM_PUB_NS_URI, "categories", AtomConstants.ATOM_PUB_NS_PREFIX
+				+ ":categories", attributes);
+		if (this.href == null) {
+			for (AtomCategory category : this.categories) {
+				category.serialize(handler, attributes);
+			}
+		}
+		for (AtomForeignMarkup temp : this.undefinedContent) {
+			temp.serialize(handler, attributes);
+		}
+		handler.endElement(AtomConstants.ATOM_PUB_NS_URI, "categories", AtomConstants.ATOM_PUB_NS_PREFIX
+				+ ":categories");
+		handler.endPrefixMapping(AtomConstants.ATOM_NS_PREFIX);
+		handler.endPrefixMapping(AtomConstants.ATOM_PUB_NS_PREFIX);
+	}
+
+	protected static void addAttribute(AttributesImpl attributes, String name, String value) throws SAXException {
+		if (value != null) {
+			attributes.addAttribute("", name, name, "CDATA", value);
 		}
 	}
 

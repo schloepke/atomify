@@ -24,48 +24,42 @@
  */
 package org.atomify.model.syndication;
 
-import javax.xml.namespace.QName;
+import org.atomify.model.common.AtomCommonBuilder;
+import org.jbasics.parser.annotations.Attribute;
+import org.jbasics.parser.annotations.Content;
+import org.jbasics.pattern.builder.Builder;
 
-import org.atomify.model.AtomContractConstraint;
+public class AtomContentBuilder extends AtomCommonBuilder<AtomContentBuilder> implements Builder<AtomContent> {
+	private String type;
+	private String content;
 
-/**
- * A simple extension has no attributes and only a text content.
- * 
- * @author Stephan Schloepke
- */
-public class AtomSimpleExtension extends AtomExtension {
-	/**
-	 * <b>Required:</b> text content of the simple extension.
-	 */
-	private String value;
-
-	/**
-	 * Creates a simple extension with the name and content.
-	 * 
-	 * @param extensionName The name of the extension (must not be null).
-	 * @param value The content of the extension.
-	 */
-	public AtomSimpleExtension(final QName extensionName, final String value) {
-		super(extensionName);
-		setValue(value);
+	public static AtomContentBuilder newInstance() {
+		return new AtomContentBuilder();
 	}
 
-	/**
-	 * Sets the text value of the simple extension.
-	 * 
-	 * @param value the value to set
-	 */
-	public void setValue(final String value) {
-		this.value = AtomContractConstraint.notNull("value", value);
+	private AtomContentBuilder() {
+		// disallow instantiation
 	}
 
-	/**
-	 * Returns the text value of the simple extension.
-	 * 
-	 * @return The text value of the simple extension.
-	 */
-	public String getValue() {
-		return this.value;
+	public AtomContent build() {
+		return new AtomContent();
+	}
+
+	@Override
+	public void reset() {
+		super.reset();
+	}
+	
+	@Attribute(name = "type", required = true)
+	public AtomContentBuilder setType(String type) {
+		this.type = type;
+		return this;
+	}
+
+	@Content(mixed = false)
+	public AtomContentBuilder setContent(String content) {
+		this.content = content;
+		return this;
 	}
 
 }
