@@ -63,8 +63,12 @@ public class AtomConstants {
 	/**
 	 * The media type for an atom publishing categories document.
 	 */
+	public static final AtomMediaType ATOM_PUB_SERVICE_MEDIA_TYPE = new AtomMediaType("application", "atomsvc+xml");
+	/**
+	 * The media type for an atom publishing categories document.
+	 */
 	public static final AtomMediaType ATOM_PUB_CATEGORIES_MEDIA_TYPE = new AtomMediaType("application", "atomcat+xml");
-	
+
 	/**
 	 * The atom:title elements QName used in checks for the extensionSansTitleElement.
 	 */

@@ -35,6 +35,15 @@ import javax.xml.transform.sax.TransformerHandler;
 import org.xml.sax.SAXException;
 
 public class AtomDocumentSerializer {
+	private final String encoding;
+
+	public AtomDocumentSerializer() {
+		this("UTF-8");
+	}
+
+	public AtomDocumentSerializer(String encoding) {
+		this.encoding = AtomContractConstraint.mustNotBeEmptyString(encoding, "encoding");
+	}
 
 	public void serialize(AtomDocument document, Result result) {
 		AtomContractConstraint.notNull("document", document);
@@ -43,7 +52,7 @@ public class AtomDocumentSerializer {
 			SAXTransformerFactory factory = (SAXTransformerFactory) TransformerFactory.newInstance();
 			TransformerHandler handler = factory.newTransformerHandler();
 			Transformer serializer = handler.getTransformer();
-			serializer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+			serializer.setOutputProperty(OutputKeys.ENCODING, this.encoding);
 			serializer.setOutputProperty(OutputKeys.INDENT, "yes");
 			serializer.setOutputProperty(OutputKeys.VERSION, "1.0");
 			serializer.setOutputProperty(OutputKeys.STANDALONE, "yes");

@@ -25,6 +25,7 @@
 package org.atomify.model.syndication;
 
 import java.net.URI;
+import java.util.UUID;
 
 import org.atomify.model.AtomConstants;
 import org.atomify.model.AtomContractConstraint;
@@ -55,6 +56,14 @@ public class AtomId extends AtomCommonAttributes {
 
 	public static AtomIdBuilder newBuilder() {
 		return AtomIdBuilder.newInstance();
+	}
+
+	public static AtomId valueOf(URI id) {
+		return new AtomId(id);
+	}
+
+	public static AtomId valueOf(UUID uuid) {
+		return new AtomId(URI.create("urn:uuid:" + AtomContractConstraint.notNull("uuid", uuid)));
 	}
 
 	/**
