@@ -26,6 +26,7 @@ package org.atomify.model.publishing;
 
 import org.atomify.model.AtomConstants;
 import org.atomify.model.common.AtomCommonAttributes;
+import org.jbasics.net.mediatype.MediaTypeRange;
 import org.jbasics.pattern.builder.Builder;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
@@ -46,7 +47,15 @@ public class AtomPubAccept extends AtomCommonAttributes {
 	/**
 	 * The media range. Can be the empty string.
 	 */
-	private final String acceptMediaRange;
+	private final MediaTypeRange acceptMediaRange;
+
+	public static AtomPubAccept valueOf(String value) {
+		return valueOf(value != null ? MediaTypeRange.valueOf(value) : null);
+	}
+
+	public static AtomPubAccept valueOf(MediaTypeRange value) {
+		return new AtomPubAccept(value);
+	}
 
 	/**
 	 * Creates a new {@link Builder} for the {@link AtomPubAccept} element.
@@ -62,8 +71,8 @@ public class AtomPubAccept extends AtomCommonAttributes {
 	 * 
 	 * @param acceptMediaRange create the accept media range.
 	 */
-	public AtomPubAccept(String acceptMediaRange) {
-		this.acceptMediaRange = acceptMediaRange == null ? "" : acceptMediaRange.trim();
+	private AtomPubAccept(MediaTypeRange acceptMediaRange) {
+		this.acceptMediaRange = acceptMediaRange;
 	}
 
 	/**
@@ -71,7 +80,7 @@ public class AtomPubAccept extends AtomCommonAttributes {
 	 * 
 	 * @return The media range accepted (cannot be null but empty string to accept nothing).
 	 */
-	public String getAcceptMediaRange() {
+	public MediaTypeRange getAcceptMediaRange() {
 		return this.acceptMediaRange;
 	}
 
@@ -108,18 +117,20 @@ public class AtomPubAccept extends AtomCommonAttributes {
 	 */
 	@Override
 	public String toString() {
-		return new StringBuilder().append("AtomPubAccept [acceptMediaRange=").append(this.acceptMediaRange)
-				.append(", ").append(super.toString()).append("]").toString();
+		return new StringBuilder().append("AtomPubAccept [acceptMediaRange=").append(this.acceptMediaRange).append(", ").append(super.toString())
+				.append("]").toString();
 	}
 
 	// FIXME: Write a much better way of serialization
 
+	@SuppressWarnings("all")
 	public void serialize(ContentHandler handler, AttributesImpl attributes) throws SAXException {
 		attributes = initCommonAttributes(attributes);
-		handler.startElement(AtomConstants.ATOM_PUB_NS_URI, "accept", AtomConstants.ATOM_PUB_NS_PREFIX + ":accept",
-				attributes);
-		char[] data = this.acceptMediaRange.toCharArray();
-		handler.characters(data, 0, data.length);
+		handler.startElement(AtomConstants.ATOM_PUB_NS_URI, "accept", AtomConstants.ATOM_PUB_NS_PREFIX + ":accept", attributes);
+		if (this.acceptMediaRange != null) {
+			char[] data = this.acceptMediaRange.toString().toCharArray();
+			handler.characters(data, 0, data.length);
+		}
 		handler.endElement(AtomConstants.ATOM_PUB_NS_URI, "accept", AtomConstants.ATOM_PUB_NS_PREFIX + ":accept");
 	}
 

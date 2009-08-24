@@ -52,24 +52,6 @@ public class AtomConstants {
 	public static final String ATOM_PUB_NS_PREFIX = "app";
 
 	/**
-	 * The media type for an atom syndication feed.
-	 */
-	public static final AtomMediaType ATOM_FEED_MEDIA_TYPE = new AtomMediaType("application", "atom+xml", "type=feed");
-	/**
-	 * The media type for an atom syndication entry.
-	 */
-	public static final AtomMediaType ATOM_ENTRY_MEDIA_TYPE = new AtomMediaType("application", "atom+xml", "type=entry");
-
-	/**
-	 * The media type for an atom publishing categories document.
-	 */
-	public static final AtomMediaType ATOM_PUB_SERVICE_MEDIA_TYPE = new AtomMediaType("application", "atomsvc+xml");
-	/**
-	 * The media type for an atom publishing categories document.
-	 */
-	public static final AtomMediaType ATOM_PUB_CATEGORIES_MEDIA_TYPE = new AtomMediaType("application", "atomcat+xml");
-
-	/**
 	 * The atom:title elements QName used in checks for the extensionSansTitleElement.
 	 */
 	public static final QName ATOM_TITLE_QNAME = new QName(ATOM_NS_URI, "title");

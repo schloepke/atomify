@@ -28,25 +28,25 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.atomify.model.AtomConstants;
 import org.atomify.model.AtomContractConstraint;
-import org.atomify.model.AtomMediaType;
 import org.atomify.model.common.AtomCommonBuilder;
+import org.atomify.model.syndication.AtomEntry;
+import org.jbasics.net.mediatype.MediaType;
+import org.jbasics.net.mediatype.MediaTypeRange;
 import org.jbasics.parser.annotations.Content;
 import org.jbasics.pattern.builder.Builder;
 
 public class AtomPubAcceptBuilder extends AtomCommonBuilder<AtomPubAcceptBuilder> implements Builder<AtomPubAccept> {
-	public final static Map<String, AtomPubAccept> STANDARD_ACCEPTS;
+	public final static Map<MediaType, AtomPubAccept> STANDARD_ACCEPTS;
 
 	static {
-		Map<String, AtomPubAccept> temp = new HashMap<String, AtomPubAccept>();
-		temp.put("", new AtomPubAccept(""));
-		temp.put(AtomConstants.ATOM_ENTRY_MEDIA_TYPE.toString(), new AtomPubAccept(AtomConstants.ATOM_ENTRY_MEDIA_TYPE
-				.toString()));
+		Map<MediaType, AtomPubAccept> temp = new HashMap<MediaType, AtomPubAccept>();
+		temp.put(null, AtomPubAccept.valueOf((String)null));
+		temp.put(AtomEntry.MEDIA_TYPE, AtomPubAccept.valueOf(AtomEntry.MEDIA_TYPE));
 		STANDARD_ACCEPTS = Collections.unmodifiableMap(temp);
 	}
 
-	private String acceptMediaRange;
+	private MediaTypeRange acceptMediaRange;
 
 	private AtomPubAcceptBuilder() {
 		// empty to dissallow instantiation
@@ -62,7 +62,7 @@ public class AtomPubAcceptBuilder extends AtomCommonBuilder<AtomPubAcceptBuilder
 			temp = STANDARD_ACCEPTS.get(this.acceptMediaRange);
 		}
 		if (temp == null) {
-			temp = new AtomPubAccept(this.acceptMediaRange);
+			temp = AtomPubAccept.valueOf(this.acceptMediaRange);
 			attachCommonAttributes(temp);
 		}
 		return temp;
@@ -76,11 +76,11 @@ public class AtomPubAcceptBuilder extends AtomCommonBuilder<AtomPubAcceptBuilder
 
 	@Content(mixed = false)
 	public AtomPubAcceptBuilder setAcceptMediaRange(String acceptMediaRange) {
-		this.acceptMediaRange = acceptMediaRange;
+		this.acceptMediaRange = MediaTypeRange.valueOf(acceptMediaRange);
 		return this;
 	}
 
-	public AtomPubAcceptBuilder setAcceptMediaRange(AtomMediaType acceptMediaRange) {
+	public AtomPubAcceptBuilder setAcceptMediaRange(MediaTypeRange acceptMediaRange) {
 		return setAcceptMediaRange(AtomContractConstraint.notNull("acceptMediaRange", acceptMediaRange).toString());
 	}
 

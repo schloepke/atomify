@@ -84,6 +84,7 @@ public class AtomSource extends AbstractAtomSource {
 		return new StringBuilder().append("AtomSource [").append(super.toString()).append("]").toString();
 	}
 
+	@SuppressWarnings("all")
 	public void serialize(ContentHandler handler, AttributesImpl attributes) throws SAXException {
 		handler.startPrefixMapping(AtomConstants.ATOM_NS_PREFIX, AtomConstants.ATOM_NS_URI);
 		attributes = initCommonAttributes(attributes);

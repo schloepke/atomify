@@ -24,7 +24,6 @@
  */
 package org.atomify.model.syndication;
 
-import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 
 import org.atomify.model.common.AtomCommonAttributes;

@@ -33,10 +33,10 @@ import javax.xml.namespace.QName;
 
 import org.atomify.model.AtomConstants;
 import org.atomify.model.AtomContractConstraint;
-import org.atomify.model.AtomMediaType;
 import org.atomify.model.common.AtomCommonAttributes;
 import org.atomify.model.common.AtomLanguage;
 import org.atomify.model.extension.AtomForeignMarkup;
+import org.jbasics.net.mediatype.MediaType;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
@@ -65,7 +65,7 @@ public class AtomLink extends AtomCommonAttributes {
 	/**
 	 * <b>Optional:</b> type attribute holding the media type of the destination.
 	 */
-	private final AtomMediaType type;
+	private final MediaType type;
 	/**
 	 * <b>Optional:</b> hreflang attribute holding the language of the destination.
 	 */
@@ -98,7 +98,7 @@ public class AtomLink extends AtomCommonAttributes {
 	 * @param rel The relation of the link.
 	 * @param type The media type of the link.
 	 */
-	public AtomLink(final String title, final URI href, final URI rel, final AtomMediaType type, final AtomLanguage hrefLang, final Integer length,
+	public AtomLink(final String title, final URI href, final URI rel, final MediaType type, final AtomLanguage hrefLang, final Integer length,
 			final List<AtomForeignMarkup> undefinedContent) {
 		this.title = title;
 		this.href = AtomContractConstraint.notNull("href", href);
@@ -136,7 +136,7 @@ public class AtomLink extends AtomCommonAttributes {
 	 * 
 	 * @return the type
 	 */
-	public AtomMediaType getType() {
+	public MediaType getType() {
 		return this.type;
 	}
 
@@ -271,6 +271,7 @@ public class AtomLink extends AtomCommonAttributes {
 
 	// FIXME: The following code is serialization which needs to be reimplemented
 
+	@SuppressWarnings("all")
 	public void serialize(ContentHandler handler, AttributesImpl attributes) throws SAXException {
 		attributes = initCommonAttributes(attributes);
 		addAttribute(attributes, HREF_QNAME, this.href.toASCIIString());

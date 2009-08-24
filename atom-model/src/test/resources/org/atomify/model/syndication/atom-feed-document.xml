@@ -86,4 +86,28 @@
 		</atom:content>
 	</atom:entry>
 
+	<atom:entry>
+		<atom:id>urn:uuid:4577-3245-23853</atom:id>
+		<atom:title type="text">Another blog test</atom:title>
+		<atom:updated>2009-08-11T12:25:12+02:00</atom:updated>
+		
+		<atom:summary type="text">A summary</atom:summary>
+		<atom:rights xml:lang="en">(C) Copyright Jane Doe</atom:rights>
+		<atom:category term="entry-cat" scheme="http://example.com" label="An entry category" />
+
+		<atom:author xml:lang="en">
+			<atom:name>Jane Doe</atom:name>
+			<atom:uri>http://www.example.org/jane.doe</atom:uri>
+			<atom:email>jane.doe@example.org</atom:email>
+		</atom:author>
+
+		<atom:contributor>
+			<atom:name>Jon Doe</atom:name>
+			<atom:email>jon.doe@example.org</atom:email>
+			<atom:uri>http://example.org/jon.doe</atom:uri>
+		</atom:contributor>
+		
+		<atom:content src="http://blabla.de" type="application/rms+xml" />
+	</atom:entry>
+
 </atom:feed>

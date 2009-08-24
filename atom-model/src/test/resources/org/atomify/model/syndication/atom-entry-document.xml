@@ -48,8 +48,10 @@
 		<atom:uri>http://example.org/jon.doe</atom:uri>
 	</atom:contributor>
 	
-	<atom:content type="text">
-		This is the content of my new block entry!
+	<atom:content type="application/xml">
+		<info xmlns="">
+			This is the content of my new block entry!
+		</info>
 	</atom:content>
 
 </atom:entry>

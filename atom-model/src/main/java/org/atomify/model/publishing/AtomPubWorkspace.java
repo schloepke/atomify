@@ -167,6 +167,7 @@ public class AtomPubWorkspace extends AtomCommonAttributes implements Iterable<A
 
 	// --- FIXME: From here all is serialization. We Still need to think about a good way to do so.
 
+	@SuppressWarnings("all")
 	public void serialize(ContentHandler handler, AttributesImpl attributes) throws SAXException {
 		attributes = initCommonAttributes(attributes);
 		handler.startElement(AtomConstants.ATOM_PUB_NS_URI, "workspace", "app:workspace", attributes);

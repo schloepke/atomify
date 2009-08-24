@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2009 Stephan Schloepke and innoQ Deutschland GmbH
  *
  * Stephan Schloepke: http://www.schloepke.de/
@@ -22,40 +22,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.atomify.service.annotations;
+package org.atomify.service;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.util.Date;
+import java.util.UUID;
 
-import org.atomify.service.AtomPublishingServiceResource;
+import org.jbasics.pattern.delegation.Delegate;
 
-/**
- * Annotation to annotate a class or method to be provided as Atom Syndication Feed in the Atom Publishing Service Document.
- * <p>
- * Atom Publishing Service Document lists collections which are Atom Syndication Feeds. Use this annotation in conjunction with the
- * {@link AtomPublishingServiceResource} to produce the correct Atom Publishing Protocol Service Document.
- * </p>
- * 
- * @author Stephan Schloepke
- * @since 1.0
- */
-@Retention(RetentionPolicy.RUNTIME)
-@Target( { ElementType.TYPE, ElementType.METHOD })
-public @interface AtomService {
-	/**
-	 * Returns the workspace title in which the collection appears. Does not have a default.
-	 */
-	String workspace();
+public interface AtomEntityDelegate<T> extends Delegate<T> {
+	
+	UUID getIdentifier();
+	
+	String getEntityName();
+	
+	Date getCreated();
+	
+	Date getLastModified();
+	
+	String getLastModifiedUser();
 
-	/**
-	 * Returns the collection title.
-	 */
-	String collection();
-
-	/**
-	 * Returns the list of accepted media types for the collection. Can be null or empty meaning only atom syndication entry is accepted.
-	 */
-	String[] accept() default {};
 }

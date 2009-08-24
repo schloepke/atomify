@@ -24,6 +24,7 @@
  */
 package org.atomify.model.extension;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -35,7 +36,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
 @ElementBuilder(AtomForeignMarkupBuilder.class)
-public interface AtomForeignMarkup {
+public interface AtomForeignMarkup extends Serializable {
 
 	QName getQualifiedName();
 

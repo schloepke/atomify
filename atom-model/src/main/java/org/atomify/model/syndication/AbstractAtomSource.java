@@ -31,7 +31,6 @@ import java.util.List;
 import javax.xml.namespace.QName;
 
 import org.atomify.model.AtomConstants;
-import org.atomify.model.AtomContractConstraint;
 import org.atomify.model.common.AtomCommonAttributes;
 import org.atomify.model.extension.AtomExtension;
 import org.xml.sax.ContentHandler;

@@ -32,9 +32,9 @@ import java.util.List;
 import org.atomify.model.AtomConstants;
 import org.atomify.model.AtomContractConstraint;
 import org.atomify.model.AtomDocument;
-import org.atomify.model.AtomMediaType;
 import org.atomify.model.common.AtomCommonAttributes;
 import org.atomify.model.extension.AtomExtension;
+import org.jbasics.net.mediatype.MediaType;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
@@ -59,7 +59,14 @@ import org.xml.sax.helpers.DefaultHandler;
  * @author Stephan Schloepke
  */
 public class AtomPubService extends AtomCommonAttributes implements AtomDocument, Iterable<AtomPubWorkspace> {
-	public static final AtomMediaType MEDIA_TYPE = new AtomMediaType("application", "atomsvc+xml");
+	/**
+	 * The media type as a string constant.
+	 */
+	public static final String MEDIA_TYPE_STRING = "application/atomsvc+xml";
+	/**
+	 * The media type as {@link AtomMediaType}.
+	 */
+	public static final MediaType MEDIA_TYPE = MediaType.valueOf(MEDIA_TYPE_STRING);
 
 	private final List<AtomPubWorkspace> workspaces;
 	private final List<AtomExtension> extensions;
@@ -78,7 +85,7 @@ public class AtomPubService extends AtomCommonAttributes implements AtomDocument
 		}
 	}
 
-	public AtomMediaType getMediaType() {
+	public MediaType getMediaType() {
 		return MEDIA_TYPE;
 	}
 
@@ -152,6 +159,7 @@ public class AtomPubService extends AtomCommonAttributes implements AtomDocument
 
 	// --- From here all is serialization. We Still need to think about a good way to do so.
 
+	@SuppressWarnings("all")
 	public void serialize(ContentHandler handler, AttributesImpl attributes) throws SAXException {
 		handler.startPrefixMapping(AtomConstants.ATOM_NS_PREFIX, AtomConstants.ATOM_NS_URI);
 		handler.startPrefixMapping(AtomConstants.ATOM_PUB_NS_PREFIX, AtomConstants.ATOM_PUB_NS_URI);

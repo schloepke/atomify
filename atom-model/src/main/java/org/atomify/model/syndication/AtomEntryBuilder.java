@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.atomify.model.AtomConstants;
+import org.atomify.model.AtomContractConstraint;
 import org.atomify.model.common.AtomCommonBuilder;
 import org.atomify.model.extension.AtomExtension;
 import org.jbasics.parser.annotations.Element;
@@ -185,12 +186,16 @@ public class AtomEntryBuilder extends AtomCommonBuilder<AtomEntryBuilder> implem
 		return this;
 	}
 
-	@Element(name = "author", namespace = AtomConstants.ATOM_NS_URI, minOccurs = 0, maxOccurs = Element.UNBOUND)
-	public AtomEntryBuilder addAuthor(AtomPerson author) {
+	public List<AtomPerson> getAuthors() {
 		if (this.authors == null) {
 			this.authors = new ArrayList<AtomPerson>();
 		}
-		this.authors.add(author);
+		return this.authors;
+	}
+
+	@Element(name = "author", namespace = AtomConstants.ATOM_NS_URI, minOccurs = 0, maxOccurs = Element.UNBOUND)
+	public AtomEntryBuilder addAuthor(AtomPerson author) {
+		getAuthors().add(AtomContractConstraint.notNull("author", author));
 		return this;
 	}
 

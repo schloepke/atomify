@@ -22,31 +22,39 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.atomify.client.http;
+package org.atomify.service.annotations;
 
-import java.io.IOException;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+import org.atomify.service.AtomPubServiceResource;
 
 /**
- * Thrown if an URI is a relative URI whereas an absolute is required.
+ * Annotation to annotate a class or method to be provided as Atom Syndication Feed in the Atom
+ * Publishing Service Document.
+ * <p>
+ * Atom Publishing Service Document lists collections which are Atom Syndication Feeds. Use this
+ * annotation in conjunction with the {@link AtomPubServiceResource} to produce the correct
+ * Atom Publishing Protocol Service Document.
+ * </p>
  * 
  * @author Stephan Schloepke
+ * @since 1.0
  */
-public class RelativeURIException extends IOException {
+@Retention(RetentionPolicy.RUNTIME)
+@Target( { ElementType.TYPE, ElementType.METHOD })
+public @interface AtomPubServiceEntry {
 
 	/**
-	 * Create a relative URI exception without message.
+	 * Returns the workspace title in which the collection appears. Does not have a default.
 	 */
-	public RelativeURIException() {
-		super();
-	}
+	String workspace();
 
 	/**
-	 * Creates a relative URI exception with a detailed message.
-	 * 
-	 * @param message The message.
+	 * Returns the collection title.
 	 */
-	public RelativeURIException(final String message) {
-		super(message);
-	}
+	String collection();
 
 }

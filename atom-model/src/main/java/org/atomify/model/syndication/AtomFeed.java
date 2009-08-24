@@ -31,7 +31,7 @@ import java.util.List;
 import org.atomify.model.AtomConstants;
 import org.atomify.model.AtomContractConstraint;
 import org.atomify.model.AtomDocument;
-import org.atomify.model.AtomMediaType;
+import org.jbasics.net.mediatype.MediaType;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
@@ -49,9 +49,19 @@ import org.xml.sax.helpers.AttributesImpl;
  * </ul>
  * </p>
  * 
- * @author stephan
+ * @author Stephan Schloepke
+ * @since 1.0
  */
 public class AtomFeed extends AbstractAtomSource implements AtomDocument {
+	/**
+	 * The media type as a string constant.
+	 */
+	public static final String MEDIA_TYPE_STRING = "application/atom+xml;type=feed";
+	/**
+	 * The media type for an atom syndication feed.
+	 */
+	public static final MediaType MEDIA_TYPE = MediaType.valueOf(MEDIA_TYPE_STRING);
+	
 	/**
 	 * <b>Optional:</b> any number of entry elements.
 	 */
@@ -87,8 +97,8 @@ public class AtomFeed extends AbstractAtomSource implements AtomDocument {
 		return this.entries;
 	}
 
-	public AtomMediaType getMediaType() {
-		return AtomConstants.ATOM_FEED_MEDIA_TYPE;
+	public MediaType getMediaType() {
+		return MEDIA_TYPE;
 	}
 
 	/*
@@ -140,6 +150,7 @@ public class AtomFeed extends AbstractAtomSource implements AtomDocument {
 
 	// --- FIXME: From here all is serialization. We Still need to think about a good way to do so.
 
+	@SuppressWarnings("all")
 	public void serialize(ContentHandler handler, AttributesImpl attributes) throws SAXException {
 		handler.startPrefixMapping(AtomConstants.ATOM_NS_PREFIX, AtomConstants.ATOM_NS_URI);
 		attributes = initCommonAttributes(attributes);

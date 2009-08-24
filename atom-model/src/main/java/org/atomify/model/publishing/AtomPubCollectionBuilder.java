@@ -26,7 +26,9 @@ package org.atomify.model.publishing;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.atomify.model.AtomConstants;
 import org.atomify.model.common.AtomCommonBuilder;
@@ -37,8 +39,7 @@ import org.jbasics.parser.annotations.Attribute;
 import org.jbasics.parser.annotations.Element;
 import org.jbasics.pattern.builder.Builder;
 
-public class AtomPubCollectionBuilder extends AtomCommonBuilder<AtomPubWorkspaceBuilder> implements
-		Builder<AtomPubCollection> {
+public class AtomPubCollectionBuilder extends AtomCommonBuilder<AtomPubWorkspaceBuilder> implements Builder<AtomPubCollection> {
 
 	/**
 	 * <b>Required:</b> the title element.
@@ -52,7 +53,7 @@ public class AtomPubCollectionBuilder extends AtomCommonBuilder<AtomPubWorkspace
 	 * <b>Optional:</b> The optional accept fields. If empty the default accept of atom:entry is in
 	 * place.
 	 */
-	private List<AtomPubAccept> accepts;
+	private Set<AtomPubAccept> accepts;
 	/**
 	 * <b>Optional:</b> The categories
 	 */
@@ -71,8 +72,7 @@ public class AtomPubCollectionBuilder extends AtomCommonBuilder<AtomPubWorkspace
 	}
 
 	public AtomPubCollection build() {
-		AtomPubCollection temp = new AtomPubCollection(this.title, this.href, this.accepts, this.categories,
-				this.extensions);
+		AtomPubCollection temp = new AtomPubCollection(this.title, this.href, this.accepts, this.categories, this.extensions);
 		attachCommonAttributes(temp);
 		return temp;
 	}
@@ -95,7 +95,7 @@ public class AtomPubCollectionBuilder extends AtomCommonBuilder<AtomPubWorkspace
 	@Element(name = "accept", namespace = AtomConstants.ATOM_PUB_NS_URI, minOccurs = 0, maxOccurs = Element.UNBOUND)
 	public AtomPubCollectionBuilder addAccept(AtomPubAccept accept) {
 		if (this.accepts == null) {
-			this.accepts = new ArrayList<AtomPubAccept>();
+			this.accepts = new HashSet<AtomPubAccept>();
 		}
 		this.accepts.add(accept);
 		return this;
@@ -114,6 +114,14 @@ public class AtomPubCollectionBuilder extends AtomCommonBuilder<AtomPubWorkspace
 		}
 		this.extensions.add(extension);
 		return this;
+	}
+
+	public URI getHref() {
+		return this.href;
+	}
+
+	public AtomText getTitle() {
+		return this.title;
 	}
 
 }

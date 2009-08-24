@@ -27,7 +27,9 @@ package org.atomify.model.publishing;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.xml.namespace.QName;
 
@@ -61,7 +63,7 @@ public class AtomPubCollection extends AtomCommonAttributes {
 	 * <b>Optional:</b> The optional accept fields. If empty the default accept of atom:entry is in
 	 * place.
 	 */
-	private final List<AtomPubAccept> accepts;
+	private final Set<AtomPubAccept> accepts;
 	/**
 	 * <b>Optional:</b> The categories
 	 */
@@ -75,14 +77,14 @@ public class AtomPubCollection extends AtomCommonAttributes {
 		return AtomPubCollectionBuilder.newInstance();
 	}
 
-	protected AtomPubCollection(AtomText title, URI href, List<AtomPubAccept> accepts, List<AtomPubCategories> categories,
+	protected AtomPubCollection(AtomText title, URI href, Set<AtomPubAccept> accepts, List<AtomPubCategories> categories,
 			List<AtomExtension> extensions) {
 		this.title = AtomContractConstraint.notNull("title", title);
 		this.href = AtomContractConstraint.notNull("href", href);
 		if (accepts != null && accepts.size() > 0) {
-			this.accepts = Collections.unmodifiableList(new ArrayList<AtomPubAccept>(accepts));
+			this.accepts = Collections.unmodifiableSet(new HashSet<AtomPubAccept>(accepts));
 		} else {
-			this.accepts = Collections.emptyList();
+			this.accepts = Collections.emptySet();
 		}
 		if (categories != null && categories.size() > 0) {
 			this.categories = Collections.unmodifiableList(new ArrayList<AtomPubCategories>(categories));
@@ -118,7 +120,7 @@ public class AtomPubCollection extends AtomCommonAttributes {
 	/**
 	 * @return the accepts
 	 */
-	public List<AtomPubAccept> getAccepts() {
+	public Set<AtomPubAccept> getAccepts() {
 		return this.accepts;
 	}
 
@@ -219,6 +221,7 @@ public class AtomPubCollection extends AtomCommonAttributes {
 
 	// --- From here all is serialization. We Still need to think about a good way to do so.
 
+	@SuppressWarnings("all")
 	public void serialize(ContentHandler handler, AttributesImpl attributes) throws SAXException {
 		attributes = initCommonAttributes(attributes);
 		addAttribute(attributes, HREF_ATTRIBUTE_QNAME, this.href.toASCIIString());

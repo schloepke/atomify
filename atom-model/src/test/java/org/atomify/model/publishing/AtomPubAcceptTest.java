@@ -24,13 +24,16 @@
  */
 package org.atomify.model.publishing;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertSame;
 
 import java.net.URI;
 import java.util.Locale;
 
-import org.atomify.model.AtomConstants;
 import org.atomify.model.common.AtomLanguage;
+import org.atomify.model.syndication.AtomEntry;
 import org.jbasics.xml.types.XmlSpaceType;
 import org.junit.Test;
 
@@ -39,8 +42,8 @@ public class AtomPubAcceptTest {
 	@Test
 	public void testSimpleBuilding() {
 		AtomPubAcceptBuilder builder = AtomPubAccept.newBuilder();
-		AtomPubAccept test = builder.setAcceptMediaRange(AtomConstants.ATOM_ENTRY_MEDIA_TYPE).build();
-		assertEquals(AtomConstants.ATOM_ENTRY_MEDIA_TYPE.toString(), test.getAcceptMediaRange());
+		AtomPubAccept test = builder.setAcceptMediaRange(AtomEntry.MEDIA_TYPE).build();
+		assertEquals(AtomEntry.MEDIA_TYPE.toString(), test.getAcceptMediaRange());
 		AtomPubAccept test2 = builder.build();
 		assertSame(test, test2);
 		builder.reset();
@@ -58,8 +61,8 @@ public class AtomPubAcceptTest {
 		URI base = URI.create("http://example.com/");
 		AtomPubAcceptBuilder builder = AtomPubAccept.newBuilder();
 		AtomPubAccept test = builder.setXmlBase(base).setXmlLang(AtomLanguage.valueOf(Locale.GERMAN)).setXmlSpace(
-				XmlSpaceType.PRESERVED).setAcceptMediaRange(AtomConstants.ATOM_ENTRY_MEDIA_TYPE).build();
-		assertEquals(AtomConstants.ATOM_ENTRY_MEDIA_TYPE.toString(), test.getAcceptMediaRange());
+				XmlSpaceType.PRESERVED).setAcceptMediaRange(AtomEntry.MEDIA_TYPE).build();
+		assertEquals(AtomEntry.MEDIA_TYPE.toString(), test.getAcceptMediaRange());
 		assertEquals(base, test.getXmlBase());
 		assertEquals(XmlSpaceType.PRESERVED, test.getXmlSpace());
 		assertEquals(Locale.GERMAN, test.getXmlLang().toLocale());
@@ -70,7 +73,7 @@ public class AtomPubAcceptTest {
 		URI base = URI.create("http://example.com/");
 		AtomPubAcceptBuilder builder = AtomPubAccept.newBuilder();
 		AtomPubAccept test = builder.setXmlBase(base).setXmlLang(AtomLanguage.valueOf(Locale.GERMAN)).setXmlSpace(
-				XmlSpaceType.PRESERVED).setAcceptMediaRange(AtomConstants.ATOM_ENTRY_MEDIA_TYPE).build();
+				XmlSpaceType.PRESERVED).setAcceptMediaRange(AtomEntry.MEDIA_TYPE).build();
 		AtomPubAccept testTwo = builder.build();
 		assertNotSame(test, testTwo);
 		assertEquals(test, testTwo);

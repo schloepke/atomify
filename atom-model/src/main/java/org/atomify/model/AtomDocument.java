@@ -28,6 +28,7 @@ import org.atomify.model.publishing.AtomPubCategories;
 import org.atomify.model.publishing.AtomPubService;
 import org.atomify.model.syndication.AtomEntry;
 import org.atomify.model.syndication.AtomFeed;
+import org.jbasics.net.mediatype.MediaType;
 import org.jbasics.parser.annotations.ElementImplementor;
 import org.jbasics.parser.annotations.ElementImplementors;
 import org.xml.sax.ContentHandler;
@@ -49,7 +50,7 @@ import org.xml.sax.helpers.AttributesImpl;
 		@ElementImplementor(builderClass = AtomEntry.class, namespace = AtomConstants.ATOM_NS_URI, localName = "entry") })
 public interface AtomDocument {
 
-	AtomMediaType getMediaType();
+	MediaType getMediaType();
 
 	void serialize(ContentHandler handler, AttributesImpl attributes) throws SAXException;
 

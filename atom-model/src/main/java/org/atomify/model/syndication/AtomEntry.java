@@ -33,9 +33,9 @@ import javax.xml.namespace.QName;
 import org.atomify.model.AtomConstants;
 import org.atomify.model.AtomContractConstraint;
 import org.atomify.model.AtomDocument;
-import org.atomify.model.AtomMediaType;
 import org.atomify.model.common.AtomCommonAttributes;
 import org.atomify.model.extension.AtomExtension;
+import org.jbasics.net.mediatype.MediaType;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
@@ -46,6 +46,15 @@ import org.xml.sax.helpers.AttributesImpl;
  * @author Stephan Schloepke
  */
 public class AtomEntry extends AtomCommonAttributes implements AtomDocument {
+	/**
+	 * The media type as a string constant.
+	 */
+	public static final String MEDIA_TYPE_STRING = "application/atom+xml;type=entry";
+	/**
+	 * The media type for an atom syndication entry.
+	 */
+	public static final MediaType MEDIA_TYPE = MediaType.valueOf(MEDIA_TYPE_STRING);
+
 	/**
 	 * <b>Required:</b> atom:id element.
 	 */
@@ -104,8 +113,8 @@ public class AtomEntry extends AtomCommonAttributes implements AtomDocument {
 		return AtomEntryBuilder.newInstance();
 	}
 
-	public AtomMediaType getMediaType() {
-		return AtomConstants.ATOM_ENTRY_MEDIA_TYPE;
+	public MediaType getMediaType() {
+		return MEDIA_TYPE;
 	}
 
 	/**
@@ -390,6 +399,7 @@ public class AtomEntry extends AtomCommonAttributes implements AtomDocument {
 
 	// --- FIXME: From here all is serialization. We Still need to think about a good way to do so.
 
+	@SuppressWarnings("all")
 	public void serialize(ContentHandler handler, AttributesImpl attributes) throws SAXException {
 		handler.startPrefixMapping(AtomConstants.ATOM_NS_PREFIX, AtomConstants.ATOM_NS_URI);
 		attributes = initCommonAttributes(attributes);

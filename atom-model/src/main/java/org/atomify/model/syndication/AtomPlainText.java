@@ -177,6 +177,7 @@ public class AtomPlainText extends AtomText {
 
 	// FIXME: Write a much better way of serialization
 
+	@SuppressWarnings("all")
 	public void serialize(QName name, ContentHandler handler, AttributesImpl attributes) throws SAXException {
 		attributes = initCommonAttributes(attributes);
 		addAttribute(attributes, TYPE_QNAME, getType().toXmlString());

@@ -34,5 +34,5 @@ package org.atomify.client;
  *
  */
 public class AtomRequest {
-
+	// TODO
 }

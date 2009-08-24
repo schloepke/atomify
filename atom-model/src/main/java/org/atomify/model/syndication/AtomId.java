@@ -133,6 +133,7 @@ public class AtomId extends AtomCommonAttributes {
 
 	// FIXME: Write a much better way of serialization
 
+	@SuppressWarnings("all")
 	public void serialize(ContentHandler handler, AttributesImpl attributes) throws SAXException {
 		attributes = initCommonAttributes(attributes);
 		handler.startElement(AtomConstants.ATOM_NS_URI, "id", AtomConstants.ATOM_NS_PREFIX + ":id", attributes);

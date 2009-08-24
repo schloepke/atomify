@@ -24,6 +24,7 @@
  */
 package org.atomify.model.common;
 
+import java.io.Serializable;
 import java.net.URI;
 import java.util.Collections;
 import java.util.HashMap;
@@ -47,7 +48,7 @@ import org.xml.sax.helpers.AttributesImpl;
  * 
  * @author stephan
  */
-public abstract class AtomCommonAttributes {
+public abstract class AtomCommonAttributes implements Serializable {
 
 	/**
 	 * <b>Optional:</b> xml:base attribute.

@@ -24,6 +24,7 @@
  */
 package org.atomify.model.publishing;
 
+import java.io.Serializable;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,9 +34,9 @@ import java.util.List;
 import org.atomify.model.AtomConstants;
 import org.atomify.model.AtomContractConstraint;
 import org.atomify.model.AtomDocument;
-import org.atomify.model.AtomMediaType;
 import org.atomify.model.extension.AtomForeignMarkup;
 import org.atomify.model.syndication.AtomCategory;
+import org.jbasics.net.mediatype.MediaType;
 import org.jbasics.xml.types.XmlBooleanYesNoType;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
@@ -47,7 +48,15 @@ import org.xml.sax.helpers.AttributesImpl;
  * 
  * @author Stephan Schloepke
  */
-public class AtomPubCategories implements AtomDocument, Iterable<AtomCategory> {
+public class AtomPubCategories implements AtomDocument, Iterable<AtomCategory>, Serializable {
+	/**
+	 * The media type as a string constant.
+	 */
+	public static final String MEDIA_TYPE_STRING = "application/atomsvc+xml";
+	/**
+	 * The media type as {@link AtomMediaType}.
+	 */
+	public static final MediaType MEDIA_TYPE = MediaType.valueOf(MEDIA_TYPE_STRING);
 
 	/**
 	 * Required Out Of Line Attribute
@@ -99,8 +108,7 @@ public class AtomPubCategories implements AtomDocument, Iterable<AtomCategory> {
 			for (AtomForeignMarkup temp : undefinedContent) {
 				if (temp.getQualifiedName() != null) {
 					if (AtomConstants.ATOM_PUB_NS_URI.equals(temp.getQualifiedName().getNamespaceURI())) {
-						throw new IllegalArgumentException(
-								"Categories undefiend content cannot have elements of the atom publishing namespace");
+						throw new IllegalArgumentException("Categories undefiend content cannot have elements of the atom publishing namespace");
 					}
 				}
 			}
@@ -116,8 +124,7 @@ public class AtomPubCategories implements AtomDocument, Iterable<AtomCategory> {
 	 * @param categories The categories (can be null or empty)
 	 * @param undefinedContent The undefined content following the categories (can be null or empty)
 	 */
-	public AtomPubCategories(XmlBooleanYesNoType fixed, URI scheme, List<AtomCategory> categories,
-			List<AtomForeignMarkup> undefinedContent) {
+	public AtomPubCategories(XmlBooleanYesNoType fixed, URI scheme, List<AtomCategory> categories, List<AtomForeignMarkup> undefinedContent) {
 		this.href = null;
 		this.fixed = fixed;
 		this.scheme = scheme;
@@ -132,8 +139,7 @@ public class AtomPubCategories implements AtomDocument, Iterable<AtomCategory> {
 			for (AtomForeignMarkup temp : undefinedContent) {
 				if (temp.getQualifiedName() != null) {
 					if (AtomConstants.ATOM_PUB_NS_URI.equals(temp.getQualifiedName().getNamespaceURI())) {
-						throw new IllegalArgumentException(
-								"Categories undefiend content cannot have elements of the atom publishing namespace");
+						throw new IllegalArgumentException("Categories undefiend content cannot have elements of the atom publishing namespace");
 					}
 				}
 			}
@@ -145,8 +151,8 @@ public class AtomPubCategories implements AtomDocument, Iterable<AtomCategory> {
 	 * (non-Javadoc)
 	 * @see org.atomify.model.AtomDocument#getMediaType()
 	 */
-	public AtomMediaType getMediaType() {
-		return AtomConstants.ATOM_PUB_CATEGORIES_MEDIA_TYPE;
+	public MediaType getMediaType() {
+		return MEDIA_TYPE;
 	}
 
 	/**
@@ -192,9 +198,8 @@ public class AtomPubCategories implements AtomDocument, Iterable<AtomCategory> {
 		return this.categories.iterator();
 	}
 
-	
-	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -209,7 +214,8 @@ public class AtomPubCategories implements AtomDocument, Iterable<AtomCategory> {
 		return result;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -268,13 +274,14 @@ public class AtomPubCategories implements AtomDocument, Iterable<AtomCategory> {
 	 */
 	@Override
 	public String toString() {
-		return new StringBuilder().append("AtomPubCategories [categories=").append(this.categories).append(", fixed=")
-				.append(this.fixed).append(", href=").append(this.href).append(", scheme=").append(this.scheme).append(
-						", undefinedContent=").append(this.undefinedContent).append("]").toString();
+		return new StringBuilder().append("AtomPubCategories [categories=").append(this.categories).append(", fixed=").append(this.fixed).append(
+				", href=").append(this.href).append(", scheme=").append(this.scheme).append(", undefinedContent=").append(this.undefinedContent)
+				.append("]").toString();
 	}
 
 	// FIXME: The following code is serialization which needs to be reimplemented
 
+	@SuppressWarnings("all")
 	public void serialize(ContentHandler handler, AttributesImpl attributes) throws SAXException {
 		handler.startPrefixMapping(AtomConstants.ATOM_NS_PREFIX, AtomConstants.ATOM_NS_URI);
 		handler.startPrefixMapping(AtomConstants.ATOM_PUB_NS_PREFIX, AtomConstants.ATOM_PUB_NS_URI);
@@ -293,8 +300,7 @@ public class AtomPubCategories implements AtomDocument, Iterable<AtomCategory> {
 				addAttribute(attributes, "fixed", this.fixed.toXmlString());
 			}
 		}
-		handler.startElement(AtomConstants.ATOM_PUB_NS_URI, "categories", AtomConstants.ATOM_PUB_NS_PREFIX
-				+ ":categories", attributes);
+		handler.startElement(AtomConstants.ATOM_PUB_NS_URI, "categories", AtomConstants.ATOM_PUB_NS_PREFIX + ":categories", attributes);
 		if (this.href == null) {
 			for (AtomCategory category : this.categories) {
 				category.serialize(handler, attributes);
@@ -303,8 +309,7 @@ public class AtomPubCategories implements AtomDocument, Iterable<AtomCategory> {
 		for (AtomForeignMarkup temp : this.undefinedContent) {
 			temp.serialize(handler, attributes);
 		}
-		handler.endElement(AtomConstants.ATOM_PUB_NS_URI, "categories", AtomConstants.ATOM_PUB_NS_PREFIX
-				+ ":categories");
+		handler.endElement(AtomConstants.ATOM_PUB_NS_URI, "categories", AtomConstants.ATOM_PUB_NS_PREFIX + ":categories");
 		handler.endPrefixMapping(AtomConstants.ATOM_NS_PREFIX);
 		handler.endPrefixMapping(AtomConstants.ATOM_PUB_NS_PREFIX);
 	}

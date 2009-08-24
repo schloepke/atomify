@@ -29,11 +29,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.atomify.model.AtomContractConstraint;
-import org.atomify.model.AtomMediaType;
 import org.atomify.model.common.AtomCommonBuilder;
 import org.atomify.model.common.AtomLanguage;
 import org.atomify.model.extension.AtomForeignMarkup;
 import org.atomify.model.extension.AtomForeignTextContent;
+import org.jbasics.net.mediatype.MediaType;
 import org.jbasics.parser.annotations.AnyElement;
 import org.jbasics.parser.annotations.Attribute;
 import org.jbasics.parser.annotations.Content;
@@ -42,7 +42,7 @@ import org.jbasics.pattern.builder.Builder;
 public class AtomLinkBuilder extends AtomCommonBuilder<AtomLinkBuilder> implements Builder<AtomLink> {
 	private URI href; // REQUIRED
 	private URI rel; // AtomNCName or AtomURI
-	private AtomMediaType type;
+	private MediaType type;
 	private AtomLanguage hreflang;
 	private String title;
 	private Integer length;
@@ -76,8 +76,9 @@ public class AtomLinkBuilder extends AtomCommonBuilder<AtomLinkBuilder> implemen
 	}
 
 	@Attribute(name = "href", required = true)
-	public void setHref(URI href) {
+	public AtomLinkBuilder setHref(URI href) {
 		this.href = href;
+		return this;
 	}
 
 	@Attribute(name = "rel")
@@ -86,8 +87,8 @@ public class AtomLinkBuilder extends AtomCommonBuilder<AtomLinkBuilder> implemen
 		return this;
 	}
 
-// @Attribute(name = "type")
-	public AtomLinkBuilder setType(AtomMediaType type) {
+	@Attribute(name = "type")
+	public AtomLinkBuilder setType(MediaType type) {
 		this.type = type;
 		return this;
 	}

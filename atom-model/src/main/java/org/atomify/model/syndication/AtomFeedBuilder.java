@@ -72,11 +72,15 @@ public class AtomFeedBuilder extends AbstractAtomSourceBuilder<AtomFeedBuilder> 
 
 	@Element(name = "entry", namespace = AtomConstants.ATOM_NS_URI, minOccurs = 0, maxOccurs = Element.UNBOUND)
 	public AtomFeedBuilder addEntry(AtomEntry entry) {
+		getEntries().add(AtomContractConstraint.notNull("extension", entry));
+		return this;
+	}
+
+	public List<AtomEntry> getEntries() {
 		if (this.entries == null) {
 			this.entries = new ArrayList<AtomEntry>();
 		}
-		this.entries.add(AtomContractConstraint.notNull("extension", entry));
-		return this;
+		return this.entries;
 	}
 
 }

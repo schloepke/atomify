@@ -211,6 +211,7 @@ public class AtomCategory extends AtomCommonAttributes {
 
 	// FIXME: The following code is serialization which needs to be reimplemented
 
+	@SuppressWarnings("all")
 	public void serialize(ContentHandler handler, AttributesImpl attributes) throws SAXException {
 		attributes = initCommonAttributes(attributes);
 		if (this.term != null) {

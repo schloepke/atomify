@@ -27,8 +27,8 @@ package org.atomify.model.syndication;
 import javax.xml.namespace.QName;
 
 import org.atomify.model.AtomConstants;
-import org.atomify.model.AtomMediaType;
 import org.atomify.model.common.AtomCommonAttributes;
+import org.jbasics.net.mediatype.MediaType;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
@@ -41,7 +41,7 @@ import org.xml.sax.helpers.AttributesImpl;
  * 
  * @author stephan
  */
-public class AtomContent extends AtomCommonAttributes {
+public abstract class AtomContent extends AtomCommonAttributes {
 
 	public static AtomContentBuilder newBuilder() {
 		return AtomContentBuilder.newInstance();
@@ -59,7 +59,15 @@ public class AtomContent extends AtomCommonAttributes {
 		return false;
 	}
 
-	public boolean isMediaType(final AtomMediaType type) {
+	public boolean isMediaType(final MediaType type) {
+		return false;
+	}
+	
+	public boolean isBinary() {
+		return false;
+	}
+	
+	public boolean isXML() {
 		return false;
 	}
 
@@ -69,9 +77,7 @@ public class AtomContent extends AtomCommonAttributes {
 	 */
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		return result;
+		return super.hashCode();
 	}
 
 	/*
@@ -83,10 +89,7 @@ public class AtomContent extends AtomCommonAttributes {
 		if (this == obj) {
 			return true;
 		}
-		if (!super.equals(obj)) {
-			return false;
-		}
-		if (!(obj instanceof AtomContent)) {
+		if (!super.equals(obj) || !(obj instanceof AtomContent)) {
 			return false;
 		}
 		return true;
@@ -94,14 +97,8 @@ public class AtomContent extends AtomCommonAttributes {
 
 	// FIXME: Write a much better way of serialization
 
-	public void serialize(ContentHandler handler, AttributesImpl attributes) throws SAXException {
-		attributes = initCommonAttributes(attributes);
-		String namespace = AtomConstants.ATOM_NS_URI;
-		String local = "content";
-		String qName = AtomConstants.ATOM_NS_PREFIX + ":" + local;
-		handler.startElement(namespace, local, qName, attributes);
-		// Here we need to serialize the content
-		handler.endElement(namespace, local, qName);
-	}
+	public abstract void serialize(ContentHandler handler, AttributesImpl attributes) throws SAXException;
+
+	protected final static QName TYPE_QNAME = new QName("type");
 
 }
