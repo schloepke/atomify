@@ -34,6 +34,8 @@ import org.atomify.model.AtomContractConstraint;
 import org.atomify.model.AtomDocument;
 import org.atomify.model.common.AtomCommonAttributes;
 import org.atomify.model.extension.AtomExtension;
+import org.atomify.model.syndication.AtomPlainText;
+import org.atomify.model.syndication.AtomText;
 import org.jbasics.net.mediatype.MediaType;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
@@ -99,6 +101,67 @@ public class AtomPubService extends AtomCommonAttributes implements AtomDocument
 
 	public Iterator<AtomPubWorkspace> iterator() {
 		return this.workspaces.iterator();
+	}
+
+	/**
+	 * Find the first occurrence of the workspace with the given name.
+	 * <p>
+	 * Workspaces have a title but no identifier which is supposed to be unique. With other words it
+	 * is quite hard to automatically select the right workspace. In some cases it is actually
+	 * having three workspaces with the same name but with different collections in it.
+	 * </p>
+	 * <p>
+	 * Under such circumstances it is hard to "select" a workspace you want to use other than
+	 * actually iterating over all workspaces and inspect them by you specific criteria. So
+	 * {@link #findWorkspace(String)} returns the first workspace where the name matches. The match
+	 * is made with a trimmed name rather than a full select and the match is also case insensitive.
+	 * If you need another matching in your case you have to iterate over the workspaces your own
+	 * and select the one you need.
+	 * </p>
+	 * 
+	 * @param title The workspace title to look for (It can be hard to find the right workspace when
+	 *            using XHTML or HTML text constructs so this here is usually only working with
+	 *            plain text. In the future I am going to extend it to be able to search for the
+	 *            pure text content of a html or xhtml entity like "MyTitle" also finds "{@code
+	 *            <b>MyTitle</b>}".
+	 * @return The first workspace matching the title (compared with both strings trimmed and case
+	 *         insensitive). If not found returns null.
+	 */
+	public AtomPubWorkspace findWorkspace(String title) {
+		AtomContractConstraint.notNull("title", title);
+		for (AtomPubWorkspace workspace : this) {
+			AtomText temp = workspace.getTitle();
+			// FIXME: This is not nice. First we have to KNOW the real type
+			// and second we need to cast it so we can get the content. This is not a
+			// good solution since changes would affect this area.
+			if (temp.isTextType()) {
+				if (title.equalsIgnoreCase(((AtomPlainText) temp).getValue())) {
+					return workspace;
+				}
+			}
+		}
+		return null;
+	}
+
+	public AtomPubCollection findCollection(String workspaceTitle, String collectionTitle, MediaType... mediaTypes) {
+		AtomContractConstraint.notNull("workspaceTitle", workspaceTitle);
+		AtomContractConstraint.notNull("collectionTitle", collectionTitle);
+		for (AtomPubWorkspace workspace : this) {
+			AtomText temp = workspace.getTitle();
+			// FIXME: This is not nice. First we have to KNOW the real type
+			// and second we need to cast it so we can get the content. This is not a
+			// good solution since changes would affect this area.
+			if (temp.isTextType()) {
+				if (workspaceTitle.equalsIgnoreCase(((AtomPlainText) temp).getValue())) {
+					AtomPubCollection collection = workspace.findCollection(collectionTitle, mediaTypes);
+					if (collection != null) {
+						return collection;
+					}
+				}
+			}
+		}
+		return null;
+		
 	}
 
 	/*

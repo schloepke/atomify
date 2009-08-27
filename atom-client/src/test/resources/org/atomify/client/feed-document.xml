@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+	<!--
+
+		Copyright (c) 2009 Stephan Schloepke and innoQ Deutschland GmbH
+
+		Stephan Schloepke: http://www.schloepke.de/ innoQ Deutschland GmbH:
+		http://www.innoq.com/ Permission is hereby granted, free of charge, to
+		any person obtaining a copy of this software and associated
+		documentation files (the "Software"), to deal in the Software without
+		restriction, including without limitation the rights to use, copy,
+		modify, merge, publish, distribute, sublicense, and/or sell copies of
+		the Software, and to permit persons to whom the Software is furnished
+		to do so, subject to the following conditions: The above copyright
+		notice and this permission notice shall be included in all copies or
+		substantial portions of the Software. THE SOFTWARE IS PROVIDED "AS
+		IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+		NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+		PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
+		OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+		LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+		ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+		OTHER DEALINGS IN THE SOFTWARE.
+	-->
+
+<atom:feed xmlns:atom="http://www.w3.org/2005/Atom" xmlns:xhtml="http://www.w3.org/1999/xhtml" xml:base="http://example.org/atom/pub">
+
+	<atom:id>urn:id:feed</atom:id>
+	<atom:title type="html">&lt;h1>Just another Blog&lt;/h1></atom:title>
+	
+	<atom:subtitle type="xhtml">
+		<xhtml:div>
+			<xhtml:h1>Here is some heading</xhtml:h1>
+			<xhtml:p>And som paragraph</xhtml:p>
+		</xhtml:div>
+	</atom:subtitle>
+	<atom:updated>2009-08-11T12:22:30+02:00</atom:updated>
+
+	<atom:generator uri="http://www.atomify.org" version="0.1.0">atomify Atom Library v0.1.0</atom:generator>
+
+	<atom:author>
+		<atom:name>John Doe</atom:name>
+		<atom:uri>http://example.org/jon.doe</atom:uri>
+		<atom:email>jon.doe@example.org</atom:email>
+	</atom:author>
+
+	<atom:category term="test" scheme="http://example.org" label="Test Category" />
+	
+	<atom:rights>(C) Copyright Jon &amp; Jane Doe</atom:rights>
+
+	<atom:contributor>
+		<atom:name>Jane Doe</atom:name>
+		<atom:email>jane.doe@example.org</atom:email>
+	</atom:contributor>
+	
+	<atom:link rel="alternate" href="http://localhost:8081/atom/feed" />
+	<atom:link rel="self" href="http://localhost:8081/atom/feed" />
+	
+	<atom:entry>
+		<atom:id>urn:id:1</atom:id>
+		<atom:title type="text">Simple test entry</atom:title>
+		<atom:updated>2009-08-11T12:25:12+02:00</atom:updated>
+		
+		<atom:summary type="text">This is a summary</atom:summary>
+		<atom:rights xml:lang="en">(C) Copyright Jane Doe</atom:rights>
+
+		<atom:link rel="alternate" href="http://localhost:8081/atom/feed/1" />
+		<atom:link rel="edit" href="http://localhost:8081/atom/feed/1" />
+
+		<atom:author>
+			<atom:name>Jane Doe</atom:name>
+			<atom:uri>http://www.example.org/jane.doe</atom:uri>
+			<atom:email>jane.doe@example.org</atom:email>
+		</atom:author>
+
+		<atom:content type="text">
+			This is the content of my new block entry!
+		</atom:content>
+	</atom:entry>
+
+	<atom:entry>
+		<atom:id>urn:uuid:2</atom:id>
+		<atom:title type="text">Another simple entry</atom:title>
+		<atom:updated>2009-08-11T12:25:12+02:00</atom:updated>
+		
+		<atom:summary type="text">A summary</atom:summary>
+		<atom:rights xml:lang="en">(C) Copyright Jane Doe</atom:rights>
+
+		<atom:link rel="alternate" href="http://localhost:8081/atom/feed/2" />
+		<atom:link rel="edit" href="http://localhost:8081/atom/feed/2" />
+
+		<atom:author>
+			<atom:name>Jane Doe</atom:name>
+			<atom:uri>http://www.example.org/jane.doe</atom:uri>
+			<atom:email>jane.doe@example.org</atom:email>
+		</atom:author>
+
+		<atom:contributor>
+			<atom:name>John Doe</atom:name>
+			<atom:email>jon.doe@example.org</atom:email>
+			<atom:uri>http://example.org/jon.doe</atom:uri>
+		</atom:contributor>
+		
+		<atom:content type="application/xml">
+			<customer xmlns="">
+				<name>John</name>
+				<surname>Doe</surname>
+				<street>42nd East Street Apt.#24a</street>
+				<city>Washington, DC</city>
+				<zip>78234</zip>
+			</customer>
+		</atom:content>
+
+	</atom:entry>
+
+</atom:feed>

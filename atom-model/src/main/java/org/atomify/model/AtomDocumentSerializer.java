@@ -52,6 +52,7 @@ public class AtomDocumentSerializer {
 			SAXTransformerFactory factory = (SAXTransformerFactory) TransformerFactory.newInstance();
 			TransformerHandler handler = factory.newTransformerHandler();
 			Transformer serializer = handler.getTransformer();
+			serializer.setOutputProperty(OutputKeys.METHOD, "xml");
 			serializer.setOutputProperty(OutputKeys.ENCODING, this.encoding);
 			serializer.setOutputProperty(OutputKeys.INDENT, "yes");
 			serializer.setOutputProperty(OutputKeys.VERSION, "1.0");

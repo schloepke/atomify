@@ -79,9 +79,6 @@ public abstract class AtomCommonBuilder<T extends AtomCommonBuilder<?>> {
 	@SuppressWarnings("unchecked")
 	@AnyAttribute
 	public final T setUndefinedAttribute(QName name, String value) {
-		if (this.undefinedAttributes == null) {
-			this.undefinedAttributes = new HashMap<QName, String>();
-		}
 		String tempNS = AtomContractConstraint.notNull("name", name).getNamespaceURI();
 		if (tempNS == null || tempNS.length() == 0) {
 			throw new IllegalArgumentException("Undefined attribute local:* is not allowed");
@@ -92,11 +89,18 @@ public abstract class AtomCommonBuilder<T extends AtomCommonBuilder<?>> {
 		} else if (XMLAttributeNames.XML_SPACE_QNAME.equals(name)) {
 			setXmlSpace(XmlSpaceType.valueOf(value));
 		} else {
-			this.undefinedAttributes.put(name, value);
+			getUndefinedAttributes().put(name, value);
 		}
 		return (T) this;
 	}
-
+	
+	public Map<QName, String> getUndefinedAttributes() {
+		if (this.undefinedAttributes == null) {
+			this.undefinedAttributes = new HashMap<QName, String>();
+		}
+		return this.undefinedAttributes;
+	}
+	
 	protected final <AT extends AtomCommonAttributes> AT attachCommonAttributes(AT instance) {
 		instance.setXmlBase(this.xmlBase);
 		instance.setXmlLang(this.xmlLang);

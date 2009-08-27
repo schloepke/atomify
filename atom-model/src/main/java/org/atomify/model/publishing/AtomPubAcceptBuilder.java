@@ -31,18 +31,17 @@ import java.util.Map;
 import org.atomify.model.AtomContractConstraint;
 import org.atomify.model.common.AtomCommonBuilder;
 import org.atomify.model.syndication.AtomEntry;
-import org.jbasics.net.mediatype.MediaType;
 import org.jbasics.net.mediatype.MediaTypeRange;
 import org.jbasics.parser.annotations.Content;
 import org.jbasics.pattern.builder.Builder;
 
 public class AtomPubAcceptBuilder extends AtomCommonBuilder<AtomPubAcceptBuilder> implements Builder<AtomPubAccept> {
-	public final static Map<MediaType, AtomPubAccept> STANDARD_ACCEPTS;
+	public final static Map<MediaTypeRange, AtomPubAccept> STANDARD_ACCEPTS;
 
 	static {
-		Map<MediaType, AtomPubAccept> temp = new HashMap<MediaType, AtomPubAccept>();
+		Map<MediaTypeRange, AtomPubAccept> temp = new HashMap<MediaTypeRange, AtomPubAccept>();
 		temp.put(null, AtomPubAccept.valueOf((String)null));
-		temp.put(AtomEntry.MEDIA_TYPE, AtomPubAccept.valueOf(AtomEntry.MEDIA_TYPE));
+		temp.put(MediaTypeRange.valueOf(AtomEntry.MEDIA_TYPE.toString()), AtomPubAccept.valueOf(AtomEntry.MEDIA_TYPE));
 		STANDARD_ACCEPTS = Collections.unmodifiableMap(temp);
 	}
 

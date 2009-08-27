@@ -43,7 +43,7 @@ public class AtomPubAcceptTest {
 	public void testSimpleBuilding() {
 		AtomPubAcceptBuilder builder = AtomPubAccept.newBuilder();
 		AtomPubAccept test = builder.setAcceptMediaRange(AtomEntry.MEDIA_TYPE).build();
-		assertEquals(AtomEntry.MEDIA_TYPE.toString(), test.getAcceptMediaRange());
+		assertEquals(AtomEntry.MEDIA_TYPE.toString(), test.getAcceptMediaRange().toString());
 		AtomPubAccept test2 = builder.build();
 		assertSame(test, test2);
 		builder.reset();
@@ -53,7 +53,7 @@ public class AtomPubAcceptTest {
 		assertEquals(test, test2);
 		builder.reset();
 		test = builder.build();
-		assertEquals("", test.getAcceptMediaRange());
+		assertEquals(null, test.getAcceptMediaRange());
 	}
 
 	@Test
@@ -62,7 +62,7 @@ public class AtomPubAcceptTest {
 		AtomPubAcceptBuilder builder = AtomPubAccept.newBuilder();
 		AtomPubAccept test = builder.setXmlBase(base).setXmlLang(AtomLanguage.valueOf(Locale.GERMAN)).setXmlSpace(
 				XmlSpaceType.PRESERVED).setAcceptMediaRange(AtomEntry.MEDIA_TYPE).build();
-		assertEquals(AtomEntry.MEDIA_TYPE.toString(), test.getAcceptMediaRange());
+		assertEquals(AtomEntry.MEDIA_TYPE.toString(), test.getAcceptMediaRange().toString());
 		assertEquals(base, test.getXmlBase());
 		assertEquals(XmlSpaceType.PRESERVED, test.getXmlSpace());
 		assertEquals(Locale.GERMAN, test.getXmlLang().toLocale());

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2009 Stephan Schloepke and innoQ Deutschland GmbH
  *
  * Stephan Schloepke: http://www.schloepke.de/
@@ -24,15 +24,37 @@
  */
 package org.atomify.client;
 
-/**
- * Listenbeschreibung
- * <p>
- * Detailierte Beschreibung
- * </p>
- *
- * @author stephan
- *
- */
-public class AtomRequest {
-	// TODO
+import javax.ws.rs.core.Response.Status;
+
+import org.atomify.model.syndication.AtomEntry;
+
+import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.WebResource;
+
+public class AtomEntryClient extends RefreshableResourceClient<AtomEntry> {
+
+	public AtomEntryClient(WebResource resource) {
+		this(resource, null);
+	}
+
+	public AtomEntryClient(WebResource resource, AtomEntry currentEntry) {
+		super(resource, AtomEntry.MEDIA_TYPE);
+		if (currentEntry != null) {
+			replaceEntity(currentEntry);
+		}
+	}
+
+	@Override
+	protected AtomEntry handleResponse(ClientResponse response) {
+		return response.getEntity(AtomEntry.class);
+	}
+	
+	public boolean delete() {
+		ClientResponse response = resource().delete(ClientResponse.class);
+		if (response.getStatus() == Status.OK.getStatusCode()) {
+			return true;
+		}
+		return false;
+	}
+
 }

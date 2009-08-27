@@ -47,8 +47,7 @@ public final class AtomContractConstraint {
 	public static <T> T notNull(String instanceName, T instance) {
 		if (instance == null) {
 			if (instanceName != null) {
-				throw new IllegalArgumentException("[AtomContractConstraint] The instance " + instanceName
-						+ " must not be null");
+				throw new IllegalArgumentException("[AtomContractConstraint] The instance " + instanceName + " must not be null");
 			} else {
 				throw new IllegalArgumentException(
 						"[AtomContractConstraint] The unknown instance must not be null (please consider the call to know which one)");
@@ -69,11 +68,31 @@ public final class AtomContractConstraint {
 	public static <T extends Collection<?>> T mustNotBeEmpty(T instance, String instanceName) {
 		if (instance == null || instance.isEmpty()) {
 			if (instanceName != null) {
-				throw new IllegalArgumentException("[AtomContractConstraint] The collection " + instanceName
-						+ " must not be null or empty");
+				throw new IllegalArgumentException("[AtomContractConstraint] The collection " + instanceName + " must not be null or empty");
 			} else {
 				throw new IllegalArgumentException(
 						"[AtomContractConstraint] The unknown collection must not be null or empty (please consider the call to know which one)");
+			}
+		}
+		return instance;
+	}
+
+	/**
+	 * Checks if a collection is not null and not empty.
+	 * 
+	 * @param <T> The {@link Collection} type
+	 * @param instance The {@link Collection} to check
+	 * @param instanceName The name of the collection instance
+	 * @return The Collection which is guaranteed to be not null and not empty
+	 * @throws IllegalArgumentException if the {@link Collection} is either be null or empty
+	 */
+	public static <T> T[] mustNotBeEmpty(T[] instance, String instanceName) {
+		if (instance == null || instance.length == 0) {
+			if (instanceName != null) {
+				throw new IllegalArgumentException("[AtomContractConstraint] The array " + instanceName + " must not be null or empty");
+			} else {
+				throw new IllegalArgumentException(
+						"[AtomContractConstraint] The unknown array must not be null or empty (please consider the call to know which one)");
 			}
 		}
 		return instance;
@@ -92,8 +111,7 @@ public final class AtomContractConstraint {
 	public static <T extends CharSequence> T mustNotBeEmptyString(T instance, String instanceName) {
 		if (instance == null || instance.length() == 0) {
 			if (instanceName != null) {
-				throw new IllegalArgumentException("[AtomContractConstraint] The character sequence " + instanceName
-						+ " must not be null or empty");
+				throw new IllegalArgumentException("[AtomContractConstraint] The character sequence " + instanceName + " must not be null or empty");
 			} else {
 				throw new IllegalArgumentException(
 						"[AtomContractConstraint] The unknown character sequence must not be null or empty (please consider the call to know which one)");
@@ -111,9 +129,8 @@ public final class AtomContractConstraint {
 				throw new IllegalArgumentException("[AtomContractConstraint] The character sequence " + instanceName
 						+ " must not be null and match the pattern " + pattern.pattern());
 			} else {
-				throw new IllegalArgumentException(
-						"[AtomContractConstraint] The unknown character sequence must not be null and match the pattern "
-								+ pattern.pattern() + " (please consider the call to know which one)");
+				throw new IllegalArgumentException("[AtomContractConstraint] The unknown character sequence must not be null and match the pattern "
+						+ pattern.pattern() + " (please consider the call to know which one)");
 			}
 		}
 		return instance;

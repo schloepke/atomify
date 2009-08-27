@@ -22,61 +22,57 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.atomify.model.syndication;
+package org.atomify.client;
 
-import java.net.URI;
-
-import javax.xml.namespace.QName;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 
 import org.atomify.model.AtomConstants;
-import org.atomify.model.AtomContractConstraint;
+import org.atomify.model.syndication.AtomContentXml;
+import org.jbasics.checker.ContractCheck;
 import org.jbasics.net.mediatype.MediaType;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
-public class AtomContentLink extends AtomContent {
-	private final URI source;
-	private final MediaType mediaType;
+public class JAXBContent extends AtomContentXml {
+	private Object element;
+	private JAXBContext ctx;
 
-	public AtomContentLink(URI source, MediaType mediatType) {
-		this.source = AtomContractConstraint.notNull("source", source);
-		this.mediaType = mediatType;
+	public JAXBContent(Object element) {
+		this(null, element);
+	}
+
+	public JAXBContent(JAXBContext ctx, Object element) {
+		super(MediaType.APPLICATION_XML_TYPE);
+		this.element = ContractCheck.mustNotBeNull(element, "element");
+		if (ctx == null) {
+			try {
+				this.ctx = JAXBContext.newInstance(this.element.getClass());
+			} catch (JAXBException e) {
+				throw new RuntimeException(e.getMessage(), e);
+			}
+		} else {
+			this.ctx = ctx;
+		}
 	}
 
 	@Override
-	public boolean isMediaType(MediaType type) {
-		return this.mediaType != null ? this.mediaType.isMediaTypeMatching(type) : false;
-	}
-
-	public URI getSource() {
-		return this.source;
-	}
-
-	public MediaType getMediaType() {
-		return this.mediaType;
-	}
-
-	public String getType() {
-		return this.mediaType == null ? null : this.mediaType.toString();
-	}
-
-	// FIXME: Write a much better way of serialization
-
-	@SuppressWarnings("all")
 	public void serialize(ContentHandler handler, AttributesImpl attributes) throws SAXException {
 		attributes = initCommonAttributes(attributes);
-		addAttribute(attributes, SRC_QNAME, this.source.toString());
-		if (this.mediaType != null) {
-			addAttribute(attributes, TYPE_QNAME, this.mediaType.toString());
-		}
+		addAttribute(attributes, TYPE_QNAME, getMediaType().toString());
 		String namespace = AtomConstants.ATOM_NS_URI;
 		String local = "content";
 		String qName = AtomConstants.ATOM_NS_PREFIX + ":" + local;
 		handler.startElement(namespace, local, qName, attributes);
+		try {
+			Marshaller m = this.ctx.createMarshaller();
+			m.marshal(this.element, handler);
+		} catch (JAXBException e) {
+			throw new SAXException(e);
+		}
 		handler.endElement(namespace, local, qName);
 	}
 
-	protected final static QName SRC_QNAME = new QName("src");
-	
 }

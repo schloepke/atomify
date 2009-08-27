@@ -52,7 +52,7 @@ public class AtomPubCategories implements AtomDocument, Iterable<AtomCategory>, 
 	/**
 	 * The media type as a string constant.
 	 */
-	public static final String MEDIA_TYPE_STRING = "application/atomsvc+xml";
+	public static final String MEDIA_TYPE_STRING = "application/atomcat+xml";
 	/**
 	 * The media type as {@link AtomMediaType}.
 	 */

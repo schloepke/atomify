@@ -35,7 +35,9 @@ import org.atomify.model.AtomConstants;
 import org.atomify.model.AtomContractConstraint;
 import org.atomify.model.common.AtomCommonAttributes;
 import org.atomify.model.extension.AtomExtension;
+import org.atomify.model.syndication.AtomPlainText;
 import org.atomify.model.syndication.AtomText;
+import org.jbasics.net.mediatype.MediaType;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
@@ -99,6 +101,28 @@ public class AtomPubWorkspace extends AtomCommonAttributes implements Iterable<A
 
 	public Iterator<AtomPubCollection> iterator() {
 		return this.collections.iterator();
+	}
+
+	public AtomPubCollection findCollection(String title, MediaType... mediaTypes) {
+		AtomContractConstraint.notNull("title", title);
+		for (AtomPubCollection collection : this) {
+			AtomText temp = collection.getTitle();
+			// FIXME: This is not nice. First we have to KNOW the real type
+			// and second we need to cast it so we can get the content. This is not a
+			// good solution since changes would affect this area.
+			if (temp.isTextType()) {
+				if (title.equalsIgnoreCase(((AtomPlainText) temp).getValue())) {
+					if (mediaTypes != null && mediaTypes.length > 0) {
+						if (collection.isMediaTypeAccepted(mediaTypes)) {
+							return collection;
+						}
+					} else {
+						return collection;
+					}
+				}
+			}
+		}
+		return null;
 	}
 
 	/*

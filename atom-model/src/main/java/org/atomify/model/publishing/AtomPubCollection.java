@@ -37,7 +37,11 @@ import org.atomify.model.AtomConstants;
 import org.atomify.model.AtomContractConstraint;
 import org.atomify.model.common.AtomCommonAttributes;
 import org.atomify.model.extension.AtomExtension;
+import org.atomify.model.syndication.AtomEntry;
 import org.atomify.model.syndication.AtomText;
+import org.jbasics.net.mediatype.AcceptMediaTypeRange;
+import org.jbasics.net.mediatype.AcceptMediaTypeSet;
+import org.jbasics.net.mediatype.MediaType;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
@@ -72,6 +76,8 @@ public class AtomPubCollection extends AtomCommonAttributes {
 	 * <b>Optional:</b> extension elements (all non AtomPub namespace and not atom:title)
 	 */
 	private final List<AtomExtension> extensions;
+
+	private transient AcceptMediaTypeSet mediaTypeAcceptanceCache;
 
 	public static AtomPubCollectionBuilder newBuilder() {
 		return AtomPubCollectionBuilder.newInstance();
@@ -136,6 +142,26 @@ public class AtomPubCollection extends AtomCommonAttributes {
 	 */
 	public List<AtomExtension> getExtensions() {
 		return this.extensions;
+	}
+
+	public MediaType matchAcceptedMediaType(MediaType defaultMediaType, MediaType... preferedTypes) {
+		AcceptMediaTypeSet temp = this.mediaTypeAcceptanceCache;
+		if (temp == null) {
+			temp = new AcceptMediaTypeSet();
+			if (this.accepts.isEmpty()) {
+				temp.add(new AcceptMediaTypeRange(AtomEntry.MEDIA_TYPE, null));
+			} else {
+				for (AtomPubAccept accept : this.accepts) {
+					temp.add(new AcceptMediaTypeRange(accept.getAcceptMediaRange(), null));
+				}
+			}
+			this.mediaTypeAcceptanceCache = temp;
+		}
+		return temp.matchClosest(defaultMediaType, preferedTypes);
+	}
+
+	public boolean isMediaTypeAccepted(MediaType... mediaTypes) {
+		return matchAcceptedMediaType(null, AtomContractConstraint.mustNotBeEmpty(mediaTypes, "mediaTypes")) != null;
 	}
 
 	/*

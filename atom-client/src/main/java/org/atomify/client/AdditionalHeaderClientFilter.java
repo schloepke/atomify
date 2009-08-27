@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2009 Stephan Schloepke and innoQ Deutschland GmbH
  *
  * Stephan Schloepke: http://www.schloepke.de/
@@ -24,45 +24,27 @@
  */
 package org.atomify.client;
 
-import java.io.IOException;
-import java.io.InputStream;
+import org.atomify.model.AtomContractConstraint;
+import org.jbasics.types.tuples.Pair;
 
-import javax.ws.rs.core.MediaType;
+import com.sun.jersey.api.client.ClientHandlerException;
+import com.sun.jersey.api.client.ClientRequest;
+import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.filter.ClientFilter;
 
-import org.atomify.client.http.AcceptParameter;
-import org.atomify.client.http.RequestHandler;
-import org.atomify.client.http.RequestHeaders;
-import org.atomify.client.http.ResponseMeta;
-import org.atomify.model.AtomConstants;
-import org.atomify.model.publishing.AtomPubService;
+public class AdditionalHeaderClientFilter extends ClientFilter {
+	private final Pair<String, String>[] additionalHeader;
 
-/**
- * Listenbeschreibung
- * <p>
- * Detailierte Beschreibung
- * </p>
- * 
- * @author stephan
- */
-public class AtomServiceRequest extends RequestHeaders implements RequestHandler {
-	public static final MediaType ATOM_PUB_SERVICE_MEDIA_TYPE = MediaType.valueOf(AtomPubService.MEDIA_TYPE.toString());
-	private AtomPubService serviceDocument;
-
-	@SuppressWarnings("unchecked")
-	public AtomServiceRequest() {
-		super();
-		setAcceptMediaTypes(new AcceptParameter<MediaType>(ATOM_PUB_SERVICE_MEDIA_TYPE));
+	public AdditionalHeaderClientFilter(Pair<String, String>... header) {
+		this.additionalHeader = AtomContractConstraint.mustNotBeEmpty(header, "header");
 	}
 
-	public AtomPubService getServiceDocument() {
-		return this.serviceDocument;
-	}
-
-	public void processInput(final ResponseMeta metaData, final InputStream in) throws IOException {
-		if (ATOM_PUB_SERVICE_MEDIA_TYPE.equals(metaData.getMediaType())) {
-			// TODO: Parse the service document
-		} else {
-			throw new UnsupportedOperationException("Cannot decode mime type "+metaData.getMediaType());
+	@Override
+	public ClientResponse handle(ClientRequest cr) throws ClientHandlerException {
+		for (Pair<String, String> header : this.additionalHeader) {
+			cr.getMetadata().add(header.left(), header.right());
 		}
+		return getNext().handle(cr);
 	}
+
 }

@@ -25,6 +25,7 @@
 package org.atomify.model.syndication;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.atomify.model.AtomConstants;
@@ -89,6 +90,27 @@ public class AtomEntryBuilder extends AtomCommonBuilder<AtomEntryBuilder> implem
 
 	public static AtomEntryBuilder newInstance() {
 		return new AtomEntryBuilder();
+	}
+
+	public static AtomEntryBuilder newInstance(AtomEntry entry) {
+		AtomEntryBuilder builder = new AtomEntryBuilder();
+		builder.setXmlBase(entry.getXmlBase());
+		builder.setXmlLang(entry.getXmlLang());
+		builder.setXmlSpace(entry.getXmlSpace());
+		builder.getUndefinedAttributes().putAll(entry.getUndefinedAttributes());
+		builder.setId(entry.getId());
+		builder.setTitle(entry.getTitle());
+		builder.setUpdated(entry.getUpdated());
+		builder.setPublished(entry.getPublished());
+		builder.setSummary(entry.getSummary());
+		builder.setRights(entry.getRights());
+		builder.setSource(entry.getSource());
+		builder.setContent(entry.getContent());
+		builder.addAuthors(entry.getAuthors());
+		builder.addContributors(entry.getContributors());
+		builder.addCategories(entry.getCategories());
+		builder.addLinks(entry.getLinks());
+		return builder;
 	}
 
 	private AtomEntryBuilder() {
@@ -199,30 +221,66 @@ public class AtomEntryBuilder extends AtomCommonBuilder<AtomEntryBuilder> implem
 		return this;
 	}
 
-	@Element(name = "category", namespace = AtomConstants.ATOM_NS_URI, minOccurs = 0, maxOccurs = Element.UNBOUND)
-	public AtomEntryBuilder addCategory(AtomCategory category) {
+	public AtomEntryBuilder addAuthors(Collection<AtomPerson> authors) {
+		getAuthors().addAll(AtomContractConstraint.notNull("authors", authors));
+		return this;
+	}
+
+	public List<AtomCategory> getCategories() {
 		if (this.categories == null) {
 			this.categories = new ArrayList<AtomCategory>();
 		}
-		this.categories.add(category);
+		return this.categories;
+	}
+
+	@Element(name = "category", namespace = AtomConstants.ATOM_NS_URI, minOccurs = 0, maxOccurs = Element.UNBOUND)
+	public AtomEntryBuilder addCategory(AtomCategory category) {
+		getCategories().add(AtomContractConstraint.notNull("category", category));
 		return this;
+	}
+
+	public AtomEntryBuilder addCategories(Collection<AtomCategory> categories) {
+		getCategories().addAll(AtomContractConstraint.notNull("categories", categories));
+		return this;
+	}
+
+	public List<AtomPerson> getContributors() {
+		if (this.contributors == null) {
+			this.contributors = new ArrayList<AtomPerson>();
+		}
+		return this.contributors;
 	}
 
 	@Element(name = "contributor", namespace = AtomConstants.ATOM_NS_URI, minOccurs = 0, maxOccurs = Element.UNBOUND)
 	public AtomEntryBuilder addContributor(AtomPerson contributor) {
-		if (this.contributors == null) {
-			this.contributors = new ArrayList<AtomPerson>();
-		}
-		this.contributors.add(contributor);
+		getContributors().add(AtomContractConstraint.notNull("contributor", contributor));
 		return this;
+	}
+
+	public AtomEntryBuilder addContributors(Collection<AtomPerson> contributors) {
+		getContributors().addAll(AtomContractConstraint.notNull("contributors", contributors));
+		return this;
+	}
+
+	// FIXME: We need to rethink the whole link thing. Here
+	// we actually want something like an AtomLinks object in
+	// order to supply method for quick access to the links
+
+	public List<AtomLink> getLinks() {
+		if (this.links == null) {
+			this.links = new ArrayList<AtomLink>();
+		}
+		return this.links;
 	}
 
 	@Element(name = "link", namespace = AtomConstants.ATOM_NS_URI, minOccurs = 0, maxOccurs = Element.UNBOUND)
 	public AtomEntryBuilder addLink(AtomLink link) {
-		if (this.links == null) {
-			this.links = new ArrayList<AtomLink>();
-		}
-		this.links.add(link);
+		getLinks().add(AtomContractConstraint.notNull("link", link));
+		return this;
+	}
+
+	public AtomEntryBuilder addLinks(Collection<AtomLink> links) {
+		getLinks().addAll(AtomContractConstraint.notNull("links", links));
 		return this;
 	}
 

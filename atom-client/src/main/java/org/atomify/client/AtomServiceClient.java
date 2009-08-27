@@ -24,38 +24,59 @@
  */
 package org.atomify.client;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
 import java.net.URI;
 
-import org.atomify.client.http.HttpAccessor;
-import org.atomify.client.http.MessageContractConstraint;
+import org.atomify.model.publishing.AtomPubCollection;
 import org.atomify.model.publishing.AtomPubService;
+import org.jbasics.checker.ContractCheck;
+import org.jbasics.net.http.HttpHeaderCreator;
+import org.jbasics.net.mediatype.MediaType;
+import org.jbasics.types.tuples.Pair;
 
-public class AtomServiceClient {
-	private final HttpAccessor accesor;
-	private AtomPubService currentService;
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.config.ClientConfig;
+import com.sun.jersey.api.client.config.DefaultClientConfig;
 
-	public static AtomServiceClient newInstance(final HttpAccessor accesor) {
-		return new AtomServiceClient(accesor, null);
+public class AtomServiceClient extends RefreshableResourceClient<AtomPubService> {
+
+	public AtomServiceClient(URI serviceUri) {
+		this(serviceUri, null, null, new DefaultClientConfig());
 	}
 
-	public AtomServiceClient selectAtomService(final URI serviceURI) {
-		MessageContractConstraint.notNull("serviceURI", serviceURI);
-		try {
-			AtomServiceRequest t = new AtomServiceRequest();
-			if (this.accesor.get(serviceURI, t, t) == HttpURLConnection.HTTP_OK) {
-				this.currentService = t.getServiceDocument();
-			}
-		} catch (IOException e) {
-			throw new RuntimeException(e);
+	public AtomServiceClient(URI serviceUri, String username, String password) {
+		this(serviceUri, username, password, new DefaultClientConfig());
+	}
+
+	public AtomServiceClient(URI serviceUri, ClientConfig clientConfig) {
+		this(serviceUri, null, null, clientConfig);
+	}
+
+	public AtomServiceClient(URI serviceUri, String username, String password, ClientConfig clientConfig) {
+		this(Client.create(ContractCheck.mustNotBeNull(clientConfig, "clientConfig")), serviceUri, username, password);
+	}
+
+	@SuppressWarnings("unchecked")
+	public AtomServiceClient(Client client, URI serviceUri, String username, String password) {
+		super(ContractCheck.mustNotBeNull(client, "client").resource(ContractCheck.mustNotBeNull(serviceUri, "serviceUri")),
+				AtomPubService.MEDIA_TYPE);
+		if (username != null) {
+			Pair<String, String> auth = HttpHeaderCreator.createBasicAuthorization(username, password);
+			resource().addFilter(new AdditionalHeaderClientFilter(auth));
 		}
-		return this;
 	}
 
-	private AtomServiceClient(final HttpAccessor accesor, final AtomServiceClient upperState) {
-		MessageContractConstraint.notNull("accessor", accesor);
-		this.accesor = accesor;
+	public AtomFeedClient getCollection(String workspaceTitle, String collectionTitle, MediaType... mediaTypes) {
+		AtomPubCollection temp = entity().findCollection(workspaceTitle, collectionTitle, mediaTypes);
+		if (temp != null) {
+			return new AtomFeedClient(resource().uri(temp.getHref()));
+		}
+		return null;
+	}
+
+	@Override
+	protected AtomPubService handleResponse(ClientResponse response) {
+		return response.getEntity(AtomPubService.class);
 	}
 
 }

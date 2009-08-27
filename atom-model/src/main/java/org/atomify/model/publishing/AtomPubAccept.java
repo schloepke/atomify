@@ -26,6 +26,7 @@ package org.atomify.model.publishing;
 
 import org.atomify.model.AtomConstants;
 import org.atomify.model.common.AtomCommonAttributes;
+import org.jbasics.net.mediatype.MediaType;
 import org.jbasics.net.mediatype.MediaTypeRange;
 import org.jbasics.pattern.builder.Builder;
 import org.xml.sax.ContentHandler;
@@ -82,6 +83,16 @@ public class AtomPubAccept extends AtomCommonAttributes {
 	 */
 	public MediaTypeRange getAcceptMediaRange() {
 		return this.acceptMediaRange;
+	}
+
+	/**
+	 * Returns true if the given media type is accepted by this accept entry.
+	 * 
+	 * @param mediaType The media type to check
+	 * @return True if the media type is accepted.
+	 */
+	public boolean isAccepted(MediaType mediaType) {
+		return this.acceptMediaRange.isMediaTypeMatching(mediaType);
 	}
 
 	/*
