@@ -24,6 +24,8 @@
  */
 package org.atomify.client;
 
+import java.net.URI;
+
 import javax.ws.rs.core.Response.Status;
 
 import org.atomify.model.syndication.AtomEntry;
@@ -32,6 +34,10 @@ import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 
 public class AtomEntryClient extends RefreshableResourceClient<AtomEntry> {
+
+	public AtomEntryClient(URI resourceURI, String username, String password) {
+		super(resourceURI, username, password, null, AtomEntry.MEDIA_TYPE);
+	}
 
 	public AtomEntryClient(WebResource resource) {
 		this(resource, null);
@@ -48,7 +54,7 @@ public class AtomEntryClient extends RefreshableResourceClient<AtomEntry> {
 	protected AtomEntry handleResponse(ClientResponse response) {
 		return response.getEntity(AtomEntry.class);
 	}
-	
+
 	public boolean delete() {
 		ClientResponse response = resource().delete(ClientResponse.class);
 		if (response.getStatus() == Status.OK.getStatusCode()) {

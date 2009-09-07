@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2009 Stephan Schloepke and innoQ Deutschland GmbH
  *
  * Stephan Schloepke: http://www.schloepke.de/
@@ -29,12 +29,11 @@ import java.net.URI;
 import org.atomify.model.publishing.AtomPubCollection;
 import org.atomify.model.publishing.AtomPubService;
 import org.jbasics.checker.ContractCheck;
-import org.jbasics.net.http.HttpHeaderCreator;
 import org.jbasics.net.mediatype.MediaType;
-import org.jbasics.types.tuples.Pair;
 
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
 
@@ -58,12 +57,12 @@ public class AtomServiceClient extends RefreshableResourceClient<AtomPubService>
 
 	@SuppressWarnings("unchecked")
 	public AtomServiceClient(Client client, URI serviceUri, String username, String password) {
-		super(ContractCheck.mustNotBeNull(client, "client").resource(ContractCheck.mustNotBeNull(serviceUri, "serviceUri")),
-				AtomPubService.MEDIA_TYPE);
-		if (username != null) {
-			Pair<String, String> auth = HttpHeaderCreator.createBasicAuthorization(username, password);
-			resource().addFilter(new AdditionalHeaderClientFilter(auth));
-		}
+		super(ContractCheck.mustNotBeNull(client, "client"), ContractCheck.mustNotBeNull(serviceUri, "serviceUri"), username, password, AtomPubService.MEDIA_TYPE);
+	}
+	
+	public WebResource getCollectionResource(String workspaceTitle, String collectionTitle, MediaType... mediaTypes) {
+		AtomPubCollection temp = entity().findCollection(workspaceTitle, collectionTitle, mediaTypes);
+		return temp != null ? resource().uri(temp.getHref()) : null; 
 	}
 
 	public AtomFeedClient getCollection(String workspaceTitle, String collectionTitle, MediaType... mediaTypes) {
