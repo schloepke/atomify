@@ -22,12 +22,6 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>de.rms.services.reporting</groupId>
-			<artifactId>reporting-service-embedded</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>org.atomify</groupId>
 			<artifactId>atom-model</artifactId>
 			<version>1.0.0-SNAPSHOT</version>

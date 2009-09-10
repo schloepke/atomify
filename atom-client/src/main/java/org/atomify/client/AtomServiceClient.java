@@ -55,7 +55,6 @@ public class AtomServiceClient extends RefreshableResourceClient<AtomPubService>
 		this(Client.create(ContractCheck.mustNotBeNull(clientConfig, "clientConfig")), serviceUri, username, password);
 	}
 
-	@SuppressWarnings("unchecked")
 	public AtomServiceClient(Client client, URI serviceUri, String username, String password) {
 		super(ContractCheck.mustNotBeNull(client, "client"), ContractCheck.mustNotBeNull(serviceUri, "serviceUri"), username, password, AtomPubService.MEDIA_TYPE);
 	}

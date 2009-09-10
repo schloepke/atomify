@@ -30,23 +30,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.ws.rs.core.UriBuilder;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.UnmarshallerHandler;
 import javax.xml.transform.stream.StreamResult;
 
 import org.atomify.model.AtomDocumentSerializer;
-import org.atomify.model.syndication.AtomContent;
-import org.atomify.model.syndication.AtomEntry;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.xml.sax.helpers.AttributesImpl;
 
 import com.sun.grizzly.http.SelectorThread;
 import com.sun.jersey.api.container.grizzly.GrizzlyWebContainerFactory;
-
-import de.rms.services.reporting.xml.ReportServiceData;
 
 public class AtomClientRemoteTest {
 	private static SelectorThread selectorThread;

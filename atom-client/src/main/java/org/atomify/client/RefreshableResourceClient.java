@@ -36,6 +36,8 @@ import org.jbasics.arrays.ArrayConstants;
 import org.jbasics.checker.ContractCheck;
 import org.jbasics.net.http.HttpHeaderCreator;
 import org.jbasics.net.mediatype.MediaTypeRange;
+import org.jbasics.pattern.singleton.Singleton;
+import org.jbasics.types.singleton.SingletonInstance;
 import org.jbasics.types.tuples.Pair;
 
 import com.sun.jersey.api.client.Client;
@@ -43,16 +45,16 @@ import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.UniformInterfaceException;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.ClientConfig;
-import com.sun.jersey.api.client.config.DefaultClientConfig;
 import com.sun.jersey.api.client.filter.GZIPContentEncodingFilter;
 
 public abstract class RefreshableResourceClient<T> {
 	private final WebResource resource;
 	private final String[] accepts;
 	private final AtomicReference<Pair<ClientResponse, T>> entityReference;
+	public static Singleton<Client> DEFAULT_CLIENT = new SingletonInstance<Client>(new JaxRSClientFactory());
 
 	public RefreshableResourceClient(URI uri, String username, String password, ClientConfig clientConfig, MediaTypeRange... accepts) {
-		this(Client.create(clientConfig != null ? clientConfig : new DefaultClientConfig()), uri, username, password, accepts);
+		this(DEFAULT_CLIENT.instance(), uri, username, password, accepts);
 	}
 
 	@SuppressWarnings("unchecked")
