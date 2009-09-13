@@ -24,10 +24,7 @@
  */
 package org.atomify.model.syndication;
 
-import javax.xml.namespace.QName;
-
 import org.atomify.model.AtomConstants;
-import org.atomify.model.AtomContractConstraint;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;

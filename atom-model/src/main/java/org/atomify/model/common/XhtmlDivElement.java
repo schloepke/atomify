@@ -33,11 +33,12 @@ import java.util.Map;
 import javax.xml.namespace.QName;
 
 import org.atomify.model.extension.AtomForeignMarkup;
+import org.jbasics.xml.XmlSerializable;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
-public class XhtmlDivElement implements AtomForeignMarkup {
+public class XhtmlDivElement implements AtomForeignMarkup, XmlSerializable {
 	public static final QName QUALIFIED_NAMAE = new QName("http://www.w3.org/1999/xhtml", "div", "xhtml");
 	private final Map<QName, String> attributes;
 	private final List<AtomForeignMarkup> childrean;
@@ -132,6 +133,7 @@ public class XhtmlDivElement implements AtomForeignMarkup {
 
 	// --- FIXME: From here all is serialization. We Still need to think about a good way to do so.
 
+	@SuppressWarnings("all")
 	public void serialize(ContentHandler handler, AttributesImpl attributes) throws SAXException {
 		if (attributes == null) {
 			attributes = new AttributesImpl();

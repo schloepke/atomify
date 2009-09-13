@@ -118,6 +118,7 @@ public class AtomForeignElementContent implements AtomForeignMarkup {
 
 	// --- FIXME: From here all is serialization. We Still need to think about a good way to do so.
 
+	@SuppressWarnings("all")
 	public void serialize(ContentHandler handler, AttributesImpl attributes) throws SAXException {
 		if (attributes == null) {
 			attributes = new AttributesImpl();

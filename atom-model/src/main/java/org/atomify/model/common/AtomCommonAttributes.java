@@ -206,6 +206,7 @@ public abstract class AtomCommonAttributes implements Serializable {
 	
 	// --- From here all is serialization. We Still need to think about a good way to do so.
 
+	@SuppressWarnings("all")
 	protected AttributesImpl initCommonAttributes(AttributesImpl attributes)
 			throws SAXException {
 		if (attributes == null) {

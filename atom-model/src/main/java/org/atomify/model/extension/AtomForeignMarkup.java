@@ -31,12 +31,10 @@ import java.util.Map;
 import javax.xml.namespace.QName;
 
 import org.jbasics.parser.annotations.ElementBuilder;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.AttributesImpl;
+import org.jbasics.xml.XmlSerializable;
 
 @ElementBuilder(AtomForeignMarkupBuilder.class)
-public interface AtomForeignMarkup extends Serializable {
+public interface AtomForeignMarkup extends Serializable, XmlSerializable {
 
 	QName getQualifiedName();
 
@@ -47,8 +45,5 @@ public interface AtomForeignMarkup extends Serializable {
 	Map<QName, String> getAttributes();
 
 	List<? extends AtomForeignMarkup> getComplexContent();
-
-	// FIXME: We need to find a better way of serialization
-	void serialize(ContentHandler handler, AttributesImpl attributes) throws SAXException;
 
 }

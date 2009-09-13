@@ -26,7 +26,6 @@ package org.atomify.model.syndication;
 
 import javax.xml.namespace.QName;
 
-import org.atomify.model.AtomConstants;
 import org.atomify.model.common.AtomCommonAttributes;
 import org.jbasics.net.mediatype.MediaType;
 import org.xml.sax.ContentHandler;

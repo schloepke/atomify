@@ -31,9 +31,7 @@ import org.atomify.model.syndication.AtomFeed;
 import org.jbasics.net.mediatype.MediaType;
 import org.jbasics.parser.annotations.ElementImplementor;
 import org.jbasics.parser.annotations.ElementImplementors;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.AttributesImpl;
+import org.jbasics.xml.XmlSerializable;
 
 /**
  * Listenbeschreibung
@@ -48,10 +46,8 @@ import org.xml.sax.helpers.AttributesImpl;
 		@ElementImplementor(builderClass = AtomPubCategories.class, namespace = AtomConstants.ATOM_PUB_NS_URI, localName = "categories"),
 		@ElementImplementor(builderClass = AtomFeed.class, namespace = AtomConstants.ATOM_NS_URI, localName = "feed"),
 		@ElementImplementor(builderClass = AtomEntry.class, namespace = AtomConstants.ATOM_NS_URI, localName = "entry") })
-public interface AtomDocument {
+public interface AtomDocument extends XmlSerializable {
 
 	MediaType getMediaType();
-
-	void serialize(ContentHandler handler, AttributesImpl attributes) throws SAXException;
 
 }
