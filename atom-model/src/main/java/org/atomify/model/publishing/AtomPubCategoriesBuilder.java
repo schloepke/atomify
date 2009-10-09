@@ -31,11 +31,13 @@ import java.util.List;
 import org.atomify.model.AtomConstants;
 import org.atomify.model.AtomContractConstraint;
 import org.atomify.model.common.AtomCommonBuilder;
+import org.atomify.model.extension.AtomForeignComment;
 import org.atomify.model.extension.AtomForeignMarkup;
 import org.atomify.model.extension.AtomForeignTextContent;
 import org.atomify.model.syndication.AtomCategory;
 import org.jbasics.parser.annotations.AnyElement;
 import org.jbasics.parser.annotations.Attribute;
+import org.jbasics.parser.annotations.Comment;
 import org.jbasics.parser.annotations.Content;
 import org.jbasics.parser.annotations.Element;
 import org.jbasics.pattern.builder.Builder;
@@ -112,6 +114,16 @@ public class AtomPubCategoriesBuilder extends AtomCommonBuilder<AtomPubCategorie
 		if (AtomContractConstraint.mustNotBeEmptyString(text, "text").trim().length() > 0) {
 			getUndefinedContent().add(new AtomForeignTextContent(text));
 		}
+		return this;
+	}
+
+	@Comment
+	public AtomPubCategoriesBuilder appendComment(String comment) {
+		// Comments can come out of line and will appear in the wrong position since it is
+		// always possible to add comments between atom elements. Since we have no guarantee
+		// that the appearance of the document stays the same comments between the
+		// atom elements will be printed after all atom elements.
+		getUndefinedContent().add(new AtomForeignComment(AtomContractConstraint.notNull("comment", comment)));
 		return this;
 	}
 

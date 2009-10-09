@@ -32,10 +32,12 @@ import java.util.Map;
 import javax.xml.namespace.QName;
 
 import org.atomify.model.AtomContractConstraint;
+import org.atomify.model.extension.AtomForeignComment;
 import org.atomify.model.extension.AtomForeignMarkup;
 import org.atomify.model.extension.AtomForeignTextContent;
 import org.jbasics.parser.annotations.AnyAttribute;
 import org.jbasics.parser.annotations.AnyElement;
+import org.jbasics.parser.annotations.Comment;
 import org.jbasics.parser.annotations.Content;
 import org.jbasics.pattern.builder.Builder;
 
@@ -87,6 +89,12 @@ public class XhtmlDivElementBuilder implements Builder<XhtmlDivElement> {
 	@Content
 	public XhtmlDivElementBuilder appendText(String text) {
 		getChildrean().add(new AtomForeignTextContent(AtomContractConstraint.mustNotBeEmptyString(text, "text")));
+		return this;
+	}
+	
+	@Comment
+	public XhtmlDivElementBuilder appendComment(String comment) {
+		getChildrean().add(new AtomForeignComment(AtomContractConstraint.notNull("comment", comment)));
 		return this;
 	}
 

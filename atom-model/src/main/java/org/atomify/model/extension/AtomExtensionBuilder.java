@@ -34,6 +34,7 @@ import javax.xml.namespace.QName;
 import org.atomify.model.AtomContractConstraint;
 import org.jbasics.parser.annotations.AnyAttribute;
 import org.jbasics.parser.annotations.AnyElement;
+import org.jbasics.parser.annotations.Comment;
 import org.jbasics.parser.annotations.Content;
 import org.jbasics.parser.annotations.QualifiedName;
 import org.jbasics.pattern.builder.Builder;
@@ -101,6 +102,12 @@ public class AtomExtensionBuilder implements Builder<AtomExtension> {
 	@Content
 	public AtomExtensionBuilder appendText(String text) {
 		getChildrean().add(new AtomForeignTextContent(AtomContractConstraint.mustNotBeEmptyString(text, "text")));
+		return this;
+	}
+
+	@Comment
+	public AtomExtensionBuilder appendComment(String comment) {
+		getChildrean().add(new AtomForeignComment(AtomContractConstraint.notNull("comment", comment)));
 		return this;
 	}
 

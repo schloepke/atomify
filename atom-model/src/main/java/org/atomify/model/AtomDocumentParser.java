@@ -39,6 +39,7 @@ import org.jbasics.parser.BuilderContentHandler;
 import org.jbasics.parser.BuilderParserContext;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXNotRecognizedException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
@@ -54,7 +55,14 @@ public class AtomDocumentParser {
 		this.reader = XMLReaderFactory.createXMLReader();
 		this.handler = ATOM_DOCUMENT_BUILDER_PARSER_CTX.createContentHandler();
 		this.reader.setContentHandler(this.handler);
+		this.reader.setDTDHandler(this.handler);
+		this.reader.setEntityResolver(this.handler);
 		this.reader.setErrorHandler(this.handler);
+		try {
+			this.reader.setProperty("http://xml.org/sax/properties/lexical-handler", this.handler);
+		} catch(SAXNotRecognizedException e) {
+			// The parser does not understand the lexical handler so we work without
+		}
 		this.parsingInProgress = new AtomicBoolean(false);
 	}
 

@@ -57,7 +57,7 @@ public class AtomDocumentProvider implements MessageBodyReader<AtomDocument>, Me
 		try {
 			return new AtomDocumentParser().parse(entityStream);
 		} catch (SAXException e) {
-			throw new WebApplicationException(e, Status.INTERNAL_SERVER_ERROR);
+			throw new RuntimeException("Could not parse AtomDocument: "+e.getMessage(), e);
 		}
 	}
 
@@ -73,12 +73,8 @@ public class AtomDocumentProvider implements MessageBodyReader<AtomDocument>, Me
 
 	public void writeTo(AtomDocument t, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType,
 			MultivaluedMap<String, Object> httpHeaders, OutputStream entityStream) throws IOException, WebApplicationException {
-		try {
-			Charset outputCharset = getCharset(mediaType);
-			new AtomDocumentSerializer(outputCharset.name()).serialize(t, new StreamResult(entityStream));
-		} catch (RuntimeException e) {
-			throw new WebApplicationException(e, Status.INTERNAL_SERVER_ERROR);
-		}
+		Charset outputCharset = getCharset(mediaType);
+		new AtomDocumentSerializer(outputCharset.name()).serialize(t, new StreamResult(entityStream));
 	}
 
 	private final Charset getCharset(MediaType m) {

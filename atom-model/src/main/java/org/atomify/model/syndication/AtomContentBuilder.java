@@ -33,6 +33,7 @@ import org.jbasics.net.mediatype.MediaType;
 import org.jbasics.net.mediatype.RFC3023XMLMediaTypes;
 import org.jbasics.parser.annotations.AnyElement;
 import org.jbasics.parser.annotations.Attribute;
+import org.jbasics.parser.annotations.Comment;
 import org.jbasics.parser.annotations.Content;
 import org.jbasics.parser.annotations.Element;
 import org.jbasics.pattern.builder.Builder;

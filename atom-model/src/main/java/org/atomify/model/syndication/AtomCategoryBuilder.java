@@ -30,10 +30,13 @@ import java.util.List;
 
 import org.atomify.model.AtomContractConstraint;
 import org.atomify.model.common.AtomCommonBuilder;
+import org.atomify.model.extension.AtomExtensionBuilder;
+import org.atomify.model.extension.AtomForeignComment;
 import org.atomify.model.extension.AtomForeignMarkup;
 import org.atomify.model.extension.AtomForeignTextContent;
 import org.jbasics.parser.annotations.AnyElement;
 import org.jbasics.parser.annotations.Attribute;
+import org.jbasics.parser.annotations.Comment;
 import org.jbasics.parser.annotations.Content;
 import org.jbasics.pattern.builder.Builder;
 
@@ -104,6 +107,12 @@ public class AtomCategoryBuilder extends AtomCommonBuilder<AtomCategoryBuilder> 
 	@Content
 	public AtomCategoryBuilder appendUndefinedText(String text) {
 		getUndefinedContent().add(new AtomForeignTextContent(AtomContractConstraint.mustNotBeEmptyString(text, "text")));
+		return this;
+	}
+
+	@Comment
+	public AtomCategoryBuilder appendComment(String comment) {
+		getUndefinedContent().add(new AtomForeignComment(AtomContractConstraint.notNull("comment", comment)));
 		return this;
 	}
 

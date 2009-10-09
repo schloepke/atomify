@@ -43,6 +43,7 @@
 				<atom:category term="friends" scheme="http://example.com" label="My second test Category">
 					Here is some undefined content consisting of text and foreign
 					elements
+					<!-- Lets see if this comment arrives! -->
 					<div xmlns="http://www.w3.org/1999/xhtml">
 						<h1>This would be a headline</h1>
 						<p>And this is just a freaky other paragraph</p>

@@ -31,11 +31,13 @@ import java.util.List;
 import org.atomify.model.AtomContractConstraint;
 import org.atomify.model.common.AtomCommonBuilder;
 import org.atomify.model.common.AtomLanguage;
+import org.atomify.model.extension.AtomForeignComment;
 import org.atomify.model.extension.AtomForeignMarkup;
 import org.atomify.model.extension.AtomForeignTextContent;
 import org.jbasics.net.mediatype.MediaType;
 import org.jbasics.parser.annotations.AnyElement;
 import org.jbasics.parser.annotations.Attribute;
+import org.jbasics.parser.annotations.Comment;
 import org.jbasics.parser.annotations.Content;
 import org.jbasics.pattern.builder.Builder;
 
@@ -114,6 +116,11 @@ public class AtomLinkBuilder extends AtomCommonBuilder<AtomLinkBuilder> implemen
 	@Content
 	public AtomLinkBuilder appendUndefinedContent(String text) {
 		return appendUndefinedContent(new AtomForeignTextContent(AtomContractConstraint.notNull("text", text)));
+	}
+
+	@Comment
+	public AtomLinkBuilder appendComment(String comment) {
+		return appendUndefinedContent(new AtomForeignComment(AtomContractConstraint.notNull("comment", comment)));
 	}
 
 	@AnyElement
