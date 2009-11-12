@@ -35,9 +35,9 @@
 	</licenses>
 
 	<scm>
-		<connection>scm:git:git://github.com/schloepke/atomify.git/</connection>
-		<developerConnection>scm:git:git://github.com/schloepke/atomify.git/</developerConnection>
-		<url>http://github.com/schloepke/atomify/</url>
+		<connection>scm:git:git://github.com/schloepke/atomify.git</connection>
+		<developerConnection>scm:git:git://github.com/schloepke/atomify.git</developerConnection>
+		<url>http://github.com/schloepke/atomify</url>
 	</scm>
 
 	<issueManagement>
@@ -106,7 +106,7 @@
 			<dependency>
 				<groupId>org.jbasics</groupId>
 				<artifactId>jbasics</artifactId>
-				<version>1.0.0-SNAPSHOT</version>
+				<version>0.2.0</version>
 			</dependency>
 			<dependency>
 				<groupId>javax.ws.rs</groupId>
