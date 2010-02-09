@@ -27,6 +27,7 @@ package org.atomify.service;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.security.Principal;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -68,12 +69,15 @@ import org.jbasics.types.tuples.Triplet;
  * @since 1.0
  */
 public abstract class AtomPubServiceResource {
-	@Context
-	protected SecurityContext securityCtx;
-	@Context
-	protected UriInfo uriInfo;
+	private final boolean requiresPrincipal;
 
-	protected abstract Map<String, ? extends Object> getUriParameterMap();
+	public AtomPubServiceResource() {
+		this(false);
+	}
+
+	public AtomPubServiceResource(boolean requiresPrincipal) {
+		this.requiresPrincipal = requiresPrincipal;
+	}
 
 	/**
 	 * Returns the atom publishing service document as JAXB type to be marshaled by JAX-RS.
@@ -82,11 +86,12 @@ public abstract class AtomPubServiceResource {
 	 */
 	@GET
 	@Produces(AtomPubService.MEDIA_TYPE_STRING)
-	public final AtomPubService getServiceDocument() {
-		if (this.securityCtx.getUserPrincipal() != null) {
-			return generateServiceDocument(this.securityCtx.getUserPrincipal(), this.uriInfo.getAbsolutePathBuilder(), getServiceClasses());
+	public final AtomPubService getServiceDocument(@Context SecurityContext securityCtx, @Context UriInfo uriInfo) {
+		if (this.requiresPrincipal && (securityCtx == null || securityCtx.getUserPrincipal() == null)) {
+			throw new WebApplicationException(Status.FORBIDDEN);
 		}
-		throw new WebApplicationException(Status.FORBIDDEN);
+		return generateServiceDocument(securityCtx == null ? null : securityCtx.getUserPrincipal(), uriInfo.getAbsolutePathBuilder(),
+				getServiceClasses());
 	}
 
 	/**
@@ -97,8 +102,8 @@ public abstract class AtomPubServiceResource {
 	 */
 	@GET
 	@Produces(MediaType.TEXT_HTML)
-	public final String getServiceDocumentAsHtml() {
-		AtomPubService service = getServiceDocument();
+	public final String getServiceDocumentAsHtml(@Context SecurityContext securityCtx, @Context UriInfo uriInfo) {
+		AtomPubService service = getServiceDocument(securityCtx, uriInfo);
 		StringBuilder builder = new StringBuilder();
 		builder.append("<html><head><title>Reporting Service Document</title></head><body>\n");
 		for (AtomPubWorkspace workspace : service.getWorkspaces()) {
@@ -119,7 +124,19 @@ public abstract class AtomPubServiceResource {
 	 * 
 	 * @return The classes with the services annotated with {@link AtomPubServiceEntry}.
 	 */
-	public abstract Set<Class<?>> getServiceClasses();
+	protected abstract Set<Class<?>> getServiceClasses();
+
+	/**
+	 * Returns the map of parameters used in the UriBuilder to build the uris for all entries in the
+	 * atom service document. This should usually be dependent on a request based thread
+	 * information. The default returns an empty map;
+	 * 
+	 * @return The map of uri parameters to be used in the uri builder for all sub path resources
+	 *         (key = value pairs, defaults to empty map)
+	 */
+	protected Map<String, ? extends Object> getUriParameterMap() {
+		return Collections.emptyMap();
+	}
 
 	private AtomPubService generateServiceDocument(final Principal principal, final UriBuilder uriBuilder, final Set<Class<?>> clazzes) {
 		Map<Triplet<String, String, URI>, AtomPubCollectionBuilder> builders = new HashMap<Triplet<String, String, URI>, AtomPubCollectionBuilder>();
