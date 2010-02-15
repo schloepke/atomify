@@ -105,7 +105,13 @@ public abstract class AtomPubServiceResource {
 	public final String getServiceDocumentAsHtml(@Context SecurityContext securityCtx, @Context UriInfo uriInfo) {
 		AtomPubService service = getServiceDocument(securityCtx, uriInfo);
 		StringBuilder builder = new StringBuilder();
-		builder.append("<html><head><title>Reporting Service Document</title></head><body>\n");
+		builder.append("<html>\n");
+		builder.append("\t<head>\n");
+		builder.append("\t\t<title>Service Document</title>\n");
+		builder.append("\t</head>\n");
+		builder.append("\t<body>\n");
+		builder.append("\t</body>\n");
+		builder.append("</html>\n");
 		for (AtomPubWorkspace workspace : service.getWorkspaces()) {
 			builder.append("<p><h1>Workspace: ").append(workspace.getTitle().toString()).append("</h1>\n<ul>");
 			for (AtomPubCollection collection : workspace.getCollections()) {
