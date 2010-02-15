@@ -24,14 +24,19 @@
  */
 package org.atomify.model;
 
+import java.net.URI;
+
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Result;
+import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 
+import org.jbasics.xml.XmlStylesheetLinks;
+import org.jbasics.xml.types.XmlStylesheetProcessInstruction;
 import org.xml.sax.SAXException;
 
 public class AtomDocumentSerializer {
@@ -46,11 +51,15 @@ public class AtomDocumentSerializer {
 	}
 
 	public void serialize(AtomDocument document, Result result) {
+		serialize(document, result, null);
+	}
+
+	protected void serialize(AtomDocument document, Result result, Templates templates) {
 		AtomContractConstraint.notNull("document", document);
 		AtomContractConstraint.notNull("result", result);
 		try {
 			SAXTransformerFactory factory = (SAXTransformerFactory) TransformerFactory.newInstance();
-			TransformerHandler handler = factory.newTransformerHandler();
+			TransformerHandler handler = templates == null ? factory.newTransformerHandler() : factory.newTransformerHandler(templates);
 			Transformer serializer = handler.getTransformer();
 			serializer.setOutputProperty(OutputKeys.METHOD, "xml");
 			serializer.setOutputProperty(OutputKeys.ENCODING, this.encoding);
@@ -58,6 +67,11 @@ public class AtomDocumentSerializer {
 			serializer.setOutputProperty(OutputKeys.VERSION, "1.0");
 			serializer.setOutputProperty(OutputKeys.STANDALONE, "yes");
 			handler.setResult(result);
+			if (document instanceof XmlStylesheetLinks) {
+				for (XmlStylesheetProcessInstruction stylesheet : ((XmlStylesheetLinks) document).getStylesheetLinks()) {
+					stylesheet.serialize(handler, null);
+				}
+			}
 			handler.startDocument();
 			document.serialize(handler, null);
 			handler.endDocument();

@@ -73,7 +73,7 @@ public abstract class RefreshableResourceClient<T> {
 		this.resource = AtomContractConstraint.notNull("resource", resource);
 		this.entityReference = new AtomicReference<Pair<ClientResponse, T>>();
 		if (accepts == null) {
-			this.accepts = ArrayConstants.zeroLegnthArray();
+			this.accepts = ArrayConstants.ZERO_LENGTH_STRING_ARRAY;
 		} else {
 			this.accepts = accepts;
 		}
@@ -87,7 +87,7 @@ public abstract class RefreshableResourceClient<T> {
 
 	private String[] convertMediaTypesRanges(MediaTypeRange... accepts) {
 		if (accepts == null) {
-			return ArrayConstants.zeroLegnthArray();
+			return ArrayConstants.ZERO_LENGTH_STRING_ARRAY;
 		} else {
 			String[] temp = new String[accepts.length];
 			for (int i = 0; i < accepts.length; i++) {
