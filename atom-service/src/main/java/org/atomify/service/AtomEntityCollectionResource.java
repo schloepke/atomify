@@ -27,18 +27,15 @@ package org.atomify.service;
 import java.net.URI;
 import java.util.Collections;
 import java.util.Map;
-import java.util.UUID;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.core.Response.Status;
 
 import org.atomify.model.AtomRelations;
-import org.atomify.model.syndication.AtomDate;
 import org.atomify.model.syndication.AtomEntry;
 import org.atomify.model.syndication.AtomEntryBuilder;
 import org.atomify.model.syndication.AtomFeedBuilder;
-import org.atomify.model.syndication.AtomId;
 import org.atomify.model.syndication.AtomLink;
 import org.atomify.model.syndication.AtomPerson;
 import org.atomify.model.syndication.AtomText;
@@ -50,7 +47,7 @@ import org.atomify.model.syndication.AtomText;
  * @param <T> The type this entity feed resource uses as entity.
  */
 public abstract class AtomEntityCollectionResource<Entity, EntityDelegate extends AtomEntityDelegate<Entity>> extends AtomCollectionResource {
-	private static final Map<String, ?> EMPTY_PARAMETERS = Collections.emptyMap(); 
+	private static final Map<String, ?> EMPTY_PARAMETERS = Collections.emptyMap();
 
 	/**
 	 * Fill the {@link AtomFeedBuilder} with the entries.
@@ -68,21 +65,19 @@ public abstract class AtomEntityCollectionResource<Entity, EntityDelegate extend
 	public final AtomFeedBuilder filleEntries(final AtomFeedBuilder feedBuilder, final UriInfo uriInfo, final int pageSize, final int page) {
 		PagedEntityAccessor<EntityDelegate> entityAccessor = createPagedEntityAccessor(EMPTY_PARAMETERS);
 		for (EntityDelegate entity : entityAccessor.queryPagedEntities(pageSize, page)) {
-			UUID entityId = entity.getIdentifier();
-			URI entryLink = uriInfo.getAbsolutePathBuilder().path("{entry}").build(entityId).normalize();
-			AtomId entryId = AtomId.valueOf(entityId);
-			AtomEntryBuilder entry = AtomEntry.newBuilder()
-					.setId(entryId)
-					.addLink(AtomLink.newBuilder().setHref(entryLink).setRel(AtomRelations.ALTERNATE).build())
-					.setUpdated(AtomDate.valueOf(entity.getLastModified()))
-					.setTitle(AtomText.newBuilder().setTextContent(entity.getEntityName()).build()
-				);
+			URI entryLink = uriInfo.getAbsolutePathBuilder().path("{entry}").build(entity.getPathSegmentIdentifier()).normalize();
+			AtomEntryBuilder entry = AtomEntry.newBuilder().setId(entity.getIdentifier()).addLink(
+					AtomLink.newBuilder().setHref(entryLink).setRel(AtomRelations.ALTERNATE).build()).setUpdated(entity.getLastModified()).setTitle(
+					AtomText.newBuilder().setTextContent(entity.getEntityName()).build());
 			if (entity.getCreated() != null) {
-				entry.setPublished(AtomDate.valueOf(entity.getCreated()));
+				entry.setPublished(entity.getCreated());
 			}
 			entry = fillFeedEntryContent(entry, entity.delegate());
 			if (entry.getAuthors().size() == 0) {
-				entry.addAuthor(AtomPerson.newBuilder().setName(entity.getLastModifiedUser()).build());
+				AtomPerson author = entity.getLastModifiedUser();
+				if (author != null) {
+					entry.addAuthor(author);
+				}
 			}
 			feedBuilder.addEntry(entry.build());
 		}
@@ -103,26 +98,23 @@ public abstract class AtomEntityCollectionResource<Entity, EntityDelegate extend
 	@Override
 	public final AtomEntryBuilder fillEntry(final AtomEntryBuilder entryBuilder, final UriInfo uriInfo, final String entryIdString) {
 		PagedEntityAccessor<EntityDelegate> entityAccessor = createPagedEntityAccessor(EMPTY_PARAMETERS);
-		UUID entityId = UUID.fromString(entryIdString);
-		EntityDelegate entity = entityAccessor.queryEntity(entityId);
+		EntityDelegate entity = entityAccessor.queryEntity(entryIdString);
 		if (entity == null) {
 			throw new WebApplicationException(Status.NOT_FOUND);
 		}
-		entityId = entity.getIdentifier();
 		URI entryLink = uriInfo.getAbsolutePathBuilder().build().normalize();
-		AtomId entryId = AtomId.valueOf(entityId);
-		AtomEntryBuilder entry = AtomEntry.newBuilder()
-				.setId(entryId)
-				.addLink(AtomLink.newBuilder().setHref(entryLink).setRel(AtomRelations.ALTERNATE).build())
-				.setUpdated(AtomDate.valueOf(entity.getLastModified()))
-				.setTitle(AtomText.newBuilder().setTextContent(entity.getEntityName()).build()
-			);
+		AtomEntryBuilder entry = AtomEntry.newBuilder().setId(entity.getIdentifier()).addLink(
+				AtomLink.newBuilder().setHref(entryLink).setRel(AtomRelations.ALTERNATE).build()).setUpdated(entity.getLastModified()).setTitle(
+				AtomText.newBuilder().setTextContent(entity.getEntityName()).build());
 		if (entity.getCreated() != null) {
-			entry.setPublished(AtomDate.valueOf(entity.getCreated()));
+			entry.setPublished(entity.getCreated());
 		}
 		entry = fillFeedEntryContent(entry, entity.delegate());
 		if (entry.getAuthors().size() == 0) {
-			entry.addAuthor(AtomPerson.newBuilder().setName(entity.getLastModifiedUser()).build());
+			AtomPerson author = entity.getLastModifiedUser();
+			if (author != null) {
+				entry.addAuthor(author);
+			}
 		}
 		return entry;
 	}

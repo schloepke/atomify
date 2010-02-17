@@ -25,6 +25,7 @@
 package org.atomify.model.syndication;
 
 import java.net.URI;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -35,6 +36,7 @@ import org.atomify.model.AtomConstants;
 import org.atomify.model.AtomContractConstraint;
 import org.atomify.model.common.AtomCommonAttributes;
 import org.atomify.model.extension.AtomExtension;
+import org.jbasics.checker.ContractCheck;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
@@ -68,6 +70,29 @@ public class AtomPerson extends AtomCommonAttributes {
 
 	public static AtomPersonBuilder newBuilder() {
 		return AtomPersonBuilder.newInstance();
+	}
+
+	/**
+	 * Returns an AtomPerson for the given name without email and URI. The name MUST NOT be null and
+	 * the trimmed content must not result in an empty string.
+	 * 
+	 * @param name The name of the person (MUST NOT be null or empty string)
+	 * @return The newly created or shared instance of the person.
+	 */
+	public static AtomPerson valueOf(String name) {
+		return new AtomPerson(ContractCheck.mustNotBeNullOrTrimmedEmpty(name, "name"), null, null, null);
+	}
+
+	/**
+	 * Creates an {@link AtomPerson} instance for given user principal. The supplied principal must
+	 * not be null and the name must not be null or empty.
+	 * 
+	 * @param principal The principal (MUST NOT be null and the name of the principal MUST NOT be
+	 *            null or empty)
+	 * @return The newly created or shared instance of the person.
+	 */
+	public static AtomPerson valueOf(Principal principal) {
+		return valueOf(ContractCheck.mustNotBeNull(principal, "principal").getName());
 	}
 
 	/**

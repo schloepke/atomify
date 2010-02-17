@@ -48,7 +48,7 @@ public interface PagedEntityAccessor<EntityDelegate extends AtomEntityDelegate<?
 	 * @param identifier The identifier to query.
 	 * @return Returns the entity with the given identifier or null if the entity does not exist.
 	 */
-	public abstract EntityDelegate queryEntity(final UUID entityIdentifier);
+	public abstract EntityDelegate queryEntity(final String identifierPathSegment);
 
 	/**
 	 * Returns the list of entities with the max size of pageSize and the page as supplied.
