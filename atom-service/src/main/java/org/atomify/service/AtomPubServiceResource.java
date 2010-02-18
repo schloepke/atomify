@@ -24,11 +24,14 @@
  */
 package org.atomify.service;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URI;
+import java.net.URL;
 import java.security.Principal;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -39,12 +42,17 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 
+import org.atomify.model.AtomDocument;
+import org.atomify.model.AtomStylesheetAttachedDocument;
 import org.atomify.model.publishing.AtomPubAccept;
 import org.atomify.model.publishing.AtomPubCollection;
 import org.atomify.model.publishing.AtomPubCollectionBuilder;
@@ -54,7 +62,10 @@ import org.atomify.model.publishing.AtomPubWorkspace;
 import org.atomify.model.publishing.AtomPubWorkspaceBuilder;
 import org.atomify.model.syndication.AtomText;
 import org.atomify.service.annotations.AtomPubServiceEntry;
+import org.jbasics.arrays.ArrayConstants;
+import org.jbasics.net.http.browser.WebBrowserType;
 import org.jbasics.types.tuples.Triplet;
+import org.jbasics.xml.types.XmlStylesheetProcessInstruction;
 
 /**
  * A resource representing an atom publishing service document.
@@ -85,13 +96,29 @@ public abstract class AtomPubServiceResource {
 	 * @return The atom publishing service document as JAXB type.
 	 */
 	@GET
-	@Produces(AtomPubService.MEDIA_TYPE_STRING)
-	public final AtomPubService getServiceDocument(@Context SecurityContext securityCtx, @Context UriInfo uriInfo) {
+	@Produces( { AtomPubService.MEDIA_TYPE_STRING, MediaType.APPLICATION_XML })
+	public final Response getServiceDocument(@Context SecurityContext securityCtx, @Context UriInfo uriInfo, @Context HttpHeaders headers) {
 		if (this.requiresPrincipal && (securityCtx == null || securityCtx.getUserPrincipal() == null)) {
 			throw new WebApplicationException(Status.FORBIDDEN);
 		}
-		return generateServiceDocument(securityCtx == null ? null : securityCtx.getUserPrincipal(), uriInfo.getAbsolutePathBuilder(),
-				getServiceClasses());
+		AtomDocument serviceDocument = generateServiceDocument(securityCtx == null ? null : securityCtx.getUserPrincipal(), uriInfo
+				.getAbsolutePathBuilder(), getServiceClasses());
+		URI xsltLink = getStylesheetLink(uriInfo);
+		if (xsltLink != null) {
+			serviceDocument = new AtomStylesheetAttachedDocument(serviceDocument, new XmlStylesheetProcessInstruction("application/xslt+xml",
+					xsltLink));
+		}
+		ResponseBuilder temp = Response.ok(serviceDocument);
+		List<String> userAgent = headers.getRequestHeader("user-agent");
+		if (userAgent != null && userAgent.size() > 0) {
+			WebBrowserType browser = WebBrowserType.detect(userAgent.get(0));
+			if (browser == WebBrowserType.INTERNET_EXPLORER) {
+				// Now the internet explorer uses a */* accept header. In such a case we want to send back xml rather than atom
+				temp.type(MediaType.APPLICATION_XML_TYPE);
+			}
+			
+		}
+		return temp.build();
 	}
 
 	/**
@@ -100,10 +127,14 @@ public abstract class AtomPubServiceResource {
 	 * 
 	 * @return The html representation of the atom publishing service document.
 	 */
-	@GET
-	@Produces(MediaType.TEXT_HTML)
+//	@GET
+//	@Produces(MediaType.TEXT_HTML)
 	public final String getServiceDocumentAsHtml(@Context SecurityContext securityCtx, @Context UriInfo uriInfo) {
-		AtomPubService service = getServiceDocument(securityCtx, uriInfo);
+		if (this.requiresPrincipal && (securityCtx == null || securityCtx.getUserPrincipal() == null)) {
+			throw new WebApplicationException(Status.FORBIDDEN);
+		}
+		AtomPubService service = generateServiceDocument(securityCtx == null ? null : securityCtx.getUserPrincipal(), uriInfo
+				.getAbsolutePathBuilder(), getServiceClasses());
 		StringBuilder builder = new StringBuilder();
 		builder.append("<html>\n");
 		builder.append("\t<head>\n");
@@ -124,6 +155,20 @@ public abstract class AtomPubServiceResource {
 		return builder.toString();
 	}
 
+	@Path("stylesheet.xslt")
+	@Produces( { "application/xslt+xml", MediaType.APPLICATION_XML })
+	public final Response getStylesheetDocument() {
+		URL data = getHtmlTransformStylesheetURI();
+		if (data == null) {
+			return Response.status(Status.NOT_FOUND).build();
+		}
+		try {
+			return Response.ok(data.openStream()).build();
+		} catch (IOException e) {
+			throw new WebApplicationException(e, Status.INTERNAL_SERVER_ERROR);
+		}
+	}
+
 	/**
 	 * Returns the classes which are annotated with {@link AtomPubServiceEntry} on either class
 	 * level or method level. Must be implemented by the derived class.
@@ -142,6 +187,29 @@ public abstract class AtomPubServiceResource {
 	 */
 	protected Map<String, ? extends Object> getUriParameterMap() {
 		return Collections.emptyMap();
+	}
+
+	/**
+	 * Returns the URI which is World accessible to attach as a stylesheet link to the atom
+	 * document.
+	 * 
+	 * @param uriInfo
+	 * @return
+	 */
+	protected URI getStylesheetLink(UriInfo uriInfo) {
+		if (getHtmlTransformStylesheetURI() != null) {
+			try {
+				return uriInfo.getRequestUriBuilder().path(
+						getClass().getMethod("getStylesheetDocument", (Class<?>[]) ArrayConstants.ZERO_LENGTH_OBJECT_ARRAY)).build();
+			} catch (NoSuchMethodException e) {
+				// Ignore and do not return an URI
+			}
+		}
+		return null;
+	}
+
+	protected URL getHtmlTransformStylesheetURI() {
+		return getClass().getResource("atom-html-transform.xslt");
 	}
 
 	private AtomPubService generateServiceDocument(final Principal principal, final UriBuilder uriBuilder, final Set<Class<?>> clazzes) {
