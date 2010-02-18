@@ -30,6 +30,7 @@ import java.util.UUID;
 import org.atomify.model.AtomConstants;
 import org.atomify.model.AtomContractConstraint;
 import org.atomify.model.common.AtomCommonAttributes;
+import org.jbasics.checker.ContractCheck;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
@@ -56,6 +57,10 @@ public class AtomId extends AtomCommonAttributes {
 
 	public static AtomIdBuilder newBuilder() {
 		return AtomIdBuilder.newInstance();
+	}
+
+	public static AtomId valueOf(String id) {
+		return new AtomId(URI.create(ContractCheck.mustNotBeNull(id, "id")));
 	}
 
 	public static AtomId valueOf(URI id) {
