@@ -105,7 +105,7 @@ public abstract class AtomPubServiceResource {
 				.getAbsolutePathBuilder(), getServiceClasses());
 		URI xsltLink = getStylesheetLink(uriInfo);
 		if (xsltLink != null) {
-			serviceDocument = new AtomStylesheetAttachedDocument(serviceDocument, new XmlStylesheetProcessInstruction("application/xslt+xml",
+			serviceDocument = new AtomStylesheetAttachedDocument(serviceDocument, new XmlStylesheetProcessInstruction("text/xsl",
 					xsltLink));
 		}
 		ResponseBuilder temp = Response.ok(serviceDocument);
