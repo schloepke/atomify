@@ -35,7 +35,7 @@
   <xsl:template match="app:service">
     <html xmlns="www.w3.org/1999/xhtml">
       <head>
-        <title>DVB Bank Service Discovery</title>
+        <title>Atomify Service</title>
       </head>
       <body>
         <h1>Service Document</h1>
