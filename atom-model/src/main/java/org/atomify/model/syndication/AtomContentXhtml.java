@@ -42,7 +42,7 @@ public class AtomContentXhtml extends AtomContent {
 
 	/**
 	 * Creates an XHTML text construct with the given xhtml:div element instance.
-	 * 
+	 *
 	 * @param xhtmlDivElement The xhtml:div element
 	 * @todo TODO: Need to refactor the element from {@link AbstractAtomExtension} to a real
 	 *       xhtml:div element.
@@ -53,7 +53,7 @@ public class AtomContentXhtml extends AtomContent {
 
 	/**
 	 * Returns the xhtml:div element.
-	 * 
+	 *
 	 * @return The xhtml:div element.
 	 */
 	public XhtmlDivElement getContent() {
@@ -84,7 +84,7 @@ public class AtomContentXhtml extends AtomContent {
 		if (!super.equals(obj)) {
 			return false;
 		}
-		if (!(obj instanceof AtomXHtmlText)) {
+		if (!(obj instanceof AtomContentXhtml)) {
 			return false;
 		}
 		AtomContentXhtml other = (AtomContentXhtml) obj;
