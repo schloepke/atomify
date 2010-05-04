@@ -28,24 +28,37 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
-import org.atomify.model.AtomConstants;
-import org.atomify.model.syndication.AtomContentXml;
-import org.jbasics.checker.ContractCheck;
-import org.jbasics.net.mediatype.MediaType;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
+import org.jbasics.checker.ContractCheck;
+import org.jbasics.net.mediatype.MediaType;
+import org.jbasics.utilities.DataUtilities;
+
+import org.atomify.model.AtomConstants;
+import org.atomify.model.common.AtomCommonAttributes;
+import org.atomify.model.syndication.AtomContent;
+import org.atomify.model.syndication.AtomContentXml;
+
 public class JAXBContent extends AtomContentXml {
-	private Object element;
+	private final Object element;
 	private JAXBContext ctx;
 
-	public JAXBContent(Object element) {
-		this(null, element);
+	public JAXBContent(final Object element) {
+		this(null, element, null);
 	}
 
-	public JAXBContent(JAXBContext ctx, Object element) {
-		super(MediaType.APPLICATION_XML_TYPE);
+	public JAXBContent(final Object element, final MediaType mediaType) {
+		this(null, element, mediaType);
+	}
+
+	public JAXBContent(final JAXBContext ctx, final Object element) {
+		this(ctx, element, null);
+	}
+
+	public JAXBContent(final JAXBContext ctx, final Object element, final MediaType mediaType) {
+		super(DataUtilities.coalesce(mediaType, MediaType.APPLICATION_XML_TYPE));
 		this.element = ContractCheck.mustNotBeNull(element, "element");
 		if (ctx == null) {
 			try {
@@ -59,9 +72,9 @@ public class JAXBContent extends AtomContentXml {
 	}
 
 	@Override
-	public void serialize(ContentHandler handler, AttributesImpl attributes) throws SAXException {
+	public void serialize(final ContentHandler handler, AttributesImpl attributes) throws SAXException {
 		attributes = initCommonAttributes(attributes);
-		addAttribute(attributes, TYPE_QNAME, getMediaType().toString());
+		AtomCommonAttributes.addAttribute(attributes, AtomContent.TYPE_QNAME, getMediaType().toString());
 		String namespace = AtomConstants.ATOM_NS_URI;
 		String local = "content";
 		String qName = AtomConstants.ATOM_NS_PREFIX + ":" + local;
