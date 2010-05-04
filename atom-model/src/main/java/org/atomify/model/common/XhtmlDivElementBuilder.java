@@ -31,15 +31,17 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
-import org.atomify.model.AtomContractConstraint;
-import org.atomify.model.extension.AtomForeignComment;
-import org.atomify.model.extension.AtomForeignMarkup;
-import org.atomify.model.extension.AtomForeignTextContent;
 import org.jbasics.parser.annotations.AnyAttribute;
 import org.jbasics.parser.annotations.AnyElement;
 import org.jbasics.parser.annotations.Comment;
 import org.jbasics.parser.annotations.Content;
 import org.jbasics.pattern.builder.Builder;
+
+import org.atomify.model.AtomContractConstraint;
+import org.atomify.model.extension.AtomForeignComment;
+import org.atomify.model.extension.AtomForeignMarkup;
+import org.atomify.model.extension.AtomForeignMarkupBuilder;
+import org.atomify.model.extension.AtomForeignTextContent;
 
 public class XhtmlDivElementBuilder implements Builder<XhtmlDivElement> {
 	private Map<QName, String> attributes;
@@ -81,27 +83,39 @@ public class XhtmlDivElementBuilder implements Builder<XhtmlDivElement> {
 	}
 
 	@AnyAttribute
-	public XhtmlDivElementBuilder setAttribute(QName name, String value) {
+	public XhtmlDivElementBuilder setAttribute(final QName name, final String value) {
 		getAttributes().put(name, value);
 		return this;
 	}
 
 	@Content
-	public XhtmlDivElementBuilder appendText(String text) {
+	public XhtmlDivElementBuilder appendText(final String text) {
 		getChildrean().add(new AtomForeignTextContent(AtomContractConstraint.mustNotBeEmptyString(text, "text")));
 		return this;
 	}
-	
+
 	@Comment
-	public XhtmlDivElementBuilder appendComment(String comment) {
+	public XhtmlDivElementBuilder appendComment(final String comment) {
 		getChildrean().add(new AtomForeignComment(AtomContractConstraint.notNull("comment", comment)));
 		return this;
 	}
 
 	@AnyElement
-	public XhtmlDivElementBuilder appendAnyElement(AtomForeignMarkup element) {
+	public XhtmlDivElementBuilder appendAnyElement(final AtomForeignMarkup element) {
 		getChildrean().add(AtomContractConstraint.notNull("element", element));
 		return this;
+	}
+
+	public XhtmlDivElementBuilder strong(final String content) {
+		return appendAnyElement(AtomForeignMarkupBuilder.newInstance().setQualifiedName(XhtmlElementQNames.STRONG).appendText(content).build());
+	}
+
+	public XhtmlDivElementBuilder emphasise(final String content) {
+		return appendAnyElement(AtomForeignMarkupBuilder.newInstance().setQualifiedName(XhtmlElementQNames.EM).appendText(content).build());
+	}
+
+	public XhtmlDivElementBuilder lineBreak() {
+		return appendAnyElement(AtomForeignMarkupBuilder.newInstance().setQualifiedName(XhtmlElementQNames.BR).build());
 	}
 
 }

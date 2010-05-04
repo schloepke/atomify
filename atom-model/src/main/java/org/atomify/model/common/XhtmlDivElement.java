@@ -32,14 +32,15 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
-import org.atomify.model.extension.AtomForeignMarkup;
-import org.jbasics.xml.XmlSerializable;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
+import org.jbasics.xml.XmlSerializable;
+
+import org.atomify.model.extension.AtomForeignMarkup;
+
 public class XhtmlDivElement implements AtomForeignMarkup, XmlSerializable {
-	public static final QName QUALIFIED_NAMAE = new QName("http://www.w3.org/1999/xhtml", "div", "xhtml");
 	private final Map<QName, String> attributes;
 	private final List<AtomForeignMarkup> childrean;
 
@@ -47,7 +48,7 @@ public class XhtmlDivElement implements AtomForeignMarkup, XmlSerializable {
 		return XhtmlDivElementBuilder.newInstance();
 	}
 
-	public XhtmlDivElement(Map<QName, String> attributes, List<AtomForeignMarkup> childrean) {
+	public XhtmlDivElement(final Map<QName, String> attributes, final List<AtomForeignMarkup> childrean) {
 		if (attributes != null && attributes.size() > 0) {
 			this.attributes = Collections.unmodifiableMap(new HashMap<QName, String>(attributes));
 		} else {
@@ -69,7 +70,7 @@ public class XhtmlDivElement implements AtomForeignMarkup, XmlSerializable {
 	}
 
 	public QName getQualifiedName() {
-		return QUALIFIED_NAMAE;
+		return XhtmlElementQNames.DIV;
 	}
 
 	public String getSimpleContent() {
@@ -110,7 +111,7 @@ public class XhtmlDivElement implements AtomForeignMarkup, XmlSerializable {
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 		if (this == obj) {
 			return true;
 		}
@@ -134,7 +135,7 @@ public class XhtmlDivElement implements AtomForeignMarkup, XmlSerializable {
 	// --- FIXME: From here all is serialization. We Still need to think about a good way to do so.
 
 	@SuppressWarnings("all")
-	public void serialize(ContentHandler handler, AttributesImpl attributes) throws SAXException {
+	public void serialize(final ContentHandler handler, AttributesImpl attributes) throws SAXException {
 		if (attributes == null) {
 			attributes = new AttributesImpl();
 		} else {
@@ -147,9 +148,11 @@ public class XhtmlDivElement implements AtomForeignMarkup, XmlSerializable {
 					+ ":" : "")
 					+ name.getLocalPart(), "CDATA", attr.getValue().toString());
 		}
-		String namespace = QUALIFIED_NAMAE.getNamespaceURI();
-		String local = QUALIFIED_NAMAE.getLocalPart();
-		String qName = (QUALIFIED_NAMAE.getPrefix() != null && QUALIFIED_NAMAE.getPrefix().length() > 0 ? QUALIFIED_NAMAE.getPrefix() + ":" : "")
+		String namespace = XhtmlElementQNames.DIV.getNamespaceURI();
+		String local = XhtmlElementQNames.DIV.getLocalPart();
+		String qName = (XhtmlElementQNames.DIV.getPrefix() != null && XhtmlElementQNames.DIV.getPrefix().length() > 0 ? XhtmlElementQNames.DIV
+				.getPrefix()
+				+ ":" : "")
 				+ local;
 		handler.startElement(namespace, local, qName, attributes);
 		for (AtomForeignMarkup child : this.childrean) {
