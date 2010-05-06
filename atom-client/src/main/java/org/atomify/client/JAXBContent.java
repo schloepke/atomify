@@ -25,6 +25,7 @@
 package org.atomify.client;
 
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
@@ -62,7 +63,11 @@ public class JAXBContent extends AtomContentXml {
 		this.element = ContractCheck.mustNotBeNull(element, "element");
 		if (ctx == null) {
 			try {
-				this.ctx = JAXBContext.newInstance(this.element.getClass());
+				if (element instanceof JAXBElement<?>) {
+					this.ctx = JAXBContext.newInstance(((JAXBElement<?>) element).getDeclaredType());
+				} else {
+					this.ctx = JAXBContext.newInstance(this.element.getClass());
+				}
 			} catch (JAXBException e) {
 				throw new RuntimeException(e.getMessage(), e);
 			}
