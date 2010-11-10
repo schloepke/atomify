@@ -24,18 +24,14 @@
  */
 package org.atomify.model.jaxrs;
 
-import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.ws.rs.core.UriBuilder;
 import javax.xml.transform.stream.StreamResult;
 
-import org.atomify.model.AtomDocumentSerializer;
-import org.atomify.model.publishing.AtomPubCollection;
-import org.atomify.model.publishing.AtomPubService;
-import org.atomify.model.syndication.AtomFeed;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -46,8 +42,12 @@ import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
 import com.sun.jersey.api.container.grizzly.GrizzlyWebContainerFactory;
 
-import static org.junit.Assert.*;
+import org.atomify.model.AtomDocumentSerializer;
+import org.atomify.model.publishing.AtomPubCollection;
+import org.atomify.model.publishing.AtomPubService;
+import org.atomify.model.syndication.AtomFeed;
 
+@SuppressWarnings("nls")
 public class AtomJAXRSTest {
 	private static SelectorThread selectorThread;
 
@@ -56,33 +56,33 @@ public class AtomJAXRSTest {
 		final Map<String, String> initParams = new HashMap<String, String>();
 		initParams.put("com.sun.jersey.config.property.resourceConfigClass", "com.sun.jersey.api.core.PackagesResourceConfig");
 		initParams.put("com.sun.jersey.config.property.packages", "org.atomify.model.jaxrs");
-		selectorThread = GrizzlyWebContainerFactory.create(UriBuilder.fromUri("http://localhost/").port(8081).build(), initParams);
+		AtomJAXRSTest.selectorThread = GrizzlyWebContainerFactory.create(UriBuilder.fromUri("http://localhost/").port(8081).build(), initParams);
 	}
 
 	@AfterClass
 	public static void stopServer() throws Exception {
-		selectorThread.stopEndpoint();
+		AtomJAXRSTest.selectorThread.stopEndpoint();
 	}
-	
+
 	@Test
 	public void testSomething() throws Exception {
 		ClientConfig clientConfig = new DefaultClientConfig();
 		Client client = Client.create(clientConfig);
 		WebResource service = client.resource(UriBuilder.fromUri("http://localhost").port(8081).path("atom").build());
-		
+
 		AtomPubService atomService = service.get(AtomPubService.class);
-		
-		assertNotNull(atomService);
+
+		Assert.assertNotNull(atomService);
 
 		new AtomDocumentSerializer().serialize(atomService, new StreamResult(System.out));
 
 		AtomPubCollection atomColl = atomService.getWorkspaces().get(0).getCollections().get(0);
-		
+
 		AtomFeed atomFeed = client.resource(atomColl.getHref()).get(AtomFeed.class);
-		assertNotNull(atomFeed);
-		
+		Assert.assertNotNull(atomFeed);
+
 		new AtomDocumentSerializer().serialize(atomFeed, new StreamResult(System.out));
-		
+
 	}
 
 }
