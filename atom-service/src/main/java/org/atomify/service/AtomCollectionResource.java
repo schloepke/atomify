@@ -43,26 +43,20 @@ import org.atomify.model.syndication.AtomLink;
 /**
  * Base class to implement a paged {@link AtomFeed} resource with functionality to get entries.
  * <p>
- * In the terminology of Atom Publishing this describes a collection where you can get a feed and
- * also entries as well as put and post to edit the feed and/or the entries. In the terminology of
- * Atom Syndication this represents a feed with the ability to also return the entries as well as
- * editing them.
+ * In the terminology of Atom Publishing this describes a collection where you can get a feed and also entries as well
+ * as put and post to edit the feed and/or the entries. In the terminology of Atom Syndication this represents a feed
+ * with the ability to also return the entries as well as editing them.
  * </p>
  * <p>
- * As implementor you need to derive the class and implement the abstract methods. A more detailed
- * description will have to follow here and in a separate how to document. Do not expect this to be
- * present until after version 1.0 is released.
+ * As implementor you need to derive the class and implement the abstract methods. A more detailed description will have
+ * to follow here and in a separate how to document. Do not expect this to be present until after version 1.0 is
+ * released.
  * </p>
  * 
  * @author Stephan Schloepke
  * @since 1.0
  */
 public abstract class AtomCollectionResource {
-	@Context
-	private UriInfo uriInfo;
-	@QueryParam("page")
-	@DefaultValue("0")
-	private int currentPage;
 
 	/**
 	 * Returns the Feed to be rendered for the request.
@@ -72,22 +66,22 @@ public abstract class AtomCollectionResource {
 	 */
 	@GET
 	@Produces(AtomFeed.MEDIA_TYPE_STRING)
-	public final AtomFeed getFeed() {
+	public final AtomFeed getFeed(@QueryParam("page") @DefaultValue("0") final int currentPage, @Context final UriInfo uriInfo) {
 		int pageSize = getPageSize();
-		AtomFeedBuilder feedBuilder = fillFeed(AtomFeed.newBuilder(), this.uriInfo);
-		filleEntries(feedBuilder, this.uriInfo, pageSize, this.currentPage);
+		AtomFeedBuilder feedBuilder = fillFeed(AtomFeed.newBuilder(), uriInfo);
+		filleEntries(feedBuilder, uriInfo, pageSize, currentPage);
 		if (pageSize > 0) {
 			if (feedBuilder.getEntries().size() == pageSize) {
 				feedBuilder.addLink(AtomLink.newBuilder().setHref(
-						this.uriInfo.getAbsolutePathBuilder().queryParam("page", Integer.valueOf(this.currentPage + 1)).build()).setRel(
+						uriInfo.getAbsolutePathBuilder().queryParam("page", Integer.valueOf(currentPage + 1)).build()).setRel(
 						AtomRelations.NEXT).setType(AtomFeed.MEDIA_TYPE).setTitle("Next page").build());
 			}
-			if (this.currentPage > 0) {
+			if (currentPage > 0) {
 				feedBuilder.addLink(AtomLink.newBuilder().setHref(
-						this.uriInfo.getAbsolutePathBuilder().queryParam("page", Integer.valueOf(this.currentPage - 1)).build()).setRel(
+						uriInfo.getAbsolutePathBuilder().queryParam("page", Integer.valueOf(currentPage - 1)).build()).setRel(
 						AtomRelations.PREVIOUS).setType(AtomFeed.MEDIA_TYPE).setTitle("Previous page").build());
 				feedBuilder.addLink(AtomLink.newBuilder().setHref(
-						this.uriInfo.getAbsolutePathBuilder().queryParam("page", Integer.valueOf(0)).build()).setRel(AtomRelations.FIRST).setType(
+						uriInfo.getAbsolutePathBuilder().queryParam("page", Integer.valueOf(0)).build()).setRel(AtomRelations.FIRST).setType(
 						AtomFeed.MEDIA_TYPE).setTitle("First page").build());
 			}
 		}
@@ -103,27 +97,18 @@ public abstract class AtomCollectionResource {
 	@GET
 	@Produces(AtomEntry.MEDIA_TYPE_STRING)
 	@Path("{entryId}")
-	public final AtomEntry getFeedEntry(@PathParam("entryId") final String entryId) {
-		return fillEntry(AtomEntry.newBuilder(), this.uriInfo, entryId).build();
-	}
-
-	/**
-	 * Returns the page in the paged feed currently rendered.
-	 * 
-	 * @return The current page of the rendering.
-	 */
-	public int getCurrentPage() {
-		return this.currentPage;
+	public final AtomEntry getFeedEntry(@PathParam("entryId") final String entryId, @Context final UriInfo uriInfo) {
+		return fillEntry(AtomEntry.newBuilder(), uriInfo, entryId).build();
 	}
 
 	/**
 	 * Returns the used page size (defaults to 20) or a value less than or equal to zero indicating
 	 * no automatic paging required.
 	 * <p>
-	 * The page size is the amount of entries in one page for a paged feed. Overwrite this method to
-	 * change the default page size of 20 entries. If you return a value less than or equal to zero
-	 * the automatic generation of paging links is disabled. The implementor deriving from this
-	 * class can still set the page links them self using the page number as query parameter "page".
+	 * The page size is the amount of entries in one page for a paged feed. Overwrite this method to change the default
+	 * page size of 20 entries. If you return a value less than or equal to zero the automatic generation of paging
+	 * links is disabled. The implementor deriving from this class can still set the page links them self using the page
+	 * number as query parameter "page".
 	 * </p>
 	 * 
 	 * @return The page size for the feed or minus one to disable automatic paging.
@@ -136,10 +121,9 @@ public abstract class AtomCollectionResource {
 	 * Returns the total amount of elements in the feed or minus one to indicate that the total
 	 * amount is unknown.
 	 * <p>
-	 * Overwrite this method in order to give the paged feed the opportunity to let the caller know
-	 * what the last page is. The total amount is divided by the page size to determine the last
-	 * page and give this as link in the feed. If either the total amount or the page size is minus
-	 * one the link to the last page will not appear.
+	 * Overwrite this method in order to give the paged feed the opportunity to let the caller know what the last page
+	 * is. The total amount is divided by the page size to determine the last page and give this as link in the feed. If
+	 * either the total amount or the page size is minus one the link to the last page will not appear.
 	 * </p>
 	 * 
 	 * @return Returns the total numbers of entries in this feed or minus one if the total amount is
@@ -152,8 +136,7 @@ public abstract class AtomCollectionResource {
 	/**
 	 * Fill the feed. This is called right at the beginning when the feed is to be created.
 	 * <p>
-	 * When implementing this method use it to fill feed related things like feed links, feed title,
-	 * feed id and so on.
+	 * When implementing this method use it to fill feed related things like feed links, feed title, feed id and so on.
 	 * </p>
 	 * 
 	 * @param feedBuilder The feed builder building the feed.
