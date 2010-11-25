@@ -72,8 +72,8 @@ public class XHTMLStylesheetAttachedXMLProvider implements MessageBodyWriter<XHT
 
 	public boolean isWriteable(final Class<?> type, final Type genericType, final Annotation[] annotations, final MediaType mediaType) {
 		return XHTMLStylesheetAttachedJAXB.class.isAssignableFrom(type) && (MediaType.APPLICATION_XHTML_XML_TYPE.equals(mediaType) ||
-				MediaType.APPLICATION_XML.equals(mediaType) ||
-				MediaType.TEXT_XML.equals(mediaType) ||
+				MediaType.APPLICATION_XML_TYPE.equals(mediaType) ||
+				MediaType.TEXT_HTML_TYPE.equals(mediaType) ||
 				MediaType.TEXT_XML_TYPE.equals(mediaType) ||
 				(mediaType != null && mediaType.getSubtype().endsWith("+xml"))); //$NON-NLS-1$
 	}
