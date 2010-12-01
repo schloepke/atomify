@@ -91,7 +91,7 @@ public class XHTMLStylesheetAttachedXMLProvider implements MessageBodyWriter<XHT
 				}
 			}
 			Writer w = new OutputStreamWriter(entityStream, charset);
-			if (MediaType.APPLICATION_XHTML_XML_TYPE.equals(mediaType)) {
+			if (MediaType.APPLICATION_XHTML_XML_TYPE.equals(mediaType) || MediaType.TEXT_HTML_TYPE.equals(mediaType)) {
 				writeToXhtml(t, mediaType, charset, marshaller, w);
 			} else {
 				writeToXml(t, mediaType, charset, marshaller, w);
