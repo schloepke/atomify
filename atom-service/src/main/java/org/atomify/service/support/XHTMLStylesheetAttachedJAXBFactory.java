@@ -25,6 +25,7 @@
 package org.atomify.service.support;
 
 import java.net.URI;
+import java.net.URL;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -48,6 +49,7 @@ import org.jbasics.types.delegates.UnmodifiableDelegate;
  */
 public class XHTMLStylesheetAttachedJAXBFactory<T> implements ParameterFactory<XHTMLStylesheetAttachedJAXB<T>, T> {
 	private final Delegate<URI> styleSheetLinkDelegate;
+	private final Delegate<URL> localResourceStylesheetDelegate;
 
 	/**
 	 * Create the factory with the given constant URI to use.
@@ -56,6 +58,17 @@ public class XHTMLStylesheetAttachedJAXBFactory<T> implements ParameterFactory<X
 	 */
 	public XHTMLStylesheetAttachedJAXBFactory(final URI styleSheetLink) {
 		this(new UnmodifiableDelegate<URI>(ContractCheck.mustNotBeNull(styleSheetLink, "styleSheetLink"))); //$NON-NLS-1$
+	}
+
+	/**
+	 * Create the factory with the given constant URI to use.
+	 * 
+	 * @param styleSheetLink The constant URI link to use (useful if an absolute URI or relative to a constant path)
+	 * @param localResourceStylesheet The local URL of the style sheet for transforming on the server side (optional)
+	 */
+	public XHTMLStylesheetAttachedJAXBFactory(final URI styleSheetLink, final URL localResourceStylesheet) {
+		this(new UnmodifiableDelegate<URI>(ContractCheck.mustNotBeNull(styleSheetLink, "styleSheetLink")), //$NON-NLS-1$
+				localResourceStylesheet == null ? null : new UnmodifiableDelegate<URL>(localResourceStylesheet));
 	}
 
 	/**
@@ -72,7 +85,27 @@ public class XHTMLStylesheetAttachedJAXBFactory<T> implements ParameterFactory<X
 	 *            return null on calling {@link Delegate#delegate()});
 	 */
 	public XHTMLStylesheetAttachedJAXBFactory(final Delegate<URI> styleSheetLinkDelegate) {
+		this(styleSheetLinkDelegate, null);
+	}
+
+	/**
+	 * Creates the factory with the given delegated URI to further customize the URI generation.
+	 * <p>
+	 * If the URI is relative and used in various resources it is often required that the URI is newly build for each
+	 * request. This can be done by using this delegate rather than a fixed URI. Upon creation of the styled element
+	 * {@link Delegate#delegate()} is called and the fixed URI is used for creation of the
+	 * {@link XHTMLStylesheetAttachedJAXB} instance. Once that instance is created the URI is constant but each creation
+	 * can have a different URI upon implementation of the delegate.
+	 * </p>
+	 * 
+	 * @param styleSheetLinkDelegate The {@link Delegate} instance to the style sheet (MUST not be null and MUST not
+	 *            return null on calling {@link Delegate#delegate()});
+	 * @param localResourceStylesheetDelegate The {@link Delegate} instance to the local URL of the style sheet for
+	 *            transforming on the server side (MAY be null or {@link Delegate#delegate()} returns null)
+	 */
+	public XHTMLStylesheetAttachedJAXBFactory(final Delegate<URI> styleSheetLinkDelegate, final Delegate<URL> localResourceStylesheetDelegate) {
 		this.styleSheetLinkDelegate = ContractCheck.mustNotBeNull(styleSheetLinkDelegate, "styleSheetLinkDelegate"); //$NON-NLS-1$
+		this.localResourceStylesheetDelegate = localResourceStylesheetDelegate;
 	}
 
 	/**
@@ -83,7 +116,11 @@ public class XHTMLStylesheetAttachedJAXBFactory<T> implements ParameterFactory<X
 	 *            instance)
 	 */
 	public XHTMLStylesheetAttachedJAXB<T> create(final T entity) {
-		return new XHTMLStylesheetAttachedJAXB<T>(this.styleSheetLinkDelegate.delegate(), entity);
+		if (this.localResourceStylesheetDelegate != null) {
+			return new XHTMLStylesheetAttachedJAXB<T>(this.styleSheetLinkDelegate.delegate(), entity, this.localResourceStylesheetDelegate.delegate());
+		} else {
+			return new XHTMLStylesheetAttachedJAXB<T>(this.styleSheetLinkDelegate.delegate(), entity);
+		}
 	}
 
 }

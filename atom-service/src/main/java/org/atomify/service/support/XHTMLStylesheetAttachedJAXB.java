@@ -24,16 +24,19 @@
  */
 package org.atomify.service.support;
 
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URL;
 
 import javax.xml.bind.JAXBElement;
 
 import org.jbasics.checker.ContractCheck;
+import org.jbasics.exception.DelegatedException;
 
 /**
- * Attach an xsl-stylesheet link to the provided JAXB entity.
+ * Attach an XSLT style sheet link to the provided JAXB entity.
  * <p>
- * Depending on the used media type the stylesheet is attached as link or the XML document is transformed to XHTML. The
+ * Depending on the used media type the style sheet is attached as link or the XML document is transformed to XHTML. The
  * style sheet must produce XHTML since the message body writer is meant for a web browser.
  * </p>
  * 
@@ -43,6 +46,7 @@ import org.jbasics.checker.ContractCheck;
 public class XHTMLStylesheetAttachedJAXB<T> {
 	private final URI stylesheet;
 	private final T entity;
+	private final URL localResource;
 
 	/**
 	 * Create a {@link XHTMLStylesheetAttachedJAXB} instance for the given style sheet link and the given
@@ -52,8 +56,31 @@ public class XHTMLStylesheetAttachedJAXB<T> {
 	 * @param entity The JAXB entity (MUST not be null)
 	 */
 	public XHTMLStylesheetAttachedJAXB(final URI stylesheet, final T entity) {
+		this(stylesheet, entity, null);
+	}
+
+	/**
+	 * Create a {@link XHTMLStylesheetAttachedJAXB} instance for the given style sheet link and the given
+	 * JAXB entity.
+	 * 
+	 * @param stylesheet The style sheet link to use (MUST not be null)
+	 * @param entity The JAXB entity (MUST not be null)
+	 * @param localResource The URL of the local resource to use in case of a server side transform (MAY be null)
+	 */
+	public XHTMLStylesheetAttachedJAXB(final URI stylesheet, final T entity, final URL localResource) {
 		this.stylesheet = ContractCheck.mustNotBeNull(stylesheet, "stylesheet"); //$NON-NLS-1$
 		this.entity = ContractCheck.mustNotBeNull(entity, "entity"); //$NON-NLS-1$
+		if (localResource != null) {
+			this.localResource = localResource;
+		} else {
+			URL temp = null;
+			try {
+				temp = this.stylesheet.toURL();
+			} catch (MalformedURLException e) {
+				// we ignore this here and set the local resource to null
+			}
+			this.localResource = temp;
+		}
 	}
 
 	/**
@@ -72,6 +99,25 @@ public class XHTMLStylesheetAttachedJAXB<T> {
 	 */
 	public T getEntity() {
 		return this.entity;
+	}
+
+	/**
+	 * Returns the resource to use when transforming locally. If not set by
+	 * constructor it will return the style sheet URI as URL.
+	 * 
+	 * @return The server side URL to use for transformation.
+	 * @throws DelegatedException If the style sheet URI cannot be dereferenced the {@link MalformedURLException} is
+	 *             thrown as {@link DelegatedException}.
+	 */
+	public URL getLocalResource() {
+		if (this.localResource == null) {
+			try {
+				getStylesheet().toURL();
+			} catch (MalformedURLException e) {
+				throw DelegatedException.delegate(e);
+			}
+		}
+		return this.localResource;
 	}
 
 	/**

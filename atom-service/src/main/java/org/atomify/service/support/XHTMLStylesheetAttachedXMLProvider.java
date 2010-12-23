@@ -91,7 +91,7 @@ public class XHTMLStylesheetAttachedXMLProvider implements MessageBodyWriter<XHT
 				}
 			}
 			Writer w = new OutputStreamWriter(entityStream, charset);
-			if (MediaType.APPLICATION_XHTML_XML_TYPE.equals(mediaType)) {
+			if (MediaType.APPLICATION_XHTML_XML_TYPE.equals(mediaType) || MediaType.TEXT_HTML_TYPE.equals(mediaType)) {
 				writeToXhtml(t, mediaType, charset, marshaller, w);
 			} else {
 				writeToXml(t, mediaType, charset, marshaller, w);
@@ -104,7 +104,7 @@ public class XHTMLStylesheetAttachedXMLProvider implements MessageBodyWriter<XHT
 	private void writeToXhtml(final XHTMLStylesheetAttachedJAXB<?> t, final MediaType mediaType, final Charset charset,
 			final Marshaller marshaller, final Writer w) throws JAXBException, IOException {
 		try {
-			Transformer transformer = TransformerFactory.newInstance().newTransformer(new StreamSource(t.getStylesheet().toURL().openStream()));
+			Transformer transformer = TransformerFactory.newInstance().newTransformer(new StreamSource(t.getLocalResource().openStream()));
 			Source source = new JAXBSource(marshaller, t.getEntity());
 			Result result = new StreamResult(w);
 			transformer.transform(source, result);

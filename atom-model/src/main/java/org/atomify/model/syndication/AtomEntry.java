@@ -30,15 +30,17 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.AttributesImpl;
+
+import org.jbasics.net.mediatype.MediaType;
+
 import org.atomify.model.AtomConstants;
 import org.atomify.model.AtomContractConstraint;
 import org.atomify.model.AtomDocument;
 import org.atomify.model.common.AtomCommonAttributes;
 import org.atomify.model.extension.AtomExtension;
-import org.jbasics.net.mediatype.MediaType;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.AttributesImpl;
 
 /**
  * Represents an atom entry element.
@@ -53,7 +55,7 @@ public class AtomEntry extends AtomCommonAttributes implements AtomDocument {
 	/**
 	 * The media type for an atom syndication entry.
 	 */
-	public static final MediaType MEDIA_TYPE = MediaType.valueOf(MEDIA_TYPE_STRING);
+	public static final MediaType MEDIA_TYPE = MediaType.valueOf(AtomEntry.MEDIA_TYPE_STRING);
 
 	/**
 	 * <b>Required:</b> atom:id element.
@@ -114,7 +116,7 @@ public class AtomEntry extends AtomCommonAttributes implements AtomDocument {
 	}
 
 	public MediaType getMediaType() {
-		return MEDIA_TYPE;
+		return AtomEntry.MEDIA_TYPE;
 	}
 
 	/**
@@ -277,7 +279,7 @@ public class AtomEntry extends AtomCommonAttributes implements AtomDocument {
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 		if (this == obj) {
 			return true;
 		}
@@ -400,38 +402,42 @@ public class AtomEntry extends AtomCommonAttributes implements AtomDocument {
 	// --- FIXME: From here all is serialization. We Still need to think about a good way to do so.
 
 	@SuppressWarnings("all")
-	public void serialize(ContentHandler handler, AttributesImpl attributes) throws SAXException {
+	public void serialize(final ContentHandler handler, AttributesImpl attributes) throws SAXException {
 		handler.startPrefixMapping(AtomConstants.ATOM_NS_PREFIX, AtomConstants.ATOM_NS_URI);
 		attributes = initCommonAttributes(attributes);
 		handler.startElement(AtomConstants.ATOM_NS_URI, "entry", AtomConstants.ATOM_NS_PREFIX + ":entry", attributes);
 		this.id.serialize(handler, attributes);
-		this.title.serialize(TITLE_QNAME, handler, attributes);
-		this.updated.serialize(UPDATED_QNAME, handler, attributes);
+		this.title.serialize(AtomEntry.TITLE_QNAME, handler, attributes);
+		this.updated.serialize(AtomEntry.UPDATED_QNAME, handler, attributes);
 		if (this.published != null) {
-			this.published.serialize(PUBLISHED_QNAME, handler, attributes);
+			this.published.serialize(AtomEntry.PUBLISHED_QNAME, handler, attributes);
 		}
 		for (AtomLink link : this.links) {
 			link.serialize(handler, attributes);
 		}
 		for (AtomPerson author : this.authors) {
-			author.serialize(AUTHOR_QNAME, handler, attributes);
+			author.serialize(AtomEntry.AUTHOR_QNAME, handler, attributes);
 		}
 		for (AtomPerson contributor : this.contributors) {
-			contributor.serialize(CONTRIBUTOR_QNAME, handler, attributes);
+			contributor.serialize(AtomEntry.CONTRIBUTOR_QNAME, handler, attributes);
 		}
 		for (AtomCategory category : this.categories) {
 			category.serialize(handler, attributes);
 		}
 		if (this.rights != null) {
-			this.rights.serialize(RIGHTS_QNAME, handler, attributes);
+			this.rights.serialize(AtomEntry.RIGHTS_QNAME, handler, attributes);
 		}
 		if (this.source != null) {
 			this.source.serialize(handler, attributes);
 		}
 		if (this.summary != null) {
-			this.summary.serialize(SUMMARY_QNAME, handler, attributes);
+			this.summary.serialize(AtomEntry.SUMMARY_QNAME, handler, attributes);
 		}
-		this.content.serialize(handler, attributes);
+		if (this.content != null) {
+			this.content.serialize(handler, attributes);
+		} else {
+			// TODO: we need to make sure there is an alternate link and a summary available!
+		}
 		for (AtomExtension extension : this.extensions) {
 			extension.serialize(handler, attributes);
 		}
@@ -490,7 +496,7 @@ public class AtomEntry extends AtomCommonAttributes implements AtomDocument {
 	 * 
 	 * @return the extensions
 	 */
-	protected void setExtensions(List<AtomExtension> extensions) {
+	protected void setExtensions(final List<AtomExtension> extensions) {
 		if (extensions == null || extensions.isEmpty()) {
 			this.extensions = Collections.emptyList();
 		} else {
@@ -503,7 +509,7 @@ public class AtomEntry extends AtomCommonAttributes implements AtomDocument {
 	 * 
 	 * @return The lazy initialized list of links.
 	 */
-	protected void setLinks(List<AtomLink> links) {
+	protected void setLinks(final List<AtomLink> links) {
 		if (links == null || links.isEmpty()) {
 			this.links = Collections.emptyList();
 		} else {
@@ -516,7 +522,7 @@ public class AtomEntry extends AtomCommonAttributes implements AtomDocument {
 	 * 
 	 * @return The lazy initialized contributors.
 	 */
-	protected void setContributors(List<AtomPerson> contributors) {
+	protected void setContributors(final List<AtomPerson> contributors) {
 		if (contributors == null || contributors.isEmpty()) {
 			this.contributors = Collections.emptyList();
 		} else {
@@ -529,7 +535,7 @@ public class AtomEntry extends AtomCommonAttributes implements AtomDocument {
 	 * 
 	 * @return The lazy initialized categories.
 	 */
-	protected void setCategories(List<AtomCategory> categories) {
+	protected void setCategories(final List<AtomCategory> categories) {
 		if (categories == null || categories.isEmpty()) {
 			this.categories = Collections.emptyList();
 		} else {
@@ -542,7 +548,7 @@ public class AtomEntry extends AtomCommonAttributes implements AtomDocument {
 	 * 
 	 * @return The lazy initialized list of authors.
 	 */
-	protected void setAuthors(List<AtomPerson> authors) {
+	protected void setAuthors(final List<AtomPerson> authors) {
 		if (authors == null || authors.isEmpty()) {
 			this.authors = Collections.emptyList();
 		} else {
