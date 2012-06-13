@@ -1,19 +1,15 @@
 /**
  * Copyright (c) 2009 Stephan Schloepke and innoQ Deutschland GmbH
- *
  * Stephan Schloepke: http://www.schloepke.de/
  * innoQ Deutschland GmbH: http://www.innoq.com/
- *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -29,8 +25,8 @@ import java.util.Collections;
 import java.util.Map;
 
 import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.UriInfo;
 
 import org.atomify.model.AtomRelations;
 import org.atomify.model.syndication.AtomEntry;
@@ -62,19 +58,19 @@ public abstract class AtomEntityCollectionResource<Entity, EntityDelegate extend
 	 *      javax.ws.rs.core.UriInfo, java.lang.String, int, int)
 	 */
 	@Override
-	public final AtomFeedBuilder filleEntries(final AtomFeedBuilder feedBuilder, final UriInfo uriInfo, final int pageSize, final int page) {
-		PagedEntityAccessor<EntityDelegate> entityAccessor = createPagedEntityAccessor(EMPTY_PARAMETERS);
-		for (EntityDelegate entity : entityAccessor.queryPagedEntities(pageSize, page)) {
-			URI entryLink = uriInfo.getAbsolutePathBuilder().path("{entry}").build(entity.getPathSegmentIdentifier()).normalize();
-			AtomEntryBuilder entry = AtomEntry.newBuilder().setId(entity.getIdentifier()).addLink(
-					AtomLink.newBuilder().setHref(entryLink).setRel(AtomRelations.ALTERNATE).build()).setUpdated(entity.getLastModified()).setTitle(
-					AtomText.newBuilder().setTextContent(entity.getEntityName()).build());
+	public final AtomFeedBuilder fillEntries(final AtomFeedBuilder feedBuilder, final UriInfo uriInfo, final int pageSize, final int page) {
+		final PagedEntityAccessor<EntityDelegate> entityAccessor = createPagedEntityAccessor(AtomEntityCollectionResource.EMPTY_PARAMETERS);
+		for (final EntityDelegate entity : entityAccessor.queryPagedEntities(pageSize, page)) {
+			final URI entryLink = uriInfo.getAbsolutePathBuilder().path("{entry}").build(entity.getPathSegmentIdentifier()).normalize();
+			AtomEntryBuilder entry = AtomEntry.newBuilder().setId(entity.getIdentifier())
+					.addLink(AtomLink.newBuilder().setHref(entryLink).setRel(AtomRelations.ALTERNATE).build()).setUpdated(entity.getLastModified())
+					.setTitle(AtomText.newBuilder().setTextContent(entity.getEntityName()).build());
 			if (entity.getCreated() != null) {
 				entry.setPublished(entity.getCreated());
 			}
 			entry = fillFeedEntryContent(entry, entity.delegate());
 			if (entry.getAuthors().size() == 0) {
-				AtomPerson author = entity.getLastModifiedUser();
+				final AtomPerson author = entity.getLastModifiedUser();
 				if (author != null) {
 					entry.addAuthor(author);
 				}
@@ -97,21 +93,21 @@ public abstract class AtomEntityCollectionResource<Entity, EntityDelegate extend
 	 */
 	@Override
 	public final AtomEntryBuilder fillEntry(final AtomEntryBuilder entryBuilder, final UriInfo uriInfo, final String entryIdString) {
-		PagedEntityAccessor<EntityDelegate> entityAccessor = createPagedEntityAccessor(EMPTY_PARAMETERS);
-		EntityDelegate entity = entityAccessor.queryEntity(entryIdString);
+		final PagedEntityAccessor<EntityDelegate> entityAccessor = createPagedEntityAccessor(AtomEntityCollectionResource.EMPTY_PARAMETERS);
+		final EntityDelegate entity = entityAccessor.queryEntity(entryIdString);
 		if (entity == null) {
 			throw new WebApplicationException(Status.NOT_FOUND);
 		}
-		URI entryLink = uriInfo.getAbsolutePathBuilder().build().normalize();
-		AtomEntryBuilder entry = AtomEntry.newBuilder().setId(entity.getIdentifier()).addLink(
-				AtomLink.newBuilder().setHref(entryLink).setRel(AtomRelations.ALTERNATE).build()).setUpdated(entity.getLastModified()).setTitle(
-				AtomText.newBuilder().setTextContent(entity.getEntityName()).build());
+		final URI entryLink = uriInfo.getAbsolutePathBuilder().build().normalize();
+		AtomEntryBuilder entry = AtomEntry.newBuilder().setId(entity.getIdentifier())
+				.addLink(AtomLink.newBuilder().setHref(entryLink).setRel(AtomRelations.ALTERNATE).build()).setUpdated(entity.getLastModified())
+				.setTitle(AtomText.newBuilder().setTextContent(entity.getEntityName()).build());
 		if (entity.getCreated() != null) {
 			entry.setPublished(entity.getCreated());
 		}
-		entry = fillFeedEntryContent(entry, entity.delegate());
+		entry = fillEntryContent(entry, entity.delegate());
 		if (entry.getAuthors().size() == 0) {
-			AtomPerson author = entity.getLastModifiedUser();
+			final AtomPerson author = entity.getLastModifiedUser();
 			if (author != null) {
 				entry.addAuthor(author);
 			}

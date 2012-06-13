@@ -1,19 +1,15 @@
 /**
  * Copyright (c) 2009 Stephan Schloepke and innoQ Deutschland GmbH
- *
  * Stephan Schloepke: http://www.schloepke.de/
  * innoQ Deutschland GmbH: http://www.innoq.com/
- *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -67,22 +63,21 @@ public abstract class AtomCollectionResource {
 	@GET
 	@Produces(AtomFeed.MEDIA_TYPE_STRING)
 	public final AtomFeed getFeed(@QueryParam("page") @DefaultValue("0") final int currentPage, @Context final UriInfo uriInfo) {
-		int pageSize = getPageSize();
-		AtomFeedBuilder feedBuilder = fillFeed(AtomFeed.newBuilder(), uriInfo);
-		filleEntries(feedBuilder, uriInfo, pageSize, currentPage);
+		final int pageSize = getPageSize();
+		final AtomFeedBuilder feedBuilder = fillFeed(AtomFeed.newBuilder(), uriInfo);
+		fillEntries(feedBuilder, uriInfo, pageSize, currentPage);
 		if (pageSize > 0) {
 			if (feedBuilder.getEntries().size() == pageSize) {
-				feedBuilder.addLink(AtomLink.newBuilder().setHref(
-						uriInfo.getAbsolutePathBuilder().queryParam("page", Integer.valueOf(currentPage + 1)).build()).setRel(
-						AtomRelations.NEXT).setType(AtomFeed.MEDIA_TYPE).setTitle("Next page").build());
+				feedBuilder.addLink(AtomLink.newBuilder()
+						.setHref(uriInfo.getAbsolutePathBuilder().queryParam("page", Integer.valueOf(currentPage + 1)).build())
+						.setRel(AtomRelations.NEXT).setType(AtomFeed.MEDIA_TYPE).setTitle("Next page").build());
 			}
 			if (currentPage > 0) {
-				feedBuilder.addLink(AtomLink.newBuilder().setHref(
-						uriInfo.getAbsolutePathBuilder().queryParam("page", Integer.valueOf(currentPage - 1)).build()).setRel(
-						AtomRelations.PREVIOUS).setType(AtomFeed.MEDIA_TYPE).setTitle("Previous page").build());
-				feedBuilder.addLink(AtomLink.newBuilder().setHref(
-						uriInfo.getAbsolutePathBuilder().queryParam("page", Integer.valueOf(0)).build()).setRel(AtomRelations.FIRST).setType(
-						AtomFeed.MEDIA_TYPE).setTitle("First page").build());
+				feedBuilder.addLink(AtomLink.newBuilder()
+						.setHref(uriInfo.getAbsolutePathBuilder().queryParam("page", Integer.valueOf(currentPage - 1)).build())
+						.setRel(AtomRelations.PREVIOUS).setType(AtomFeed.MEDIA_TYPE).setTitle("Previous page").build());
+				feedBuilder.addLink(AtomLink.newBuilder().setHref(uriInfo.getAbsolutePathBuilder().queryParam("page", Integer.valueOf(0)).build())
+						.setRel(AtomRelations.FIRST).setType(AtomFeed.MEDIA_TYPE).setTitle("First page").build());
 			}
 		}
 		return feedBuilder.build();
@@ -157,7 +152,7 @@ public abstract class AtomCollectionResource {
 	 * @param page The page to fill.
 	 * @return The feed builder as given in the parameter list (builder pattern).
 	 */
-	public abstract AtomFeedBuilder filleEntries(final AtomFeedBuilder feedBuilder, final UriInfo uriInfo, final int pageSize, final int page);
+	public abstract AtomFeedBuilder fillEntries(final AtomFeedBuilder feedBuilder, final UriInfo uriInfo, final int pageSize, final int page);
 
 	/**
 	 * Fill an entry for an entry request. Use this to fill a complete entry not to fill the entry
