@@ -41,4 +41,20 @@
 		</dependency>
 	</dependencies>
 
+	<profiles>
+		<profile>
+			<id>github-repo</id>
+			<distributionManagement>
+				<repository>
+					<id>github-pages</id>
+					<url>file:///${basedir}/../jbasics/_gh-pages/repository/</url>
+				</repository>
+				<snapshotRepository>
+					<id>github-pages</id>
+					<url>file:///${basedir}/_gh-pages/repository/</url>
+				</snapshotRepository>
+			</distributionManagement>
+		</profile>
+	</profiles>
+
 </project>
