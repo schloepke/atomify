@@ -7,14 +7,14 @@
 	<parent>
 		<groupId>org.jbasics.atomify</groupId>
 		<artifactId>atomify-project</artifactId>
-		<version>0.3.0</version>
+		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 
 	<name>Atomify Atom Model</name>
 	<description>Model for the atom family</description>
 
 	<artifactId>atom-model</artifactId>
-	<version>0.3.0</version>
+	<version>1.0.0-SNAPSHOT</version>
 
 	<packaging>jar</packaging>
 
