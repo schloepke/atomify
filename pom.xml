@@ -17,8 +17,15 @@
 		<module>atom-client</module>
 	</modules>
 
+	<description>
+		Atomify is a set of libraries to implement atom services. Mostly desgined to be used in enterpise applications.
+		The main idea is to have a very close implementation of atom feed and atom service documents.
+	</description>
+
+	<url>http://www.atomify.org</url>
+
 	<organization>
-		<name>Atomify.org (Stephan Schloepke and innoQ Deutschland GmbH)</name>
+		<name>atomify.org (Stephan Schloepke and Mirko Klemm)</name>
 		<url>http://www.atomify.org</url>
 	</organization>
 
