@@ -1,5 +1,6 @@
 .*
 !.gitignore
+!.travis.yml
 target/
 _*
 web-site/
