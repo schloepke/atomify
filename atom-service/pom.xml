@@ -7,14 +7,14 @@
 	<parent>
 		<groupId>org.jbasics.atomify</groupId>
 		<artifactId>atomify-project</artifactId>
-		<version>0.3.0</version>
+		<version>0.3.1-SNAPSHOT</version>
 	</parent>
 
 	<name>Atomify Atom JAX-RS Service</name>
 	<description>JAX-RS based server implementation for atom publishing service</description>
 
 	<artifactId>atom-service</artifactId>
-	<version>0.3.0</version>
+	<version>0.3.1-SNAPSHOT</version>
 
 	<packaging>jar</packaging>
 
@@ -22,7 +22,7 @@
 		<dependency>
 			<groupId>org.jbasics.atomify</groupId>
 			<artifactId>atom-model</artifactId>
-			<version>0.3.0</version>
+			<version>0.3.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.ws.rs</groupId>
