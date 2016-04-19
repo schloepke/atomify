@@ -24,28 +24,25 @@
  */
 package org.atomify.model.jaxrs;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.ws.rs.core.UriBuilder;
-import javax.xml.transform.stream.StreamResult;
-
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import com.sun.grizzly.http.SelectorThread;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
 import com.sun.jersey.api.container.grizzly.GrizzlyWebContainerFactory;
-
 import org.atomify.model.AtomDocumentSerializer;
 import org.atomify.model.publishing.AtomPubCollection;
 import org.atomify.model.publishing.AtomPubService;
 import org.atomify.model.syndication.AtomFeed;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import javax.ws.rs.core.UriBuilder;
+import javax.xml.transform.stream.StreamResult;
+import java.util.HashMap;
+import java.util.Map;
 
 @SuppressWarnings("nls")
 public class AtomJAXRSTest {

@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>org.atomify</groupId>
+		<groupId>org.jbasics.atomify</groupId>
 		<artifactId>atomify-project</artifactId>
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
@@ -13,7 +13,6 @@
 	<name>Atomify Atom Model</name>
 	<description>Model for the atom family</description>
 
-	<groupId>org.atomify</groupId>
 	<artifactId>atom-model</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 
@@ -40,6 +39,10 @@
 		<dependency>
 			<groupId>com.sun.grizzly</groupId>
 			<artifactId>grizzly-servlet-webserver</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.jersey</groupId>
+			<artifactId>jersey-grizzly</artifactId>
 		</dependency>
 	</dependencies>
 
