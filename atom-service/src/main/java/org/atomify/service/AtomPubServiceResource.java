@@ -1,8 +1,7 @@
-/**
- * Copyright (c) 2009 Stephan Schloepke and innoQ Deutschland GmbH
+/*
+ * Copyright (c) 2009-2016 Stephan Schloepke
  *
  * Stephan Schloepke: http://www.schloepke.de/
- * innoQ Deutschland GmbH: http://www.innoq.com/
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
