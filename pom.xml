@@ -13,7 +13,7 @@
 	<name>Atomify</name>
 	<groupId>org.jbasics.atomify</groupId>
 	<artifactId>atomify-project</artifactId>
-	<version>0.3.2-SNAPSHOT</version>
+	<version>0.3.2</version>
 
 	<packaging>pom</packaging>
 
@@ -50,7 +50,7 @@
 		<connection>scm:git:git://github.com/schloepke/atomify.git</connection>
 		<developerConnection>scm:git:git://github.com/schloepke/atomify.git</developerConnection>
 		<url>http://github.com/schloepke/atomify</url>
-		<tag>HEAD</tag>
+		<tag>atomify-project-0.3.2</tag>
 	</scm>
 
 	<issueManagement>
