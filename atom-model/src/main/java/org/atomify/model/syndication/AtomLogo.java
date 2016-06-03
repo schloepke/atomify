@@ -119,7 +119,7 @@ public class AtomLogo extends AtomCommonAttributes {
 
 	@SuppressWarnings("all")
 	public void serialize(ContentHandler handler, AttributesImpl attributes) throws SAXException {
-		attributes = initCommonAttributes(attributes);
+		attributes = initCommonAttributes(handler, attributes);
 		handler.startElement(AtomConstants.ATOM_NS_URI, "logo", AtomConstants.ATOM_NS_PREFIX + ":logo", attributes);
 		char[] data = this.uri.toASCIIString().toCharArray();
 		handler.characters(data, 0, data.length);

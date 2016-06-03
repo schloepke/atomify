@@ -100,7 +100,7 @@ public abstract class AtomCommonBuilder<T extends AtomCommonBuilder<?>> {
 		return this.undefinedAttributes;
 	}
 	
-	protected final <AT extends AtomCommonAttributes> AT attachCommonAttributes(AT instance) {
+	protected final <AT extends AtomCommonAttributes> AT attachParentBuilder(AT instance) {
 		instance.setXmlBase(this.xmlBase);
 		instance.setXmlLang(this.xmlLang);
 		instance.setXmlSpace(this.xmlSpace);

@@ -61,7 +61,7 @@ public class AtomPubAcceptBuilder extends AtomCommonBuilder<AtomPubAcceptBuilder
 		}
 		if (temp == null) {
 			temp = AtomPubAccept.valueOf(this.acceptMediaRange);
-			attachCommonAttributes(temp);
+			attachParentBuilder(temp);
 		}
 		return temp;
 	}

@@ -29,12 +29,12 @@ import java.util.List;
 
 import org.atomify.model.AtomConstants;
 import org.atomify.model.AtomContractConstraint;
-import org.atomify.model.common.AtomCommonBuilder;
+import org.atomify.model.common.AtomExtendableBuilder;
 import org.atomify.model.extension.AtomExtension;
 import org.jbasics.parser.annotations.AnyElement;
 import org.jbasics.parser.annotations.Element;
 
-public abstract class AbstractAtomSourceBuilder<T extends AbstractAtomSourceBuilder<?>> extends AtomCommonBuilder<T> {
+public abstract class AbstractAtomSourceBuilder<T extends AbstractAtomSourceBuilder<?>> extends AtomExtendableBuilder<T> {
 	/**
 	 * <b>Optional:</b> atom:id element.
 	 */
@@ -245,25 +245,6 @@ public abstract class AbstractAtomSourceBuilder<T extends AbstractAtomSourceBuil
 			this.links = new ArrayList<AtomLink>();
 		}
 		this.links.addAll(AtomContractConstraint.notNull("links", links));
-		return (T) this;
-	}
-
-	@AnyElement
-	@SuppressWarnings("unchecked")
-	public T addExtension(AtomExtension extension) {
-		if (this.extensions == null) {
-			this.extensions = new ArrayList<AtomExtension>();
-		}
-		this.extensions.add(AtomContractConstraint.notNull("extension", extension));
-		return (T) this;
-	}
-
-	@SuppressWarnings("unchecked")
-	public T addExtensions(Collection<AtomExtension> extensions) {
-		if (this.extensions == null) {
-			this.extensions = new ArrayList<AtomExtension>();
-		}
-		this.extensions.addAll(AtomContractConstraint.notNull("extensions", extensions));
 		return (T) this;
 	}
 

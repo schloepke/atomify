@@ -272,7 +272,7 @@ public class AtomLink extends AtomCommonAttributes {
 
 	@SuppressWarnings("all")
 	public void serialize(ContentHandler handler, AttributesImpl attributes) throws SAXException {
-		attributes = initCommonAttributes(attributes);
+		attributes = initCommonAttributes(handler, attributes);
 		addAttribute(attributes, HREF_QNAME, this.href.toASCIIString());
 		if (this.rel != null) {
 			addAttribute(attributes, REL_QNAME, this.rel.toASCIIString());

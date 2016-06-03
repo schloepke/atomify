@@ -28,11 +28,12 @@ import java.util.List;
 
 import org.atomify.model.AtomConstants;
 import org.atomify.model.common.AtomCommonBuilder;
+import org.atomify.model.common.AtomExtendableBuilder;
 import org.atomify.model.extension.AtomExtension;
 import org.jbasics.parser.annotations.Element;
 import org.jbasics.pattern.builder.Builder;
 
-public class AtomPersonBuilder extends AtomCommonBuilder<AtomPersonBuilder> implements Builder<AtomPerson> {
+public class AtomPersonBuilder extends AtomExtendableBuilder<AtomPersonBuilder> implements Builder<AtomPerson> {
 	/**
 	 * <b>Required:</b> atom:name element.
 	 */
@@ -48,10 +49,6 @@ public class AtomPersonBuilder extends AtomCommonBuilder<AtomPersonBuilder> impl
 	 * <b>Optional:</b> atom:email element.
 	 */
 	private String email;
-	/**
-	 * <b>Optional:</b> any number of atom extension elements.
-	 */
-	private List<AtomExtension> extensions;
 
 	public static AtomPersonBuilder newInstance() {
 		return new AtomPersonBuilder();
@@ -63,7 +60,7 @@ public class AtomPersonBuilder extends AtomCommonBuilder<AtomPersonBuilder> impl
 	
 	public AtomPerson build() {
 		AtomPerson temp = new AtomPerson(this.name, this.email, this.uri, this.extensions);
-		attachCommonAttributes(temp);
+		attachParentBuilder(temp);
 		return temp;
 	}
 

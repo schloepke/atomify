@@ -50,14 +50,13 @@ public class AtomFeedBuilder extends AbstractAtomSourceBuilder<AtomFeedBuilder> 
 		temp.setCategories(this.categories);
 		temp.setAuthors(this.authors);
 		temp.setContributors(this.contributors);
-		temp.setExtensions(this.extensions);
 		temp.setLinks(this.links);
 		temp.setSubtitle(this.subtitle);
 		temp.setGenerator(this.generator);
 		temp.setIcon(this.icon);
 		temp.setLogo(this.logo);
 		temp.setRights(this.rights);
-		attachCommonAttributes(temp);
+		attachParentBuilder(temp);
 		return temp;
 	}
 

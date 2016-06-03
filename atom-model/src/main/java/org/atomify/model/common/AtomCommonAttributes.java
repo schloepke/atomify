@@ -25,14 +25,13 @@ package org.atomify.model.common;
 
 import java.io.Serializable;
 import java.net.URI;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 
 import org.jbasics.xml.types.XmlSpaceType;
+import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
@@ -206,7 +205,7 @@ public abstract class AtomCommonAttributes implements Serializable {
 	// --- From here all is serialization. We Still need to think about a good way to do so.
 
 	@SuppressWarnings("all")
-	protected AttributesImpl initCommonAttributes(AttributesImpl attributes)
+	protected AttributesImpl initCommonAttributes(ContentHandler handler, AttributesImpl attributes)
 			throws SAXException {
 		if (attributes == null) {
 			attributes = new AttributesImpl();
@@ -222,8 +221,18 @@ public abstract class AtomCommonAttributes implements Serializable {
 		if (this.xmlSpace != null) {
 			addAttribute(attributes, XML_SPACE, this.xmlSpace.toXmlString());
 		}
+		Set<String> prefixes = new HashSet<>();
 		for (Map.Entry<QName, String> attr : this.undefinedAttributes.entrySet()) {
-			addAttribute(attributes, attr.getKey(), attr.getValue());
+			QName qName = attr.getKey();
+			String prefix = qName.getPrefix();
+			if (prefix != null && !prefix.isEmpty() && !prefixes.contains(prefix)) {
+				handler.startPrefixMapping(prefix, qName.getNamespaceURI());
+				prefixes.add(prefix);
+			}
+			addAttribute(attributes, qName, attr.getValue());
+		}
+		for(String prefix : prefixes) {
+			handler.endPrefixMapping(prefix);
 		}
 		return attributes;
 	}

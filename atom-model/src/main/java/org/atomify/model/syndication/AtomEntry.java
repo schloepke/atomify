@@ -29,6 +29,7 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
+import org.atomify.model.common.AtomExtendable;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
@@ -46,7 +47,7 @@ import org.atomify.model.extension.AtomExtension;
  * 
  * @author Stephan Schloepke
  */
-public class AtomEntry extends AtomCommonAttributes implements AtomDocument {
+public class AtomEntry extends AtomExtendable implements AtomDocument {
 	/**
 	 * The media type as a string constant.
 	 */
@@ -105,10 +106,6 @@ public class AtomEntry extends AtomCommonAttributes implements AtomDocument {
 	 * <b>Optional:</b> atom:source element.
 	 */
 	private AtomSource source;
-	/**
-	 * <b>Optional:</b> optional atom extensions.
-	 */
-	private List<AtomExtension> extensions;
 
 	public static AtomEntryBuilder newBuilder() {
 		return AtomEntryBuilder.newInstance();
@@ -240,15 +237,6 @@ public class AtomEntry extends AtomCommonAttributes implements AtomDocument {
 		return this.source;
 	}
 
-	/**
-	 * Returns the lazy initialized collection of extensions.
-	 * 
-	 * @return the extensions
-	 */
-	public List<AtomExtension> getExtensions() {
-		return this.extensions;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
@@ -261,7 +249,6 @@ public class AtomEntry extends AtomCommonAttributes implements AtomDocument {
 		result = prime * result + ((this.categories == null) ? 0 : this.categories.hashCode());
 		result = prime * result + ((this.content == null) ? 0 : this.content.hashCode());
 		result = prime * result + ((this.contributors == null) ? 0 : this.contributors.hashCode());
-		result = prime * result + ((this.extensions == null) ? 0 : this.extensions.hashCode());
 		result = prime * result + ((this.id == null) ? 0 : this.id.hashCode());
 		result = prime * result + ((this.links == null) ? 0 : this.links.hashCode());
 		result = prime * result + ((this.published == null) ? 0 : this.published.hashCode());
@@ -315,13 +302,6 @@ public class AtomEntry extends AtomCommonAttributes implements AtomDocument {
 				return false;
 			}
 		} else if (!this.contributors.equals(other.contributors)) {
-			return false;
-		}
-		if (this.extensions == null) {
-			if (other.extensions != null) {
-				return false;
-			}
-		} else if (!this.extensions.equals(other.extensions)) {
 			return false;
 		}
 		if (this.id == null) {
@@ -389,13 +369,12 @@ public class AtomEntry extends AtomCommonAttributes implements AtomDocument {
 	 */
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("AtomEntry [authors=").append(this.authors).append(", categories=").append(this.categories).append(", content=").append(
-				this.content).append(", contributors=").append(this.contributors).append(", extensions=").append(this.extensions).append(", id=")
-				.append(this.id).append(", links=").append(this.links).append(", published=").append(this.published).append(", rights=").append(
-						this.rights).append(", source=").append(this.source).append(", summary=").append(this.summary).append(", title=").append(
-						this.title).append(", updated=").append(this.updated).append("]");
-		return builder.toString();
+		String builder = "AtomEntry [authors=" + this.authors + ", categories=" + this.categories + ", content=" +
+				this.content + ", contributors=" + this.contributors + ", id=" +
+				this.id + ", links=" + this.links + ", published=" + this.published + ", rights=" +
+				this.rights + ", source=" + this.source + ", summary=" + this.summary + ", title=" +
+				this.title + ", updated=" + this.updated + "]";
+		return builder;
 	}
 
 	// --- FIXME: From here all is serialization. We Still need to think about a good way to do so.
@@ -403,7 +382,7 @@ public class AtomEntry extends AtomCommonAttributes implements AtomDocument {
 	@SuppressWarnings("all")
 	public void serialize(final ContentHandler handler, AttributesImpl attributes) throws SAXException {
 		handler.startPrefixMapping(AtomConstants.ATOM_NS_PREFIX, AtomConstants.ATOM_NS_URI);
-		attributes = initCommonAttributes(attributes);
+		attributes = initCommonAttributes(handler, attributes);
 		handler.startElement(AtomConstants.ATOM_NS_URI, "entry", AtomConstants.ATOM_NS_PREFIX + ":entry", attributes);
 		this.id.serialize(handler, attributes);
 		this.title.serialize(AtomEntry.TITLE_QNAME, handler, attributes);
@@ -429,6 +408,7 @@ public class AtomEntry extends AtomCommonAttributes implements AtomDocument {
 		if (this.source != null) {
 			this.source.serialize(handler, attributes);
 		}
+		serializeExtensions(handler, attributes);
 		if (this.summary != null) {
 			this.summary.serialize(AtomEntry.SUMMARY_QNAME, handler, attributes);
 		}
@@ -436,9 +416,6 @@ public class AtomEntry extends AtomCommonAttributes implements AtomDocument {
 			this.content.serialize(handler, attributes);
 		} else {
 			// TODO: we need to make sure there is an alternate link and a summary available!
-		}
-		for (AtomExtension extension : this.extensions) {
-			extension.serialize(handler, attributes);
 		}
 		handler.endElement(AtomConstants.ATOM_NS_URI, "entry", AtomConstants.ATOM_NS_PREFIX + ":entry");
 		handler.endPrefixMapping(AtomConstants.ATOM_NS_PREFIX);
@@ -488,19 +465,6 @@ public class AtomEntry extends AtomCommonAttributes implements AtomDocument {
 	 */
 	protected void setSource(final AtomSource source) {
 		this.source = source;
-	}
-
-	/**
-	 * Returns the lazy initialized collection of extensions.
-	 * 
-	 * @return the extensions
-	 */
-	protected void setExtensions(final List<AtomExtension> extensions) {
-		if (extensions == null || extensions.isEmpty()) {
-			this.extensions = Collections.emptyList();
-		} else {
-			this.extensions = Collections.unmodifiableList(new ArrayList<AtomExtension>(extensions));
-		}
 	}
 
 	/**

@@ -225,7 +225,7 @@ public class AtomPubService extends AtomCommonAttributes implements AtomDocument
 	public void serialize(ContentHandler handler, AttributesImpl attributes) throws SAXException {
 		handler.startPrefixMapping(AtomConstants.ATOM_NS_PREFIX, AtomConstants.ATOM_NS_URI);
 		handler.startPrefixMapping(AtomConstants.ATOM_PUB_NS_PREFIX, AtomConstants.ATOM_PUB_NS_URI);
-		attributes = initCommonAttributes(attributes);
+		attributes = initCommonAttributes(handler, attributes);
 		handler.startElement(AtomConstants.ATOM_PUB_NS_URI, "service", "app:service", attributes);
 		for (AtomPubWorkspace workspace : this.workspaces) {
 			workspace.serialize(handler, attributes);

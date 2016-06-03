@@ -50,7 +50,7 @@ public class AtomPubWorkspaceBuilder extends AtomCommonBuilder<AtomPubWorkspaceB
 
 	public AtomPubWorkspace build() {
 		AtomPubWorkspace result = new AtomPubWorkspace(this.title, this.collections, this.extensions);
-		attachCommonAttributes(result);
+		attachParentBuilder(result);
 		return result;
 	}
 

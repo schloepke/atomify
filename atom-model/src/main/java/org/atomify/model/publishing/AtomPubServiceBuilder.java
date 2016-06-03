@@ -50,7 +50,7 @@ public class AtomPubServiceBuilder extends AtomCommonBuilder<AtomPubServiceBuild
 			throw new RuntimeException("AtomPubService building error: Must have at least one workspace");
 		}
 		AtomPubService result = new AtomPubService(this.workspaces, this.extensions);
-		attachCommonAttributes(result);
+		attachParentBuilder(result);
 		return result;
 	}
 

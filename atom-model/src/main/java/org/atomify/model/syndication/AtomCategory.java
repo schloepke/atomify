@@ -212,7 +212,7 @@ public class AtomCategory extends AtomCommonAttributes {
 
 	@SuppressWarnings("all")
 	public void serialize(ContentHandler handler, AttributesImpl attributes) throws SAXException {
-		attributes = initCommonAttributes(attributes);
+		attributes = initCommonAttributes(handler, attributes);
 		if (this.term != null) {
 			addAttribute(attributes, TERM_QNAME, this.term);
 		}

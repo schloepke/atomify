@@ -58,7 +58,7 @@ public class AtomLinkBuilder extends AtomCommonBuilder<AtomLinkBuilder> implemen
 	}
 
 	public AtomLink build() {
-		return attachCommonAttributes(new AtomLink(this.title, this.href, this.rel, this.type, this.hreflang,
+		return attachParentBuilder(new AtomLink(this.title, this.href, this.rel, this.type, this.hreflang,
 				this.length, this.undefinedContent));
 	}
 

@@ -56,7 +56,7 @@ public class AtomGeneratorBuilder extends AtomCommonBuilder<AtomGeneratorBuilder
 	}
 
 	public AtomGenerator build() {
-		return attachCommonAttributes(new AtomGenerator(this.description, this.version, this.uri));
+		return attachParentBuilder(new AtomGenerator(this.description, this.version, this.uri));
 	}
 
 	@Content

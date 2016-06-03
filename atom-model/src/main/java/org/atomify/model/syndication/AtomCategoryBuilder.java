@@ -29,7 +29,6 @@ import java.util.List;
 
 import org.atomify.model.AtomContractConstraint;
 import org.atomify.model.common.AtomCommonBuilder;
-import org.atomify.model.extension.AtomExtensionBuilder;
 import org.atomify.model.extension.AtomForeignComment;
 import org.atomify.model.extension.AtomForeignMarkup;
 import org.atomify.model.extension.AtomForeignTextContent;
@@ -71,7 +70,7 @@ public class AtomCategoryBuilder extends AtomCommonBuilder<AtomCategoryBuilder> 
 
 	public AtomCategory build() {
 		AtomCategory result = new AtomCategory(this.term, this.scheme, this.label, this.undefinedContent);
-		attachCommonAttributes(result);
+		attachParentBuilder(result);
 		return result;
 	}
 

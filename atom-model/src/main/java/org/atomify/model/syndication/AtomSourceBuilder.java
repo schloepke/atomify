@@ -42,13 +42,12 @@ public class AtomSourceBuilder extends AbstractAtomSourceBuilder<AtomSourceBuild
 		temp.setAuthors(this.authors);
 		temp.setContributors(this.contributors);
 		temp.setLinks(this.links);
-		temp.setExtensions(this.extensions);
 		temp.setSubtitle(this.subtitle);
 		temp.setGenerator(this.generator);
 		temp.setIcon(this.icon);
 		temp.setLogo(this.logo);
 		temp.setRights(this.rights);
-		attachCommonAttributes(temp);
+		attachParentBuilder(temp);
 		return temp;
 	}
 

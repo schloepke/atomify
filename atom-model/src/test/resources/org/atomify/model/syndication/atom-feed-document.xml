@@ -51,9 +51,10 @@
 	
 	<atom:rights xml:lang="en">(C) Copyright Jon &amp; Jane Doe</atom:rights>
 
-	<atom:contributor>
+	<atom:contributor schloepke:id="123" xmlns:schloepke="tag:schloepke.de,2010">
 		<atom:name>Jane Doe</atom:name>
 		<atom:email>jane.doe@example.org</atom:email>
+		<schloepke:location>Cologne</schloepke:location>
 	</atom:contributor>
 	
 	<atom:link rel="alternate" href="http://example.org/feed.1">
@@ -61,7 +62,7 @@
 	</atom:link>
 	
 	<feed-extension xmlns="">This is a feed extension</feed-extension>
-	
+
 	<atom:entry>
 		<atom:id>urn:uuid:1234-3245-23853</atom:id>
 		<atom:title type="text">One Blog entry</atom:title>

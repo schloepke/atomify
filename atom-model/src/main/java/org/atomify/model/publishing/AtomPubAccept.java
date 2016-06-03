@@ -135,7 +135,7 @@ public class AtomPubAccept extends AtomCommonAttributes {
 
 	@SuppressWarnings("all")
 	public void serialize(ContentHandler handler, AttributesImpl attributes) throws SAXException {
-		attributes = initCommonAttributes(attributes);
+		attributes = initCommonAttributes(handler, attributes);
 		handler.startElement(AtomConstants.ATOM_PUB_NS_URI, "accept", AtomConstants.ATOM_PUB_NS_PREFIX + ":accept", attributes);
 		if (this.acceptMediaRange != null) {
 			char[] data = this.acceptMediaRange.toString().toCharArray();

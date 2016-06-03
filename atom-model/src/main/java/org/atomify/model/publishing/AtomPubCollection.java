@@ -248,7 +248,7 @@ public class AtomPubCollection extends AtomCommonAttributes {
 
 	@SuppressWarnings("all")
 	public void serialize(ContentHandler handler, AttributesImpl attributes) throws SAXException {
-		attributes = initCommonAttributes(attributes);
+		attributes = initCommonAttributes(handler, attributes);
 		addAttribute(attributes, HREF_ATTRIBUTE_QNAME, this.href.toASCIIString());
 		handler.startElement(AtomConstants.ATOM_PUB_NS_URI, "collection", "app:collection", attributes);
 		this.title.serialize(TITLE_QNAME, handler, attributes);

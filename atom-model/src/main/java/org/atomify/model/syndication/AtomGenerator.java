@@ -166,7 +166,7 @@ public class AtomGenerator extends AtomCommonAttributes {
 
 	@SuppressWarnings("all")
 	public void serialize(ContentHandler handler, AttributesImpl attributes) throws SAXException {
-		attributes = initCommonAttributes(attributes);
+		attributes = initCommonAttributes(handler, attributes);
 		if (this.uri != null) {
 			addAttribute(attributes, URI_QNAME, this.uri.toASCIIString());
 		}

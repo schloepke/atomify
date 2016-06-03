@@ -25,15 +25,14 @@ package org.atomify.model.syndication;
 
 import java.net.URI;
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import javax.xml.namespace.QName;
 
 import org.atomify.model.AtomConstants;
 import org.atomify.model.AtomContractConstraint;
 import org.atomify.model.common.AtomCommonAttributes;
+import org.atomify.model.common.AtomExtendable;
 import org.atomify.model.extension.AtomExtension;
 import org.jbasics.checker.ContractCheck;
 import org.xml.sax.ContentHandler;
@@ -45,7 +44,7 @@ import org.xml.sax.helpers.AttributesImpl;
  * 
  * @author Stephan Schloepke
  */
-public class AtomPerson extends AtomCommonAttributes {
+public class AtomPerson extends AtomExtendable {
 
 	/**
 	 * <b>Required:</b> atom:name element.
@@ -62,10 +61,6 @@ public class AtomPerson extends AtomCommonAttributes {
 	 * <b>Optional:</b> atom:email element.
 	 */
 	private final String email;
-	/**
-	 * <b>Optional:</b> any number of atom extension elements.
-	 */
-	private final List<AtomExtension> extensions;
 
 	public static AtomPersonBuilder newBuilder() {
 		return AtomPersonBuilder.newInstance();
@@ -104,11 +99,6 @@ public class AtomPerson extends AtomCommonAttributes {
 		// TODO: We need to match the email if it is not null
 		this.email = email;
 		this.uri = uri;
-		if (extensions == null || extensions.isEmpty()) {
-			this.extensions = Collections.emptyList();
-		} else {
-			this.extensions = Collections.unmodifiableList(new ArrayList<AtomExtension>(extensions));
-		}
 	}
 
 	/**
@@ -138,15 +128,6 @@ public class AtomPerson extends AtomCommonAttributes {
 		return this.email;
 	}
 
-	/**
-	 * Returns the lazy initialized list of extensions.
-	 * 
-	 * @return The lazy initialized list of extensions.
-	 */
-	public List<AtomExtension> getExtensions() {
-		return this.extensions;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
@@ -156,7 +137,6 @@ public class AtomPerson extends AtomCommonAttributes {
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result + ((this.email == null) ? 0 : this.email.hashCode());
-		result = prime * result + ((this.extensions == null) ? 0 : this.extensions.hashCode());
 		result = prime * result + ((this.name == null) ? 0 : this.name.hashCode());
 		result = prime * result + ((this.uri == null) ? 0 : this.uri.hashCode());
 		return result;
@@ -185,13 +165,6 @@ public class AtomPerson extends AtomCommonAttributes {
 		} else if (!this.email.equals(other.email)) {
 			return false;
 		}
-		if (this.extensions == null) {
-			if (other.extensions != null) {
-				return false;
-			}
-		} else if (!this.extensions.equals(other.extensions)) {
-			return false;
-		}
 		if (this.name == null) {
 			if (other.name != null) {
 				return false;
@@ -215,7 +188,7 @@ public class AtomPerson extends AtomCommonAttributes {
 	 */
 	@Override
 	public String toString() {
-		return new StringBuilder().append("AtomPerson [email=").append(this.email).append(", extensions=").append(this.extensions).append(", name=")
+		return new StringBuilder().append("AtomPerson [email=").append(this.email).append(", name=")
 				.append(this.name).append(", uri=").append(this.uri).append(", ").append(super.toString()).append("]").toString();
 	}
 
@@ -223,7 +196,7 @@ public class AtomPerson extends AtomCommonAttributes {
 
 	@SuppressWarnings("all")
 	public void serialize(QName name, ContentHandler handler, AttributesImpl attributes) throws SAXException {
-		attributes = initCommonAttributes(attributes);
+		attributes = initCommonAttributes(handler, attributes);
 		String namespace = name.getNamespaceURI();
 		String local = name.getLocalPart();
 		String qName = (name.getPrefix() != null && name.getPrefix().length() > 0 ? name.getPrefix() + ":" : "") + local;
@@ -235,9 +208,7 @@ public class AtomPerson extends AtomCommonAttributes {
 		if (this.uri != null) {
 			serializeElement("uri", this.uri.toASCIIString(), handler, attributes);
 		}
-		for (AtomExtension extension : this.extensions) {
-			extension.serialize(handler, attributes);
-		}
+		serializeExtensions(handler, attributes);
 		handler.endElement(namespace, local, qName);
 	}
 

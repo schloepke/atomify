@@ -47,7 +47,7 @@ public class AtomLogoBuilder extends AtomCommonBuilder<AtomLogoBuilder> implemen
 	}
 
 	public AtomLogo build() {
-		return attachCommonAttributes(new AtomLogo(this.uri));
+		return attachParentBuilder(new AtomLogo(this.uri));
 	}
 
 	@Override

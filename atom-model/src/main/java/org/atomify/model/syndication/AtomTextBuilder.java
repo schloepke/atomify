@@ -51,7 +51,7 @@ public class AtomTextBuilder extends AtomCommonBuilder<AtomTextBuilder> implemen
 		} else {
 			temp = new AtomPlainText(this.type == Type.HTML, this.textOrHtmlContent);
 		}
-		attachCommonAttributes(temp);
+		attachParentBuilder(temp);
 		return temp;
 	}
 

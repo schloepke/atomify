@@ -94,7 +94,7 @@ public class AtomContentXhtml extends AtomContent {
 
 	@SuppressWarnings("all")
 	public void serialize(ContentHandler handler, AttributesImpl attributes) throws SAXException {
-		attributes = initCommonAttributes(attributes);
+		attributes = initCommonAttributes(handler, attributes);
 		addAttribute(attributes, TYPE_QNAME, "xhtml");
 		String namespace = AtomConstants.ATOM_NS_URI;
 		String local = "content";

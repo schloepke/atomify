@@ -152,7 +152,7 @@ public class AtomFeed extends AbstractAtomSource implements AtomDocument {
 	@SuppressWarnings("all")
 	public void serialize(ContentHandler handler, AttributesImpl attributes) throws SAXException {
 		handler.startPrefixMapping(AtomConstants.ATOM_NS_PREFIX, AtomConstants.ATOM_NS_URI);
-		attributes = initCommonAttributes(attributes);
+		attributes = initCommonAttributes(handler, attributes);
 		handler.startElement(AtomConstants.ATOM_NS_URI, "feed", AtomConstants.ATOM_NS_PREFIX + ":feed", attributes);
 		super.serializeContent(handler, attributes);
 		for (AtomEntry entry : this.entries) {

@@ -192,7 +192,7 @@ public class AtomPubWorkspace extends AtomCommonAttributes implements Iterable<A
 
 	@SuppressWarnings("all")
 	public void serialize(ContentHandler handler, AttributesImpl attributes) throws SAXException {
-		attributes = initCommonAttributes(attributes);
+		attributes = initCommonAttributes(handler, attributes);
 		handler.startElement(AtomConstants.ATOM_PUB_NS_URI, "workspace", "app:workspace", attributes);
 		this.title.serialize(TITLE_QNAME, handler, attributes);
 		for (AtomPubCollection collection : this.collections) {

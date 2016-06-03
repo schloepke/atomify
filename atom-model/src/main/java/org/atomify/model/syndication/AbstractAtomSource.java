@@ -31,12 +31,13 @@ import javax.xml.namespace.QName;
 
 import org.atomify.model.AtomConstants;
 import org.atomify.model.common.AtomCommonAttributes;
+import org.atomify.model.common.AtomExtendable;
 import org.atomify.model.extension.AtomExtension;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
-public class AbstractAtomSource extends AtomCommonAttributes {
+public class AbstractAtomSource extends AtomExtendable {
 	/**
 	 * <b>Optional:</b> atom:id element.
 	 */
@@ -85,15 +86,12 @@ public class AbstractAtomSource extends AtomCommonAttributes {
 	 * <b>Optional:</b> atom:rights element.
 	 */
 	private AtomText rights;
-	/**
-	 * <b>Optional:</b> atom extensions.
-	 */
-	private List<AtomExtension> extensions;
 
 	/**
 	 * Creates an empty source element.
 	 */
 	public AbstractAtomSource(final AtomId id, final AtomText title, final AtomDate updated) {
+		super();
 		this.id = id;
 		this.title = title;
 		this.updated = updated;
@@ -101,7 +99,6 @@ public class AbstractAtomSource extends AtomCommonAttributes {
 		this.authors = Collections.emptyList();
 		this.contributors = Collections.emptyList();
 		this.links = Collections.emptyList();
-		this.extensions = Collections.emptyList();
 	}
 
 	/**
@@ -212,15 +209,6 @@ public class AbstractAtomSource extends AtomCommonAttributes {
 		return this.rights;
 	}
 
-	/**
-	 * Returns the lazy initialized collection of extensions.
-	 * 
-	 * @return the extensions
-	 */
-	public List<AtomExtension> getExtensions() {
-		return this.extensions;
-	}
-
 	// Protected interface area for the builder (we need to figure out a way to do this better)
 
 	protected void setCategories(List<AtomCategory> categories) {
@@ -255,14 +243,6 @@ public class AbstractAtomSource extends AtomCommonAttributes {
 		}
 	}
 
-	protected void setExtensions(List<AtomExtension> extensions) {
-		if (extensions == null || extensions.isEmpty()) {
-			this.extensions = Collections.emptyList();
-		} else {
-			this.extensions = Collections.unmodifiableList(new ArrayList<AtomExtension>(extensions));
-		}
-	}
-
 	protected void setSubtitle(final AtomText subtitle) {
 		this.subtitle = subtitle;
 	}
@@ -294,7 +274,6 @@ public class AbstractAtomSource extends AtomCommonAttributes {
 		result = prime * result + ((this.authors == null) ? 0 : this.authors.hashCode());
 		result = prime * result + ((this.categories == null) ? 0 : this.categories.hashCode());
 		result = prime * result + ((this.contributors == null) ? 0 : this.contributors.hashCode());
-		result = prime * result + ((this.extensions == null) ? 0 : this.extensions.hashCode());
 		result = prime * result + ((this.generator == null) ? 0 : this.generator.hashCode());
 		result = prime * result + ((this.icon == null) ? 0 : this.icon.hashCode());
 		result = prime * result + ((this.id == null) ? 0 : this.id.hashCode());
@@ -342,13 +321,6 @@ public class AbstractAtomSource extends AtomCommonAttributes {
 				return false;
 			}
 		} else if (!this.contributors.equals(other.contributors)) {
-			return false;
-		}
-		if (this.extensions == null) {
-			if (other.extensions != null) {
-				return false;
-			}
-		} else if (!this.extensions.equals(other.extensions)) {
 			return false;
 		}
 		if (this.generator == null) {
@@ -424,7 +396,7 @@ public class AbstractAtomSource extends AtomCommonAttributes {
 	@Override
 	public String toString() {
 		return new StringBuilder().append("authors=").append(this.authors).append(", categories=").append(this.categories).append(", contributors=")
-				.append(this.contributors).append(", extensions=").append(this.extensions).append(", generator=").append(this.generator).append(
+				.append(this.contributors).append(", generator=").append(this.generator).append(
 						", icon=").append(this.icon).append(", id=").append(this.id).append(", links=").append(this.links).append(", logo=").append(
 						this.logo).append(", rights=").append(this.rights).append(", subtitle=").append(this.subtitle).append(", title=").append(
 						this.title).append(", updated=").append(this.updated).append(", ").append(super.toString()).toString();
@@ -469,9 +441,7 @@ public class AbstractAtomSource extends AtomCommonAttributes {
 		if (this.rights != null) {
 			this.rights.serialize(RIGHTS_QNAME, handler, attributes);
 		}
-		for (AtomExtension extension : this.extensions) {
-			extension.serialize(handler, attributes);
-		}
+		serializeExtensions(handler, attributes);
 	}
 
 	private static final QName TITLE_QNAME = new QName(AtomConstants.ATOM_NS_URI, "title", AtomConstants.ATOM_NS_PREFIX);

@@ -178,7 +178,7 @@ public class AtomPlainText extends AtomText {
 
 	@SuppressWarnings("all")
 	public void serialize(QName name, ContentHandler handler, AttributesImpl attributes) throws SAXException {
-		attributes = initCommonAttributes(attributes);
+		attributes = initCommonAttributes(handler, attributes);
 		addAttribute(attributes, TYPE_QNAME, getType().toXmlString());
 		String namespace = name.getNamespaceURI();
 		String local = name.getLocalPart();

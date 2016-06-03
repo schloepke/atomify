@@ -47,7 +47,7 @@ public class AtomIconBuilder extends AtomCommonBuilder<AtomIconBuilder> implemen
 	}
 
 	public AtomIcon build() {
-		return attachCommonAttributes(new AtomIcon(this.uri));
+		return attachParentBuilder(new AtomIcon(this.uri));
 	}
 
 	@Override

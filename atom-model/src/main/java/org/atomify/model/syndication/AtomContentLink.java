@@ -64,7 +64,7 @@ public class AtomContentLink extends AtomContent {
 
 	@SuppressWarnings("all")
 	public void serialize(ContentHandler handler, AttributesImpl attributes) throws SAXException {
-		attributes = initCommonAttributes(attributes);
+		attributes = initCommonAttributes(handler, attributes);
 		addAttribute(attributes, SRC_QNAME, this.source.toString());
 		if (this.mediaType != null) {
 			addAttribute(attributes, TYPE_QNAME, this.mediaType.toString());

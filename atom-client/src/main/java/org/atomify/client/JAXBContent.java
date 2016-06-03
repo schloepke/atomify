@@ -77,7 +77,7 @@ public class JAXBContent extends AtomContentXml {
 
 	@Override
 	public void serialize(final ContentHandler handler, AttributesImpl attributes) throws SAXException {
-		attributes = initCommonAttributes(attributes);
+		attributes = initCommonAttributes(handler, attributes);
 		AtomCommonAttributes.addAttribute(attributes, AtomContent.TYPE_QNAME, getMediaType().toString());
 		String namespace = AtomConstants.ATOM_NS_URI;
 		String local = "content";

@@ -154,7 +154,7 @@ public class AtomDate extends AtomCommonAttributes {
 
 	@SuppressWarnings("all")
 	public void serialize(QName name, ContentHandler handler, AttributesImpl attributes) throws SAXException {
-		attributes = initCommonAttributes(attributes);
+		attributes = initCommonAttributes(handler, attributes);
 		String namespace = name.getNamespaceURI();
 		String local = name.getLocalPart();
 		String qName = (name.getPrefix() != null && name.getPrefix().length() > 0 ? name.getPrefix() + ":" : "") + local;

@@ -72,7 +72,7 @@ public class AtomPubCollectionBuilder extends AtomCommonBuilder<AtomPubWorkspace
 
 	public AtomPubCollection build() {
 		AtomPubCollection temp = new AtomPubCollection(this.title, this.href, this.accepts, this.categories, this.extensions);
-		attachCommonAttributes(temp);
+		attachParentBuilder(temp);
 		return temp;
 	}
 

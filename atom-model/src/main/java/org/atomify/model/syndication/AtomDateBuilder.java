@@ -46,7 +46,7 @@ public class AtomDateBuilder extends AtomCommonBuilder<AtomDateBuilder> implemen
 
 	public AtomDate build() {
 		AtomDate temp = AtomDate.valueOf(this.dateString);
-		attachCommonAttributes(temp);
+		attachParentBuilder(temp);
 		return temp;
 	}
 

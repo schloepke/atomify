@@ -30,11 +30,13 @@ import java.util.List;
 import org.atomify.model.AtomConstants;
 import org.atomify.model.AtomContractConstraint;
 import org.atomify.model.common.AtomCommonBuilder;
+import org.atomify.model.common.AtomExtendable;
+import org.atomify.model.common.AtomExtendableBuilder;
 import org.atomify.model.extension.AtomExtension;
 import org.jbasics.parser.annotations.Element;
 import org.jbasics.pattern.builder.Builder;
 
-public class AtomEntryBuilder extends AtomCommonBuilder<AtomEntryBuilder> implements Builder<AtomEntry> {
+public class AtomEntryBuilder extends AtomExtendableBuilder<AtomEntryBuilder> implements Builder<AtomEntry> {
 	/**
 	 * <b>Required:</b> atom:id element.
 	 */
@@ -122,12 +124,11 @@ public class AtomEntryBuilder extends AtomCommonBuilder<AtomEntryBuilder> implem
 		result.setCategories(this.categories);
 		result.setContributors(this.contributors);
 		result.setContent(this.content);
-		result.setExtensions(this.extensions);
 		result.setLinks(this.links);
 		result.setRights(this.rights);
 		result.setSource(this.source);
 		result.setSummary(this.summary);
-		attachCommonAttributes(result);
+		attachParentBuilder(result);
 		return result;
 	}
 

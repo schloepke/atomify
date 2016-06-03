@@ -48,7 +48,7 @@ public class AtomIdBuilder extends AtomCommonBuilder<AtomIdBuilder> implements B
 
 	public AtomId build() {
 		AtomId temp = new AtomId(this.id);
-		attachCommonAttributes(temp);
+		attachParentBuilder(temp);
 		return temp;
 	}
 
