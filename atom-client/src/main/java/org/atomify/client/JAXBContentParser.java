@@ -27,38 +27,69 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.UnmarshallerHandler;
+import javax.xml.bind.util.JAXBResult;
+import javax.xml.transform.Source;
+import javax.xml.transform.Templates;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.sax.SAXSource;
+import javax.xml.transform.stream.StreamSource;
+
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.AttributesImpl;
+
+import org.jbasics.enviroment.JVMEnviroment;
 
 import org.atomify.model.syndication.AtomContent;
 import org.atomify.model.syndication.AtomContentGenericXml;
 import org.atomify.model.syndication.AtomEntry;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.AttributesImpl;
 
 public class JAXBContentParser {
 
-	public static <T> T parseContent(AtomEntry entry, Class<T> type) {
-		AtomContent content = entry.getContent();
+	public static <T> T parseContent(final AtomEntry entry, final Class<T> type) {
+		return JAXBContentParser.parseContent(entry, type, null);
+	}
+
+	public static <T> T parseContent(final AtomEntry entry, final Class<T> type, final Templates template) {
+		final AtomContent content = entry.getContent();
 		if (content.isXML()) {
 			try {
-				AtomContentGenericXml xml = (AtomContentGenericXml) content;
-				JAXBContext ctx = JAXBContext.newInstance(type);
-				Unmarshaller um = ctx.createUnmarshaller();
-				UnmarshallerHandler handler = um.getUnmarshallerHandler();
+				final JAXBContext ctx = JAXBContext.newInstance(type);
+				ContentHandler handler;
+				if (template != null) {
+					final Transformer t = template.newTransformer();
+					JAXBResult result = new JAXBResult(ctx);
+					SAXSource source = new SAXSource();
+					handler = source.getXMLReader().getContentHandler();
+				} else {
+					final Unmarshaller um = ctx.createUnmarshaller();
+					handler = um.getUnmarshallerHandler();
+				}
+				final AtomContentGenericXml xml = (AtomContentGenericXml) content;
 				handler.startDocument();
 				xml.getXmlContent().serialize(handler, new AttributesImpl());
 				handler.endDocument();
 				return type.cast(handler.getResult());
-			} catch (SAXException e) {
-				throw createRuntimeException(e);
-			} catch (JAXBException e) {
-				throw createRuntimeException(e);
+				
+				
+				Templates partnerTemplate = TransformerFactory.newInstance().newTemplates(
+						new StreamSource(JVMEnviroment.getNotNullResource("/xslts/partner.xslt").openStream()));
+				
+				
+			} catch (final SAXException e) {
+				throw JAXBContentParser.createRuntimeException(e);
+			} catch (final JAXBException e) {
+				throw JAXBContentParser.createRuntimeException(e);
+			} catch (final TransformerConfigurationException e) {
+				throw JAXBContentParser.createRuntimeException(e);
 			}
 		}
 		throw new IllegalArgumentException("Entry does not have any xml content");
 	}
 
-	private static RuntimeException createRuntimeException(Throwable e) {
-		RuntimeException er = new RuntimeException("[" + e.getClass().getSimpleName() + "] " + e.getMessage());
+	private static RuntimeException createRuntimeException(final Throwable e) {
+		final RuntimeException er = new RuntimeException("[" + e.getClass().getSimpleName() + "] " + e.getMessage());
 		er.setStackTrace(e.getStackTrace());
 		er.initCause(e);
 		return er;
